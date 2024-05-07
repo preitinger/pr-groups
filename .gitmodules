@@ -1,0 +1,6 @@
+[submodule "app/_lib/user-management-client"]
+	path = app/_lib/user-management-client
+	url = git@github.com:preitinger/user-management-client.git
+[submodule "app/_lib/user-management-server"]
+	path = app/_lib/user-management-server
+	url = git@github.com:preitinger/user-management-server.git
