@@ -1,0 +1,11 @@
+.form {
+    display: block;
+}
+.addButton {
+    display: block;
+    margin: 1rem;
+    min-height: 40px;
+}
+.comment {
+
+}

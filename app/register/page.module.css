@@ -1,0 +1,21 @@
+.container {
+    display: block;
+}
+
+.userLabel,
+.user,
+.passwdLabel,
+.passwd,
+.passwdRepeatLabel,
+.passwdRepeat,
+.registerButton {
+    display: block;
+    margin: 1rem;
+}
+
+.user,
+.passwd,
+.passwdRepeat,
+.registerButton {
+    min-height: 40px;
+}

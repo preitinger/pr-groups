@@ -1,0 +1,16 @@
+.form {
+    display: table;
+}
+.row {
+    display: table-row;
+    border: 1px solid red;
+    height: 40px;
+}
+.linkMemberAdd,
+.linkMemberRemove,
+.linkActivityAdd,
+.linkActivityDelete,
+.linkActivityChange {
+    display: table-cell;
+    vertical-align: middle;
+}

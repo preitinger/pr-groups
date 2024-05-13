@@ -1,0 +1,18 @@
+.form {
+    display: table;
+}
+.row {
+    display: table-row;
+    border: 1px solid red;
+    height: 40px;
+}
+
+.linkGroupCreate,
+.linkGroupDelete,
+.linkGroupChange,
+.linkGroupAdminList,
+.linkGroupAdminAdd,
+.linkGroupAdminDelete {
+    display: table-cell;
+    vertical-align: middle;
+}

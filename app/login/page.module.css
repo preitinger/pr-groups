@@ -1,0 +1,18 @@
+.form {
+    display: block;
+}
+
+.userLabel,
+.user,
+.passwdLabel,
+.passwd,
+.registerButton {
+    display: block;
+    margin: 1rem;
+}
+
+.user,
+.passwd,
+.registerButton {
+    min-height: 40px;
+}

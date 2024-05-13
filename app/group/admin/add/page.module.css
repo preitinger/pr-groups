@@ -1,0 +1,20 @@
+.form {
+    display: block;
+}
+
+.groupLabel,
+.group,
+.userLabel,
+.user,
+.addButton {
+    display: block;
+    margin: 1rem;
+}
+
+.group,
+.user,
+.addButton {
+    min-height: 40px;
+}
+
+.comment {}
