@@ -5,7 +5,7 @@ import { SessionContext } from "@/app/_lib/SessionContext";
 import { Activity, ActivityDetailsReq, ActivityDetailsResp, Participation } from "@/app/_lib/api";
 import useUser from "@/app/_lib/useUser";
 import { apiFetchPost } from "@/app/_lib/user-management-client/apiRoutesClient";
-import { formatDate } from "@/app/_lib/utils";
+import { formatDateTime } from "@/app/_lib/utils";
 import { useEffect, useState } from "react";
 import styles from './page.module.css'
 
@@ -29,7 +29,7 @@ export default function Page({ params }: { params: { activityIdx: string } }) {
 
     const decisions: { [user: string]: Participation } | undefined = activity?.participations.reduce((d, participation) => ({
         ...d,
-        [participation.user]: participation
+        [participation.phoneNr]: participation
     }),
         {}
     )
@@ -45,12 +45,12 @@ export default function Page({ params }: { params: { activityIdx: string } }) {
             <h3 className={styles.headerAccepts}>Zusagen</h3>
             <div>
                 {accept.length === 0 ? <span className={styles.none}>keine</span> :
-                accept.map((participation, i) => <div key={i}>{participation.user} <span className={styles.date}>{formatDate(participation.date)}</span></div>)}
+                accept.map((participation, i) => <div key={i}>{participation.phoneNr} <span className={styles.date}>{formatDateTime(participation.date)}</span></div>)}
             </div>
             <h3 className={styles.headerRejects}>Absagen</h3>
             <div>
                 {reject.length === 0 ? <span className={styles.none}>keine</span> :
-                reject.map((participation, i) => <div key={i}>{participation.user} <span className={styles.date}>{formatDate(participation.date)}</span></div>)}
+                reject.map((participation, i) => <div key={i}>{participation.phoneNr} <span className={styles.date}>{formatDateTime(participation.date)}</span></div>)}
             </div>
         </div>
     )

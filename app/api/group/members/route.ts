@@ -7,18 +7,13 @@ import { NextRequest } from "next/server";
 import { apiPOST } from "@/app/_lib/user-management-server/apiRoutesForServer";
 
 async function executeMembers(req: MembersReq): Promise<ApiResp<MembersResp>> {
-    if (!await checkToken(req.user, req.token)) {
-        return {
-            type: 'authFailed'
-        }
-    }
 
     const client = await clientPromise;
     const db = client.db('pr-groups');
     const col = db.collection<GroupDoc>('groups');
     const group = await col.findOne({
         _id: req.group,
-        members: req.user
+        'members.phoneNr': req.phoneNr
     }, {
         projection: {
             members: 1

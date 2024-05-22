@@ -1,0 +1,10 @@
+.lines {
+    position: absolute;
+    top: 1rem;
+    --left: calc(var(--w1) + 0rem);
+    left: var(--left);
+    width: calc(100vw - 1rem - var(--left));
+}
+.lines p {
+    margin-bottom: 1rem;
+}

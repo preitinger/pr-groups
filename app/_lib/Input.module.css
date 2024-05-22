@@ -1,9 +1,13 @@
 .label, .input {
     display: block;
-    margin: 1rem;
+    margin-bottom: 1rem;
+}
+
+.label {
+    margin-top: 1rem;
 }
 
 .input {
     min-height: 40px;
-    width: 80ex;
+    width: 30ex;
 }

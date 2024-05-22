@@ -1,0 +1,28 @@
+.form {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    position: absolute;
+    top: calc(var(--h1) + 2rem);
+    left: calc(var(--w1) + 4rem);
+    color: #ebebeb;
+    right: 2rem;
+    bottom: 1rem;
+    overflow: scroll;
+}
+
+.nameLabel,
+.name,
+.createGroup {
+    display: block;
+    margin: 1rem;
+}
+
+.name,
+.createGroup {
+    min-height: 40px;
+}
+
+.name {
+    width: 80rex;
+}

@@ -1,5 +1,13 @@
 .form {
     display: table;
+    position: absolute;
+    top: calc(var(--h1) + 2rem);
+    left: calc(var(--w1) + 4rem);
+    color: #ebebeb;
+    right: 2rem;
+}
+.form a {
+    color: inherit;
 }
 .row {
     display: table-row;
@@ -13,4 +21,12 @@
 .linkActivityChange {
     display: table-cell;
     vertical-align: middle;
+}
+.groups {
+    display: flex;
+    flex-flow: column;
+}
+.groups a {
+    color: inherit;
+    min-height: 40px;
 }

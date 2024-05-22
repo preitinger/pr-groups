@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import Image from "next/image";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -14,9 +15,26 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
+
   return (
     <html lang="de">
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        <div className='d1'>
+          <div className='d5'>
+            <div className='d6'>
+            </div>
+            <div id='d4' className='d4'>
+              d4
+            </div>
+          </div>
+          <div className='d2'>
+          </div>
+          <div className='d3'>
+            {children}
+          </div>
+        </div>
+      </body>
     </html>
   );
 }

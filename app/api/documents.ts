@@ -1,5 +1,6 @@
 import { ObjectId } from "mongodb";
-import { Activity } from "../_lib/api";
+import { Activity, Logo, Member } from "../_lib/api";
+import { HeaderLine } from "../_lib/HeaderLine";
 
 export interface AdminsDoc {
     _id: 'admins';
@@ -9,7 +10,11 @@ export interface AdminsDoc {
 export interface GroupDoc {
     _id: string;
     admins: string[];
-    members: string[];
+    members: Member[];
+    logo: Logo | null;
+    line1: HeaderLine;
+    margin: string;
+    line2: HeaderLine;
     activities: Activity[];
 }
 

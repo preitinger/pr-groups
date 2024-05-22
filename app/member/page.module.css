@@ -1,71 +1,11 @@
-.container {
-    display: block;
+.links {
+    position: absolute;
+    top: calc(var(--h1) + 2rem);
+    left: calc(var(--w1) + 5rem);
+    color: #ebebeb;
+    width: 60ex;
 }
 
-.adminLinks {
-    display: flex;
-}
-.adminLink {
-    color: gray;
-    min-height: 40px;
-    margin-right: 1rem;
-}
-
-.headerWelcome {
-    
-}
-.headerGroup {
-
-}
-.linkMembers {
-    
-}
-
-.comment {
-    height: 2em;
-}
-
-.activity {
-    margin-bottom: 2rem;
-}
-
-.activityButtons {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-}
-.accepted,
-.accept,
-.rejected,
-.reject,
-.undecided,
-.doubt {
-    box-sizing: border-box;
-    width: 120px;
-}
-.accept,
-.reject,
-.doubt {
-    height: 40px;
-}
-.accepted {
-    color: green;
-    text-align: center;
-}
-.rejected {
-    color: red;
-    text-align: center;
-}
-.undecided {
-    color: darkgray;
-    text-align: center;
-}
-.accept {
-
-}
-.reject {
-
-}
-.doubt {
-
+.links a {
+    color: #ebebeb;
 }

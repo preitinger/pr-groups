@@ -7,13 +7,13 @@ import { useState } from "react";
 import { GroupAdminAddReq, GroupAdminAddResp } from "@/app/_lib/api";
 import { SessionContext } from "@/app/_lib/SessionContext";
 import { apiFetchPost } from "@/app/_lib/user-management-client/apiRoutesClient";
+import Header from "@/app/_lib/Header";
 
 export default function Page() {
     const user = useUser();
     const [group, setGroup] = useState('')
     const [groupAdminUser, setGroupAdminUser] = useState('');
     const [comment, setComment] = useState('');
-
 
     async function onAddClick() {
         const ctx = new SessionContext();
@@ -35,6 +35,7 @@ export default function Page() {
                 break;
             case 'success':
                 setComment(`${groupAdminUser} ist jetzt ein Gruppen-Admin von ${group}.`)
+                console.log('resp', resp);
                 break;
             case 'wasGroupAdmin':
                 setComment(`${groupAdminUser} war bereits vorher ein Gruppen-Admin von ${group}.`)
@@ -53,18 +54,17 @@ export default function Page() {
 
     return (
         <div>
-            <Profile user={user} />
-            <h1>Gruppen-Admin hinzufügen</h1>
+            <Header user={user} line1={{ text: 'pr-groups / Admin', fontSize: '1.2rem', bold: false }} margin='1rem' line2={{ text: 'Gruppen-Admin hinzufügen', fontSize: '1.5rem', bold: true }} />
             <div className={styles.form}>
                 <label className={styles.groupLabel} htmlFor='group'>Gruppe</label>
                 <input className={styles.group} type='text' value={group} onChange={(e) => setGroup(e.target.value)} id='group' />
                 <label className={styles.userLabel} htmlFor='user'>User</label>
                 <input className={styles.user} type='text' value={groupAdminUser} onChange={(e) => setGroupAdminUser(e.target.value)} id='user' />
                 <button className={styles.addButton} disabled={user == null} onClick={onAddClick}>Gruppen-Admin hinzufügen</button>
+                <p className={styles.comment}>
+                    {comment}
+                </p>
             </div>
-            <p className={styles.comment}>
-                {comment}
-            </p>
         </div>
     )
 }

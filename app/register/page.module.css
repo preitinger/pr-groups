@@ -1,5 +1,10 @@
-.container {
+.form {
     display: block;
+    position: absolute;
+    top: calc(var(--h1) + 2rem);
+    left: calc(var(--w1) + 4rem);
+    color: #ebebeb;
+    right: 2rem;
 }
 
 .userLabel,
@@ -18,4 +23,9 @@
 .passwdRepeat,
 .registerButton {
     min-height: 40px;
+}
+.user,
+.passwd,
+.passwdRepeat {
+    width: 30ex;
 }

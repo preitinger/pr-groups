@@ -1,16 +1,33 @@
 import { ObjectId } from "mongodb";
+import { HeaderLine } from "./HeaderLine";
 
 export type Acceptance = 'accepted' | 'rejected' | 'undecided'
 export interface Participation {
-    user: string;
+    phoneNr: string;
     accept: Acceptance;
-    date: Date;
+    date: number;
 }
 
 export interface Activity {
     name: string;
-    creationDate: Date;
+    date: number | null;
+    capacity: number | null;
     participations: Participation[];
+    creationDate: number;
+}
+
+export interface Member {
+    phoneNr: string;
+    prename: string;
+    surname: string;
+    token: string;
+}
+
+export interface Logo {
+    src: string;
+    alt: string;
+    width: number;
+    height: number;
 }
 
 export interface GroupCreateReq {
@@ -20,6 +37,10 @@ export interface GroupCreateReq {
     user: string;
     token: string;
     name: string;
+    logo: Logo | null;
+    line1: HeaderLine;
+    margin: string;
+    line2: HeaderLine;
 }
 
 export type GroupCreateResp = {
@@ -59,19 +80,20 @@ export interface GroupMemberAddReq {
     user: string;
     token: string;
     group: string;
-    member: string;
+    phoneNr: string;
+    prename: string;
+    surname: string;
 }
 
 export type GroupMemberAddResp = {
     type: 'authFailed'
 } | {
     type: 'success'
+    invitationUrl: string;
 } | {
     type: 'groupNotFound'
 } | {
-    type: 'userNotFound'
-} | {
-    type: 'wasMember'
+    type: 'phoneNrContained'
 }
 
 export interface GroupActivityAddReq {
@@ -82,6 +104,8 @@ export interface GroupActivityAddReq {
     token: string;
     group: string;
     activity: string;
+    date: number | null;
+    capacity: number | null;
 }
 
 export type GroupActivityAddResp = {
@@ -95,22 +119,24 @@ export type GroupActivityAddResp = {
 }
 
 export interface MemberDataReq {
+    group: string;
     /**
      * user sending the request
      */
-    user: string;
+    phoneNr: string;
     token: string;
-    /**
-     * if nullish, the first group whose field members contains user
-     */
-    curGroup: string | null;
 }
 
 export type MemberDataResp = {
     type: 'authFailed'
 } | {
     type: 'success';
-    curGroup: string | null;
+    prename: string;
+    surname: string;
+    logo: Logo | null;
+    line1: HeaderLine;
+    margin: string;
+    line2: HeaderLine;
     activities: Activity[];
 }
 
@@ -118,7 +144,7 @@ export interface ActivityAcceptReq {
     /**
      * user sending the request
      */
-    user: string;
+    phoneNr: string;
     token: string;
     group: string;
     activityIdx: number;
@@ -159,7 +185,7 @@ export interface MembersReq {
     /**
      * user sending the request
      */
-    user: string;
+    phoneNr: string;
     token: string;
     group: string;
 }
@@ -168,5 +194,36 @@ export type MembersResp = {
     type: 'authFailed' // if token is invalid or user is no member of group
 } | {
     type: 'success';
-    members: string[];
+    members: Member[];
+}
+
+export interface GroupAdminGroupsReq {
+     /**
+     * user sending the request
+     */
+     user: string;
+     token: string;
+}
+
+export type GroupAdminGroupsResp = {
+    type: 'authFailed' // if token is invalid
+} | {
+    type: 'success'
+    groupIds: string[];
+}
+
+export interface GroupAdminGroupReq {
+     /**
+     * user sending the request
+     */
+     user: string;
+     token: string;
+    groupId: string;
+}
+
+export type GroupAdminGroupResp = {
+    type: 'authFailed'
+} | {
+    type: 'success'
+    members: Member[]
 }

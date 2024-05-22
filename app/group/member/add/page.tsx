@@ -7,12 +7,18 @@ import { useState } from "react";
 import { SessionContext } from "@/app/_lib/SessionContext";
 import { GroupMemberAddReq, GroupMemberAddResp } from "@/app/_lib/api";
 import { apiFetchPost } from "@/app/_lib/user-management-client/apiRoutesClient";
+import Input from "@/app/_lib/Input";
+import Header from "@/app/_lib/Header";
 
 export default function Page() {
     const user = useUser();
     const [group, setGroup] = useState('')
-    const [member, setMember] = useState('');
+    const [newPhoneNr, setNewPhoneNr] = useState('');
+    const [prename, setPrename] = useState('');
+    const [surname, setSurname] = useState('');
     const [comment, setComment] = useState('');
+    const [invitationLink, setInvitationLink] = useState<string | null>(null);
+    const [copied, setCopied] = useState(false);
 
     async function onAddClick() {
         const ctx = new SessionContext();
@@ -25,24 +31,30 @@ export default function Page() {
             user: user,
             token: token,
             group: group,
-            member: member
+            phoneNr: newPhoneNr,
+            prename: prename,
+            surname: surname,
         }
+        setComment('Sende Daten ...');
+        setInvitationLink(null);
+        setCopied(false);
         const resp = await apiFetchPost<GroupMemberAddReq, GroupMemberAddResp>('/api/group/member/add', req)
+        console.log('resp', resp);
         switch (resp.type) {
             case 'authFailed':
                 setComment('Nicht authorisiert.');
                 break;
             case 'success':
-                setComment(`${member} ist jetzt Mitglied in Gruppe ${group}.`)
+                console.log('baseURI', document.baseURI);
+                console.log('location.origin', location.origin);
+                setComment(`Einladungslink für ${prename} ${surname}: ${location.origin + resp.invitationUrl}`)
+                setInvitationLink(location.origin + resp.invitationUrl);
                 break;
             case 'groupNotFound':
                 setComment(`Gruppe ${group} existiert nicht.`);
                 break;
-            case 'userNotFound':
-                setComment(`User ${member} existiert nicht.`);
-                break;
-            case 'wasMember':
-                setComment(`${member} war bereits vorher Mitglied in Gruppe ${group}.`)
+            case 'phoneNrContained':
+                setComment(`Abgebrochen. Es gibt bereits ein Mitglied mit Telefonnr ${newPhoneNr} in Gruppe ${group}.`)
                 break;
             case 'error':
                 setComment(`Unerwarteter Fehler: ${resp.error}`);
@@ -50,19 +62,31 @@ export default function Page() {
         }
     }
 
+    function onCopyClick() {
+        if (invitationLink == null) return;
+        navigator.clipboard.writeText(invitationLink).then(() => {
+            setCopied(true);
+        })
+    }
+
     return (
-        <div>
+        <>
+            <Header user={user} line1={{ text: 'pr-groups / Gruppenadmin', fontSize: '1.2em', bold: false }} margin='1em' line2={{ text: 'Gruppenmitglied hinzufügen', fontSize: '1.5em', bold: true }} />
             <Profile user={user} />
-            <p>Gruppenadministration</p>
-            <h1>Gruppenmitglied hinzufügen</h1>
             <div className={styles.form}>
-                <label className={styles.groupLabel} htmlFor='group'>Gruppe</label>
-                <input className={styles.group} type='text' value={group} onChange={(e) => setGroup(e.target.value)} id='group' />
-                <label className={styles.userLabel} htmlFor='user'>User</label>
-                <input className={styles.user} type='text' value={member} onChange={(e) => setMember(e.target.value)} id='user' />
+                <Input id='group' label='Gruppe' text={group} setText={setGroup} />
+                <Input id='phoneNr' label='Telefonnr. des neuen Gruppenmitglieds' text={newPhoneNr} setText={setNewPhoneNr} />
+                <Input id='prename' label='Vorname des neuen Mitglieds' text={prename} setText={setPrename} />
+                <Input id='surname' label='Nachname (ggf. Kürzel) des neuen Mitglieds' text={surname} setText={setSurname} />
                 <button className={styles.addButton} disabled={user == null} onClick={onAddClick}>Gruppenmitglied hinzufügen</button>
+                <p>{comment}</p>
+                {invitationLink != null &&
+                    <div className={styles.copyLink}>
+                        <textarea readOnly value={invitationLink} />
+                        <button className={`${styles.copy} ${copied && styles.copied}`} onClick={onCopyClick} />
+                    </div>
+                }
             </div>
-            <p>{comment}</p>
-        </div>
+        </>
     )
 }

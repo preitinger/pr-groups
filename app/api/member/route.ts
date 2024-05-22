@@ -7,50 +7,51 @@ import { apiPOST } from "@/app/_lib/user-management-server/apiRoutesForServer";
 import { NextRequest } from "next/server";
 
 async function execute(req: MemberDataReq): Promise<ApiResp<MemberDataResp>> {
-    if (!await checkToken(req.user, req.token)) {
-        return {
-            type: 'authFailed'
-        }
-    }
 
     const client = await clientPromise;
     const db = client.db('pr-groups');
     const col = db.collection<GroupDoc>('groups');
     let group: GroupDoc | null = null;
-    if (req.curGroup == null) {
-        group = await col.findOne({
-            members: req.user
-        }, {
-            projection: {
-                _id: 1,
-                activities: 1
-            }
-        })
-    } else {
-        group = await col.findOne({
-            _id: req.curGroup,
-            members: req.user
-        }, {
-            projection: {
-                _id: 1,
-                activities: 1
-            }
-        })
-    }
+    group = await col.findOne({
+        _id: req.group,
+        'members.phoneNr': req.phoneNr
+    }, {
+        projection: {
+            _id: 1,
+            members: 1,
+            logo: 1,
+            line1: 1,
+            margin: 1,
+            line2: 1,
+            activities: 1,
+        }
+    })
 
     if (group == null) {
         return {
-            type: 'success',
-            curGroup: null,
-            activities: []
+            type: 'authFailed',
         }
     }
 
+    console.log('group', group);
+
+    const member = group.members.find((member) => member.phoneNr === req.phoneNr)
+
+    if (member == null) {
+        return {
+            type: 'authFailed'
+        }
+    }
 
     return {
         type: 'success',
-        curGroup: group._id,
-        activities: group.activities
+        prename: member.prename,
+        surname: member.surname,
+        logo: group.logo,
+        line1: group.line1,
+        margin: group.margin,
+        line2: group.line2,
+        activities: group.activities,
     }
 }
 

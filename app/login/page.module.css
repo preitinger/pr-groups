@@ -1,18 +1,30 @@
 .form {
     display: block;
+    position: absolute;
+    top: calc(var(--h1) + 2rem);
+    left: calc(var(--w1) + 4rem);
+    color: #ebebeb;
+    right: 2rem;
 }
 
 .userLabel,
 .user,
 .passwdLabel,
 .passwd,
-.registerButton {
+.loginButton {
     display: block;
-    margin: 1rem;
+    margin-bottom: 1rem;
 }
 
 .user,
 .passwd,
-.registerButton {
+.loginButton {
     min-height: 40px;
+}
+.user, .passwd {
+    width: 30ex;
+}
+
+.comment {
+    margin-top: 1rem;
 }

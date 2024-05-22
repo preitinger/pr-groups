@@ -1,5 +1,10 @@
+.logo {
+    position: absolute;
+    top: 1rem;
+    left: calc(var(--w1) + 0rem);
+}
 .profile {
-    position: fixed;
+    position: absolute;
     top: 1rem;
     right: 1rem;
     width: auto;

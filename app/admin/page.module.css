@@ -1,11 +1,25 @@
 .form {
     display: table;
+    position: absolute;
+    top: calc(var(--h1) + 2rem);
+    left: calc(var(--w1) + 4rem);
+    color: #ebebeb;
+    right: 2rem;
+    bottom: 1rem;
+}
+.form a {
+    color: inherit;
+}
+.form button {
+    background-color: #333;
+    color: inherit;
 }
 .row {
     display: table-row;
     border: 1px solid red;
     height: 40px;
 }
+
 
 .linkGroupCreate,
 .linkGroupDelete,

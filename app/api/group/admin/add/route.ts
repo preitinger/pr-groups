@@ -24,7 +24,13 @@ async function executeAdd(req: GroupAdminAddReq): Promise<ApiResp<GroupAdminAddR
     try {
         const resp = await groupsCol.findOneAndUpdate(
             { _id: req.group },
-            { $addToSet: { admins: req.groupAdminUser } }
+            { $addToSet: { admins: req.groupAdminUser } },
+            {
+                projection: {
+                    _id: 0,
+                    admins: true
+                }
+            }
         );
         if (resp == null) {
             // Group not found

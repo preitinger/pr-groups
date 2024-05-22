@@ -1,0 +1,177 @@
+.main {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    position: absolute;
+    --myTop: calc(var(--h1) + 1rem);
+    top: var(--myTop);
+    left: calc(var(--w1) + 4rem);
+    color: #ebebeb;
+    right: 2rem;
+    height: calc(var(--barTop) - var(--myTop));
+    /* border: 1px solid blue; */
+}
+
+.main a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.adminLinks {
+    display: flex;
+}
+
+.adminLink {
+    color: gray;
+    min-height: 40px;
+    margin-right: 1rem;
+}
+
+.welcome {
+    position: absolute;
+    top: 5rem;
+    left: calc(var(--w1) + 3.5rem);
+    color: #ebebeb;
+    right: 2rem;
+    bottom: 1rem;
+
+}
+
+.hello {
+    font-size: 1.8rem;
+
+}
+
+.user {
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.headerGroup {}
+
+.linkMembers {}
+
+.comment {
+    height: 2em;
+}
+
+.labelNext {
+    font-size: 1.1rem;
+    font-weight: normal;
+    color: #928b89;
+}
+
+.nextDateSmall {
+    font-size: 1.4rem;
+    font-weight: bold;
+}
+.nextTimeSmall {
+    font-size: 0.8rem;
+}
+
+.nextDate,
+.participants {
+    font-size: 2.1rem;
+    font-weight: bold;
+    /* color: white; */
+}
+
+.nextTime,
+.free {
+    font-size: 1.2rem;
+}
+
+.participants {
+    margin-top: 1rem;
+}
+
+.activity {
+    display: flex;
+    flex-flow: column;
+    margin-bottom: 2rem;
+}
+
+.activityButtons {
+    margin-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+}
+
+.accepted,
+.accept,
+.rejected,
+.reject,
+.undecided,
+.doubt {
+    box-sizing: border-box;
+    height: 50px;
+    margin-top: 3px;
+    font-size: 1.2rem;
+    border: none;
+}
+
+
+.accepted,
+.rejected,
+.undecided {
+    text-align: center;
+    vertical-align: middle;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.accept,
+.reject,
+.doubt {
+}
+
+
+.accepted {
+    background: #aaba98 url('/check-alex.png') no-repeat 5px 50%;
+    color: #515151;
+}
+
+.doubt {}
+
+.accept, .reject, .doubt {
+    background-color: #dadada;
+    color: #515151;
+}
+.rejected {
+    color: #852a1e;
+    /* background-image: url('/cross_8995303.png'); */
+    background: #ce9d92 url('/reject.png') no-repeat 5px 50%;
+}
+
+.spinner {
+    position: fixed;
+    background: url('/Spinner@1x-1.0s-200px-200px.gif') no-repeat center;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+}
+
+.testRow {
+    display: flex;
+    flex-direction: row;
+}
+
+.activityBar {
+    position: absolute;
+    top: var(--barTop);
+    left: 0;
+    right: 0;
+}
+.barElem {
+    padding: 5px 15px;
+    box-sizing: border-box;
+    width: 160px;
+}
+.barElemActive {
+    background-color: #aaba98;
+    color: #515151;
+}

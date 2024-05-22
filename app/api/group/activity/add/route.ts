@@ -18,10 +18,13 @@ async function executeAdd(req: GroupActivityAddReq): Promise<ApiResp<GroupActivi
 
         const client = await clientPromise;
         const db = client.db('pr-groups');
+        console.log('typeof req.date', typeof req.date);
 
         const activity: Activity = {
             name: req.activity,
-            creationDate: new Date(),
+            date: req.date,
+            creationDate: Date.now(),
+            capacity: req.capacity,
             participations: [],
         }
         let success = false;
@@ -44,6 +47,10 @@ async function executeAdd(req: GroupActivityAddReq): Promise<ApiResp<GroupActivi
                     _id: 1,
                     admins: 0,
                     members: 0,
+                    logo: 0,
+                    line1: 0,
+                    margin: 0,
+                    line2: 0,
                     activities: 0
                 }
             })

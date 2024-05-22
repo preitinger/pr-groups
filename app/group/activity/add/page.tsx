@@ -8,12 +8,18 @@ import Input from "@/app/_lib/Input";
 import { apiFetchPost } from "@/app/_lib/user-management-client/apiRoutesClient";
 import { GroupActivityAddReq, GroupActivityAddResp } from "@/app/_lib/api";
 import { SessionContext } from "@/app/_lib/SessionContext";
+import Header from "@/app/_lib/Header";
+import { parseGermanDate } from "@/app/_lib/utils";
+import DateTimeInput from "@/app/_lib/pr-client-utils/DateTimeInput";
 
 export default function Page() {
     const user = useUser();
     const [group, setGroup] = useState('');
     const [activity, setActivity] = useState('');
+    const [capacity, setCapacity] = useState('');
+    const [date, setDate] = useState<Date | null>(null);
     const [comment, setComment] = useState('');
+    const [unclearMESZ, setUnclearMESZ] = useState(false);
 
     async function onAddClick() {
         const ctx = new SessionContext();
@@ -24,11 +30,20 @@ export default function Page() {
         }
 
         setComment('Erstelle Aktivität ...');
+        let capacityNum: number | null = null;
+        try {
+            capacityNum = parseInt(capacity);
+        } catch (reason) {}
+        console.log('date', date, 'typeof date', typeof date);
+        const test = JSON.parse(JSON.stringify(date));
+        console.log('test', test, 'typeof test', typeof test);
         const req: GroupActivityAddReq = {
             user: user,
             token: token,
             group: group,
-            activity: activity
+            activity: activity,
+            date: date?.getTime() ?? null,
+            capacity: capacityNum != null && capacityNum > 0 ? capacityNum : null
         }
         const resp = await apiFetchPost<GroupActivityAddReq, GroupActivityAddResp>('/api/group/activity/add', req);
         switch (resp.type) {
@@ -52,17 +67,17 @@ export default function Page() {
 
     return (
         <div>
-            <Profile user={user} />
-            <p>Gruppenadministration</p>
-            <h1>Aktivität hinzufügen</h1>
+            <Header user={user} line1={{ text: 'pr-groups / Gruppen-Admin', fontSize: '1.2rem', bold: false }} margin='1rem' line2={{ text: 'Aktivität hinzufügen', fontSize: '1.5rem', bold: true }} />
             <div className={styles.form}>
                 <Input id='group' label='Gruppe' text={group} setText={setGroup} />
                 <Input id='activity' label='Aktivität' text={activity} setText={setActivity} />
+                <Input id='capacity' label='Teilnehmerkapazität' text={capacity} setText={setCapacity} />
+                <DateTimeInput initialText='' setDate={setDate} />
                 <button className={styles.addButton} onClick={onAddClick}>Aktivität hinzufügen</button>
+                <p className={styles.comment}>
+                    {comment}
+                </p>
             </div>
-            <p className={styles.comment}>
-                {comment}
-            </p>
         </div>
     )
 }

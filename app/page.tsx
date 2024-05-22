@@ -7,17 +7,22 @@ import Profile from "./_lib/Profile";
 import { useEffect, useState } from "react";
 import { SessionContext } from "./_lib/SessionContext";
 import useUser from "./_lib/useUser";
+import Header from "./_lib/Header";
 
 export default function Home() {
   const user = useUser();
 
   return (
-    <div className={styles.container}>
-      <Profile user={user} />
+    <>
+      <Header user={user} line1={{ text: 'pr-groups', fontSize: '1.5rem', bold: true }} margin='0' line2={{ text: '', fontSize: '1.2rem', bold: false }} />
       <div className={styles.buttons}>
-        <Link href='/register' className={styles.registerButton}>Register</Link>
-        <Link href='/login' className={styles.loginButton}>Login</Link>
+        <p>
+          <Link href='/register'>Register</Link>
+        </p>
+        <p>
+          <Link href='/login'>Login</Link>
+        </p>
       </div>
-    </div>
+    </>
   );
 }

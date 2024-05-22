@@ -36,7 +36,11 @@ async function executeCreate(req: GroupCreateReq): Promise<ApiResp<GroupCreateRe
             _id: req.name,
             admins: [],
             members: [],
-            activities: []
+            logo: req.logo,
+            line1: req.line1,
+            margin: req.margin,
+            line2: req.line2,
+            activities: [],
         })
         return {
             type: 'success'
