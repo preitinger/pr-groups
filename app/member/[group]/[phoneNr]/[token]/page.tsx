@@ -85,6 +85,7 @@ function ActivityComp({ user, activity, url, onAcceptClick, onDetailsClick }: Ac
                         <>
                             <button className={styles.accept} onClick={() => onAcceptClick('accepted')}>MITMACHEN</button>
                             <button className={styles.reject} onClick={() => onAcceptClick('rejected')}>ABSAGEN</button>
+                            <div className={styles.undecided}>UNENTSCHLOSSEN</div>
                         </>
                     }
                     {
