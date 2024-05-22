@@ -4,7 +4,7 @@ import Link from 'next/link'
 import styles from './page.module.css'
 import { PropsWithChildren, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Acceptance, Activity, ActivityAcceptReq, ActivityAcceptResp, Logo, MemberDataReq, MemberDataResp } from '@/app/_lib/api';
+import { Acceptance, Activity, ActivityAcceptReq, ActivityAcceptResp, Logo, Member, MemberDataReq, MemberDataResp, Participation } from '@/app/_lib/api';
 import { formatDate, formatDateTime, formatTime } from '@/app/_lib/utils';
 import { SessionContext } from '@/app/_lib/SessionContext';
 import Profile from '@/app/_lib/Profile';
@@ -14,6 +14,7 @@ import { HeaderLine } from '@/app/_lib/HeaderLine';
 import FixedAbortController from '@/app/_lib/pr-client-utils/FixedAbortController';
 import Image from 'next/image';
 import ScrollableContainer from '@/app/_lib/pr-client-utils/ScrollableContainer';
+import ModalDialog from '@/app/_lib/ModalDialog';
 
 const FAKE = true;
 
@@ -45,9 +46,10 @@ interface ActivityProps {
     activity: Activity;
     url: string;
     onAcceptClick: (accept: Acceptance) => void;
+    onDetailsClick: () => void;
 }
 
-function ActivityComp({ user, activity, url, onAcceptClick }: ActivityProps) {
+function ActivityComp({ user, activity, url, onAcceptClick, onDetailsClick }: ActivityProps) {
     // activity.participations can contain objects with equal user, but different accept values. Then, the last array element is the latest decision of the specific user.
     // Now, filter the last decisions:
     const decisions: { [user: string]: Acceptance } = activity.participations.reduce((d, participation) => ({
@@ -65,19 +67,18 @@ function ActivityComp({ user, activity, url, onAcceptClick }: ActivityProps) {
     return (
         <>
             <div className={styles.activity}>
-                <Link className={styles.link} href={url}>
+                <div onClick={onDetailsClick}>
                     {date != null &&
                         <DateTimeComp date={date} small={false} />
                     }
                     <div className={styles.participants}>{`${acceptNum} Teilnehmer`}</div>
                     {activity.capacity != null && <div className={styles.free}>{`NOCH ${activity.capacity - acceptNum} FREIE PLÄTZE!`}</div>}
-
-                    {/* <p>Erstellt: {formatDate(activity.creationDate)}</p> */}
-                    {/* <Link href={url}>
+                </div>
+                {/* <p>Erstellt: {formatDate(activity.creationDate)}</p> */}
+                {/* <Link href={url}>
                     <p>{acceptNum} Zusagen</p>
                     <p>{rejectNum} Absagen</p>
                 </Link> */}
-                </Link>
                 <div className={styles.activityButtons}>
                     {
                         (decisions[user] == null || decisions[user] === 'undecided') &&
@@ -138,12 +139,14 @@ export default function Page({ params }: { params: { group: string; phoneNr: str
     const [phoneNr, setPhoneNr] = useState('');
     const [token, setToken] = useState('');
     const [activities, setActivities] = useState<Activity[]>([]);
+    const [members, setMembers] = useState<Member[]>([]);
     const [comment, setComment] = useState('')
     const [prename, setPrename] = useState('');
     const [surname, setSurname] = useState('');
     const [additionalHeaderProps, setAdditionalHeaderProps] = useState<AdditionalHeaderProps | null>(null);
     const [activityIdx, setActivityIdx] = useState(0)
     const [spinning, setSpinning] = useState(true);
+    const [detailsPopup, setDetailsPopup] = useState(false);
 
 
     useEffect(() => {
@@ -180,6 +183,7 @@ export default function Page({ params }: { params: { group: string; phoneNr: str
                     setPrename(resp.prename);
                     setSurname(resp.surname);
                     setActivities(resp.activities);
+                    setMembers(resp.members);
                     setComment('');
                     ctx.group = params.group
                     ctx.activities = resp.activities;
@@ -315,6 +319,28 @@ export default function Page({ params }: { params: { group: string; phoneNr: str
         setActivityIdx(i);
     }
 
+    const onDetailsClick = (i: number) => () => {
+        setDetailsPopup(true)
+    }
+
+
+    const decisions: { [user: string]: Participation } | undefined = selActivity?.participations.reduce((d, participation) => ({
+        ...d,
+        [participation.phoneNr]: participation
+    }),
+        {}
+    )
+
+    const accept: Participation[] = decisions == null ? [] : Object.values(decisions).filter((p => p.accept === 'accepted'))
+    const reject: Participation[] = decisions == null ? [] : Object.values(decisions).filter((p => p.accept === 'rejected'))
+
+    function phoneNrToName(phoneNr: string): string {
+        if (selActivity == null) return '';
+        const member = members.find(member => member.phoneNr === phoneNr)
+        if (member == null) return '';
+        return member.prename + ' ' + member.surname;
+    }
+
     return (
         <>
             {additionalHeaderProps != null &&
@@ -334,7 +360,7 @@ export default function Page({ params }: { params: { group: string; phoneNr: str
                     selActivity != null &&
                     <>
                         <div className={styles.labelNext}>{activityIdx === 0 ? 'NÄCHSTE VERANSTALTUNG' : 'WEITERE VERANSTALTUNG'}:</div>
-                        <ActivityComp activity={selActivity} url={`/member/activity-details/${activityIdx}`} user={phoneNr} onAcceptClick={(accept) => onAcceptClick(activityIdx, accept)} />
+                        <ActivityComp activity={selActivity} url={`/member/activity-details/${activityIdx}`} user={phoneNr} onAcceptClick={(accept) => onAcceptClick(activityIdx, accept)} onDetailsClick={onDetailsClick(activityIdx)} />
                         {/* <div ref={testRef} className={styles.testRow}><div className={styles.barElem}><DateTimeComp date={new Date()} small={true} /> */}
 
                     </>
@@ -348,6 +374,30 @@ export default function Page({ params }: { params: { group: string; phoneNr: str
                 }
             </ScrollableContainer>
 
+            {detailsPopup && selActivity != null &&
+                <ModalDialog>
+                    <div className={styles.popupContent}>
+                        <h1 className={styles.headerGroup}>{group}</h1>
+                        <h2 className={styles.headerActivity}>{selActivity?.name}</h2>
+                        <div className={styles.detailLists}>
+                            <h3 className={styles.headerAccepts}>Zusagen</h3>
+                            <div>
+                                {accept.length === 0 ? <span className={styles.none}>keine</span> :
+                                    accept.map((participation, i) => <div key={i}>{phoneNrToName(participation.phoneNr)} <span className={styles.date}>{formatDateTime(new Date(participation.date))}</span></div>)}
+                            </div>
+                            <h3 className={styles.headerRejects}>Absagen</h3>
+                            <div>
+                                {reject.length === 0 ? <span className={styles.none}>keine</span> :
+                                    reject.map((participation, i) => <div key={i}>{phoneNrToName(participation.phoneNr)} <span className={styles.date}>{formatDateTime(new Date(participation.date))}</span></div>)}
+                            </div>
+                        </div>
+                        <div className={styles.popupButtonRow}>
+                            <button onClick={() => setDetailsPopup(false)}>SCHLIEẞEN</button>
+                        </div>
+                    </div>
+
+                </ModalDialog>
+            }
             {
                 spinning &&
                 <div className={styles.spinner}></div>

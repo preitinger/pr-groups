@@ -138,6 +138,7 @@ export type MemberDataResp = {
     margin: string;
     line2: HeaderLine;
     activities: Activity[];
+    members: Member[];
 }
 
 export interface ActivityAcceptReq {

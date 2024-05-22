@@ -52,6 +52,7 @@ async function execute(req: MemberDataReq): Promise<ApiResp<MemberDataResp>> {
         margin: group.margin,
         line2: group.line2,
         activities: group.activities,
+        members: group.members,
     }
 }
 

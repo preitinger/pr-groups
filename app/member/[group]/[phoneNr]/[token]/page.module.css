@@ -175,3 +175,20 @@
     background-color: #aaba98;
     color: #515151;
 }
+
+.popupContent {
+    padding: 2rem;
+}
+.detailLists {
+    max-height: 50vh;
+    overflow-y: scroll;
+}
+.popupButtonRow {
+    margin-top: 1rem;
+    display: flex;
+    width: 100%;
+}
+.popupContent button {
+    margin: auto;
+    padding: 1rem;
+}
