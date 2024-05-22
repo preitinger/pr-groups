@@ -85,23 +85,23 @@ function ActivityComp({ user, activity, url, onAcceptClick, onDetailsClick }: Ac
                         <>
                             <button className={styles.accept} onClick={() => onAcceptClick('accepted')}>MITMACHEN</button>
                             <button className={styles.reject} onClick={() => onAcceptClick('rejected')}>ABSAGEN</button>
-                            <div className={styles.undecided}>UNENTSCHLOSSEN</div>
+                            <div className={styles.undecided}>ENTSCHEIDE MICH NOCH</div>
                         </>
                     }
                     {
                         decisions[user] === 'accepted' &&
                         <>
-                            <div className={styles.accepted}>ZUGESAGT</div>
+                            <div className={styles.accepted}>ICH KOMME!</div>
                             <button className={styles.reject} onClick={() => onAcceptClick('rejected')}>ABSAGEN</button>
-                            <button className={styles.doubt} onClick={() => onAcceptClick('undecided')}>ZÖGERN</button>
+                            <button className={styles.doubt} onClick={() => onAcceptClick('undecided')}>SPÄTER ENTSCHEIDEN</button>
                         </>
                     }
                     {
                         decisions[user] === 'rejected' &&
                         <>
                             <button className={styles.accept} onClick={() => onAcceptClick('accepted')}>ZUSAGEN</button>
-                            <div className={styles.rejected}>ABGESAGT</div>
-                            <button className={styles.doubt} onClick={() => onAcceptClick('undecided')}>ZÖGERN</button>
+                            <div className={styles.rejected}>ICH KOMME NICHT!</div>
+                            <button className={styles.doubt} onClick={() => onAcceptClick('undecided')}>SPÄTER ENTSCHEIDEN</button>
                         </>
                     }
                 </div>
