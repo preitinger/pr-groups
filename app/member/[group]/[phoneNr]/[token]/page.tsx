@@ -188,6 +188,10 @@ export default function Page({ params }: { params: { group: string; phoneNr: str
                     setComment('');
                     ctx.group = params.group
                     ctx.activities = resp.activities;
+                    const now = Date.now();
+                    const first = resp.activities.findIndex((a) => (a.date ?? 0) > now)
+                    console.log('first', first);
+                    setActivityIdx(first >= 0 ? first : 0);
                     break;
                 case 'error':
                     if (FAKE) {
