@@ -45,12 +45,12 @@ export default function Page({ params }: { params: { activityIdx: string } }) {
             <h3 className={styles.headerAccepts}>Zusagen</h3>
             <div>
                 {accept.length === 0 ? <span className={styles.none}>keine</span> :
-                accept.map((participation, i) => <div key={i}>{participation.phoneNr} <span className={styles.date}>{formatDateTime(participation.date)}</span></div>)}
+                accept.map((participation, i) => <div key={i}>{participation.phoneNr} <span className={styles.date}>{formatDateTime(new Date(participation.date))}</span></div>)}
             </div>
             <h3 className={styles.headerRejects}>Absagen</h3>
             <div>
                 {reject.length === 0 ? <span className={styles.none}>keine</span> :
-                reject.map((participation, i) => <div key={i}>{participation.phoneNr} <span className={styles.date}>{formatDateTime(participation.date)}</span></div>)}
+                reject.map((participation, i) => <div key={i}>{participation.phoneNr} <span className={styles.date}>{formatDateTime(new Date(participation.date))}</span></div>)}
             </div>
         </div>
     )
