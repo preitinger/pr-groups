@@ -1,3 +1,9 @@
+.menuButton {
+    position: absolute;
+    right: 1rem;
+    top: 1rem;
+    z-index: 100;
+}
 .main {
     display: flex;
     flex-direction: column;
@@ -65,6 +71,7 @@
     font-size: 1.4rem;
     font-weight: bold;
 }
+
 .nextTimeSmall {
     font-size: 0.8rem;
 }
@@ -125,8 +132,7 @@
 
 .accept,
 .reject,
-.doubt {
-}
+.doubt {}
 
 
 .accepted {
@@ -136,15 +142,19 @@
 
 .doubt {}
 
-.accept, .reject, .doubt {
+.accept,
+.reject,
+.doubt {
     background-color: #dadada;
     color: #515151;
 }
+
 .rejected {
     color: #852a1e;
     /* background-image: url('/cross_8995303.png'); */
     background: #ce9d92 url('/reject.png') no-repeat 5px 50%;
 }
+
 .undecided {
     background-color: gray;
 }
@@ -169,29 +179,49 @@
     left: 0;
     right: 0;
 }
+
 .barElem {
     padding: 5px 15px;
     box-sizing: border-box;
     width: 160px;
 }
+
 .barElemActive {
     background-color: #aaba98;
     color: #515151;
 }
 
 .popupContent {
+    z-index: 100;
     padding: 2rem;
 }
+
 .detailLists {
     max-height: 50vh;
     overflow-y: scroll;
 }
+
 .popupButtonRow {
     margin-top: 1rem;
     display: flex;
+    justify-content: center;
     width: 100%;
 }
+
 .popupContent button {
-    margin: auto;
-    padding: 1rem;
+    /* margin: auto;
+    padding: 1rem; */
+    min-height: 40px;
+}
+
+.impressum {
+    overflow: scroll;
+    max-height: 80vh;
+    max-width: 80vw;
+}
+
+.menu {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
 }

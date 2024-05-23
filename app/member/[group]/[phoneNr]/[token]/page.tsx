@@ -15,6 +15,7 @@ import FixedAbortController from '@/app/_lib/pr-client-utils/FixedAbortControlle
 import Image from 'next/image';
 import ScrollableContainer from '@/app/_lib/pr-client-utils/ScrollableContainer';
 import ModalDialog from '@/app/_lib/ModalDialog';
+import Impressum from '@/app/_lib/pr-client-utils/Impressum';
 
 const FAKE = true;
 
@@ -71,7 +72,7 @@ function ActivityComp({ user, activity, url, onAcceptClick, onDetailsClick }: Ac
                     {date != null &&
                         <DateTimeComp date={date} small={false} />
                     }
-                    <div className={styles.participants}>{`${acceptNum} Teilnehmer`}</div>
+                    <div className={styles.participants}>{`${acceptNum} TEILNEHMER`}</div>
                     {activity.capacity != null && <div className={styles.free}>{`NOCH ${activity.capacity - acceptNum} FREIE PLÄTZE!`}</div>}
                 </div>
                 {/* <p>Erstellt: {formatDate(activity.creationDate)}</p> */}
@@ -85,13 +86,13 @@ function ActivityComp({ user, activity, url, onAcceptClick, onDetailsClick }: Ac
                         <>
                             <button className={styles.accept} onClick={() => onAcceptClick('accepted')}>MITMACHEN</button>
                             <button className={styles.reject} onClick={() => onAcceptClick('rejected')}>ABSAGEN</button>
-                            <div className={styles.undecided}>ENTSCHEIDE MICH NOCH</div>
+                            <div className={styles.undecided}>Entscheide mich noch</div>
                         </>
                     }
                     {
                         decisions[user] === 'accepted' &&
                         <>
-                            <div className={styles.accepted}>ICH KOMME!</div>
+                            <div className={styles.accepted}>Ich komme!</div>
                             <button className={styles.reject} onClick={() => onAcceptClick('rejected')}>ABSAGEN</button>
                             <button className={styles.doubt} onClick={() => onAcceptClick('undecided')}>SPÄTER ENTSCHEIDEN</button>
                         </>
@@ -100,7 +101,7 @@ function ActivityComp({ user, activity, url, onAcceptClick, onDetailsClick }: Ac
                         decisions[user] === 'rejected' &&
                         <>
                             <button className={styles.accept} onClick={() => onAcceptClick('accepted')}>ZUSAGEN</button>
-                            <div className={styles.rejected}>ICH KOMME NICHT!</div>
+                            <div className={styles.rejected}>Ich komme nicht.</div>
                             <button className={styles.doubt} onClick={() => onAcceptClick('undecided')}>SPÄTER ENTSCHEIDEN</button>
                         </>
                     }
@@ -132,6 +133,34 @@ function Welcome(p: WelcomeProps) {
     )
 }
 
+interface PopupProps {
+    visible: boolean;
+    setVisible?: (visible: boolean) => void
+}
+
+function Popup({ visible, setVisible, children }: PropsWithChildren<PopupProps>) {
+    return (
+        <>
+            {
+                visible &&
+                <ModalDialog>
+                    <div className={styles.popupContent}>
+                        {children}
+                        {
+                            setVisible != null &&
+                            <div className={styles.popupButtonRow}>
+                                <button onClick={() => setVisible(false)}>SCHLIEẞEN</button>
+                            </div>
+
+                        }
+                    </div>
+                </ModalDialog>
+            }
+        </>
+    )
+
+}
+
 type Choice = 'undecided' | 'accepted' | 'rejected';
 
 export default function Page({ params }: { params: { group: string; phoneNr: string; token: string } }) {
@@ -147,7 +176,11 @@ export default function Page({ params }: { params: { group: string; phoneNr: str
     const [additionalHeaderProps, setAdditionalHeaderProps] = useState<AdditionalHeaderProps | null>(null);
     const [activityIdx, setActivityIdx] = useState(0)
     const [spinning, setSpinning] = useState(true);
+    const [menu, setMenu] = useState(false);
     const [detailsPopup, setDetailsPopup] = useState(false);
+    const [impressum, setImpressum] = useState(false);
+    const [about, setAbout] = useState(false);
+    const [cookiePopup, setCookiePopup] = useState(true);
 
 
     useEffect(() => {
@@ -346,8 +379,15 @@ export default function Page({ params }: { params: { group: string; phoneNr: str
         return member.prename + ' ' + member.surname;
     }
 
+    function onMenuClick() {
+        setMenu(visible => !visible);
+    }
+
     return (
         <>
+            <div className={styles.menuButton} onClick={onMenuClick} >
+                <Image src='/main-menu.svg' width={32} height={32} alt='Menu' />
+            </div>
             {additionalHeaderProps != null &&
                 <Header user={null} {...additionalHeaderProps} />
             }
@@ -379,30 +419,46 @@ export default function Page({ params }: { params: { group: string; phoneNr: str
                 }
             </ScrollableContainer>
 
-            {detailsPopup && selActivity != null &&
-                <ModalDialog>
-                    <div className={styles.popupContent}>
-                        <h1 className={styles.headerGroup}>{group}</h1>
-                        <h2 className={styles.headerActivity}>{selActivity?.name}</h2>
-                        <div className={styles.detailLists}>
-                            <h3 className={styles.headerAccepts}>Zusagen</h3>
-                            <div>
-                                {accept.length === 0 ? <span className={styles.none}>keine</span> :
-                                    accept.map((participation, i) => <div key={i}>{phoneNrToName(participation.phoneNr)} <span className={styles.date}>{formatDateTime(new Date(participation.date))}</span></div>)}
-                            </div>
-                            <h3 className={styles.headerRejects}>Absagen</h3>
-                            <div>
-                                {reject.length === 0 ? <span className={styles.none}>keine</span> :
-                                    reject.map((participation, i) => <div key={i}>{phoneNrToName(participation.phoneNr)} <span className={styles.date}>{formatDateTime(new Date(participation.date))}</span></div>)}
-                            </div>
-                        </div>
-                        <div className={styles.popupButtonRow}>
-                            <button onClick={() => setDetailsPopup(false)}>SCHLIEẞEN</button>
-                        </div>
+            <Popup visible={impressum}>
+                <div className={styles.impressum}>
+                    <Impressum name='Peter Reitinger' street='Birkenweg' houseNr='8' postalCode='93482' city='Pemfling' phone='09971-6131' mail='peter.reitinger(at)gmail.com' />
+                </div>
+                <div className={styles.popupButtonRow}>
+                    <button onClick={() => setImpressum(false)}>SCHLIEẞEN</button>
+                </div>
+            </Popup>
+            <Popup visible={detailsPopup && selActivity != null}>
+                <h1 className={styles.headerGroup}>{group}</h1>
+                <h2 className={styles.headerActivity}>{selActivity?.name}</h2>
+                <div className={styles.detailLists}>
+                    <h3 className={styles.headerAccepts}>Zusagen</h3>
+                    <div>
+                        {accept.length === 0 ? <span className={styles.none}>keine</span> :
+                            accept.map((participation, i) => <div key={i}>{phoneNrToName(participation.phoneNr)} <span className={styles.date}>{formatDateTime(new Date(participation.date))}</span></div>)}
                     </div>
-
-                </ModalDialog>
-            }
+                    <h3 className={styles.headerRejects}>Absagen</h3>
+                    <div>
+                        {reject.length === 0 ? <span className={styles.none}>keine</span> :
+                            reject.map((participation, i) => <div key={i}>{phoneNrToName(participation.phoneNr)} <span className={styles.date}>{formatDateTime(new Date(participation.date))}</span></div>)}
+                    </div>
+                </div>
+                <div className={styles.popupButtonRow}>
+                    <button onClick={() => setDetailsPopup(false)}>SCHLIEẞEN</button>
+                </div>
+            </Popup>
+            <Popup visible={menu}>
+                <div className={styles.menu}>
+                    <button onClick={() => { setImpressum(true); setMenu(false) }}>IMPRESSUM</button>
+                    <button onClick={() => { setAbout(true); setMenu(false) }}>ABOUT</button>
+                </div>
+                <div className={styles.popupButtonRow}>
+                    <button onClick={() => setMenu(false)}>SCHLIEẞEN</button>
+                </div>
+            </Popup>
+            <Popup visible={cookiePopup} setVisible={setCookiePopup}>
+                Dieser Service benutzt Cookies um temporäre Seitenzustände zu speichern und eine Datenbank um Gruppen, ihre Mitglieder (nur Handynr, Vorname und optional Nachname oder abgekürzter Nachname) zu speichern.
+                Sie dürfen diese Seite nur weiter benutzen, wenn Sie dies akzeptieren. Andernfalls verlassen Sie bitte diese Seite.
+            </Popup>
             {
                 spinning &&
                 <div className={styles.spinner}></div>
