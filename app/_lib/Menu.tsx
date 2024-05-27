@@ -5,10 +5,6 @@ import { Popup } from "../Popup";
 import Impressum from "./pr-client-utils/Impressum";
 import { SessionContext } from "./SessionContext";
 
-export interface MenuProps {
-
-}
-
 function ImgAndAttrRow({ url, children }: PropsWithChildren<{ url: string }>) {
     return (
         <tr>
@@ -18,7 +14,12 @@ function ImgAndAttrRow({ url, children }: PropsWithChildren<{ url: string }>) {
     )
 }
 
-export default function Menu({ }: PropsWithChildren<MenuProps>) {
+export interface MenuProps {
+    customLabels?: string[]
+    onCustomClick?: (idx: number) => () => void;
+}
+
+export default function Menu({ customLabels, onCustomClick }: MenuProps) {
     const [impressum, setImpressum] = useState(false);
     const [about, setAbout] = useState(false);
     const [cookiePopup, setCookiePopup] = useState(false);
@@ -48,6 +49,11 @@ export default function Menu({ }: PropsWithChildren<MenuProps>) {
                     <button onClick={() => { setImpressum(true); setMenu(false) }}>IMPRESSUM</button>
                     <button onClick={() => { setAbout(true); setMenu(false) }}>ABOUT</button>
                     <button onClick={() => { setImgAttr(true); setMenu(false) }}>Bilder von FREEP!K</button>
+                    {customLabels != null &&
+                        customLabels.map((label, i) => 
+                            <button key={i} onClick={onCustomClick == undefined ? undefined : onCustomClick(i)}>{label}</button>
+                        )
+                    }
                 </div>
                 <div className={styles.popupButtonRow}>
                     <button onClick={() => setMenu(false)}>SCHLIEẞEN</button>

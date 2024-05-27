@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import styles from './page.module.css'
-import { PropsWithChildren, useEffect, useRef, useState } from 'react';
+import { PropsWithChildren, useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Acceptance, Activity, ActivityAcceptReq, ActivityAcceptResp, Logo, Member, MemberDataReq, MemberDataResp, Participation } from '@/app/_lib/api';
 import { formatDate, formatDateTime, formatTime } from '@/app/_lib/utils';
@@ -146,6 +146,7 @@ export default function Page({ params }: { params: { group: string; phoneNr: str
     const [members, setMembers] = useState<Member[]>([]);
     const [comment, setComment] = useState('')
     const [prename, setPrename] = useState('');
+    const [surname, setSurname] = useState('');
     const [additionalHeaderProps, setAdditionalHeaderProps] = useState<AdditionalHeaderProps | null>(null);
     const [activityIdx, setActivityIdx] = useState(0)
     const [spinning, setSpinning] = useState(true);
@@ -154,18 +155,21 @@ export default function Page({ params }: { params: { group: string; phoneNr: str
 
     useEffect(() => {
         // console.log('effect ...');
+        let decodedGroup: string;
+        let decodedPhoneNr: string;
+        let decodedToken: string;
         try {
-            setGroup(decodeURIComponent(params.group));
-            setPhoneNr(decodeURIComponent(params.phoneNr));
-            setToken(decodeURIComponent(params.token));
+            setGroup(decodedGroup = decodeURIComponent(params.group));
+            setPhoneNr(decodedPhoneNr = decodeURIComponent(params.phoneNr));
+            setToken(decodedToken = decodeURIComponent(params.token));
         } catch (reason) {
             setComment('Ungültiger Link!');
             return;
         }
         const req: MemberDataReq = {
-            group: params.group,
-            phoneNr: params.phoneNr,
-            token: params.token,
+            group: decodedGroup,
+            phoneNr: decodedPhoneNr,
+            token: decodedToken,
         }
         const ctx = new SessionContext();
         setSpinning(true);
@@ -184,11 +188,12 @@ export default function Page({ params }: { params: { group: string; phoneNr: str
                         line2: resp.line2,
                     })
                     setPrename(resp.prename);
+                    setSurname(resp.surname);
 
                     setActivities(resp.activities);
                     setMembers(resp.members);
                     setComment('');
-                    ctx.group = params.group
+                    ctx.group = decodedGroup
                     ctx.activities = resp.activities;
                     const now = Date.now();
                     const first = resp.activities.findIndex((a) => (a.date ?? 0) > now)
@@ -347,6 +352,19 @@ export default function Page({ params }: { params: { group: string; phoneNr: str
         return member.prename + ' ' + member.surname;
     }
 
+    const onMenuClick = useCallback((i: number) => () => {
+        switch (i) {
+            case 0: {
+                if (!confirm(`Wirklich alles zum Benutzer ${prename} ${surname} löschen?`)) return;
+                const ctx = new SessionContext();
+                const phoneNr1 = phoneNr;
+                const token1 = token;
+                alert('Not yet implemented')
+                break;
+            }
+        }
+    }, [prename, surname, phoneNr, token ])
+
     return (
         <>
             {additionalHeaderProps != null &&
@@ -360,7 +378,7 @@ export default function Page({ params }: { params: { group: string; phoneNr: str
             </div> */}
             {/* <h1 className={styles.headerWelcome}>Hallo {name}!</h1> */}
             {/* <h2 className={styles.headerGroup}>{group}</h2> */}
-            <Menu />
+            <Menu customLabels={[`Alles über mich (${prename} ${surname}) löschen`]} onCustomClick={onMenuClick} />
             <div className={styles.main}>
                 {comment != '' && <p className={styles.comment}>{comment}</p>}
                 {
