@@ -24,3 +24,23 @@
 .copied {
     background-color: lightgreen;
 }
+
+.buttonRow {
+    display: flex;
+}
+.clickable {
+    cursor: pointer;
+}
+.capacity {
+    text-align: right;
+}
+
+.spinner {
+    position: fixed;
+    background: url('/Spinner@1x-1.0s-200px-200px.gif') no-repeat center;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 100;
+}

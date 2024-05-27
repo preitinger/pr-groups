@@ -1,3 +1,5 @@
+import styles from './Impressum.module.css'
+
 export interface ImpressumProps {
     name: string;
     mail: string;
@@ -9,7 +11,7 @@ export interface ImpressumProps {
 }
 export default function Impressum({ name, street, houseNr, mail, phone, postalCode, city }: ImpressumProps) {
     return (
-        <div>
+        <div className={styles.impressum}>
             <h1>Impressum</h1>
             <p>Angaben gemäß § 5 TMG:</p>
             <p>{name}<br />

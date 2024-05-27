@@ -16,6 +16,8 @@ import Image from 'next/image';
 import ScrollableContainer from '@/app/_lib/pr-client-utils/ScrollableContainer';
 import ModalDialog from '@/app/_lib/ModalDialog';
 import Impressum from '@/app/_lib/pr-client-utils/Impressum';
+import { Popup } from '@/app/Popup';
+import Menu from '@/app/_lib/Menu';
 
 const FAKE = true;
 
@@ -133,34 +135,6 @@ function Welcome(p: WelcomeProps) {
     )
 }
 
-interface PopupProps {
-    visible: boolean;
-    setVisible?: (visible: boolean) => void
-}
-
-function Popup({ visible, setVisible, children }: PropsWithChildren<PopupProps>) {
-    return (
-        <>
-            {
-                visible &&
-                <ModalDialog>
-                    <div className={styles.popupContent}>
-                        {children}
-                        {
-                            setVisible != null &&
-                            <div className={styles.popupButtonRow}>
-                                <button onClick={() => setVisible(false)}>SCHLIEẞEN</button>
-                            </div>
-
-                        }
-                    </div>
-                </ModalDialog>
-            }
-        </>
-    )
-
-}
-
 type Choice = 'undecided' | 'accepted' | 'rejected';
 
 export default function Page({ params }: { params: { group: string; phoneNr: string; token: string } }) {
@@ -172,15 +146,10 @@ export default function Page({ params }: { params: { group: string; phoneNr: str
     const [members, setMembers] = useState<Member[]>([]);
     const [comment, setComment] = useState('')
     const [prename, setPrename] = useState('');
-    const [surname, setSurname] = useState('');
     const [additionalHeaderProps, setAdditionalHeaderProps] = useState<AdditionalHeaderProps | null>(null);
     const [activityIdx, setActivityIdx] = useState(0)
     const [spinning, setSpinning] = useState(true);
-    const [menu, setMenu] = useState(false);
     const [detailsPopup, setDetailsPopup] = useState(false);
-    const [impressum, setImpressum] = useState(false);
-    const [about, setAbout] = useState(false);
-    const [cookiePopup, setCookiePopup] = useState(true);
 
 
     useEffect(() => {
@@ -215,7 +184,7 @@ export default function Page({ params }: { params: { group: string; phoneNr: str
                         line2: resp.line2,
                     })
                     setPrename(resp.prename);
-                    setSurname(resp.surname);
+
                     setActivities(resp.activities);
                     setMembers(resp.members);
                     setComment('');
@@ -249,7 +218,6 @@ export default function Page({ params }: { params: { group: string; phoneNr: str
 
                         })
                         setPrename('Peter');
-                        setSurname('R.');
                         setComment('');
                         ctx.group = 'TC Rot-Weiß Cham'
                         // const date = new Date('2024-05-22T18:00Z+02:00');
@@ -379,15 +347,8 @@ export default function Page({ params }: { params: { group: string; phoneNr: str
         return member.prename + ' ' + member.surname;
     }
 
-    function onMenuClick() {
-        setMenu(visible => !visible);
-    }
-
     return (
         <>
-            <div className={styles.menuButton} onClick={onMenuClick} >
-                <Image src='/main-menu.svg' width={32} height={32} alt='Menu' />
-            </div>
             {additionalHeaderProps != null &&
                 <Header user={null} {...additionalHeaderProps} />
             }
@@ -399,6 +360,7 @@ export default function Page({ params }: { params: { group: string; phoneNr: str
             </div> */}
             {/* <h1 className={styles.headerWelcome}>Hallo {name}!</h1> */}
             {/* <h2 className={styles.headerGroup}>{group}</h2> */}
+            <Menu />
             <div className={styles.main}>
                 {comment != '' && <p className={styles.comment}>{comment}</p>}
                 {
@@ -419,14 +381,6 @@ export default function Page({ params }: { params: { group: string; phoneNr: str
                 }
             </ScrollableContainer>
 
-            <Popup visible={impressum}>
-                <div className={styles.impressum}>
-                    <Impressum name='Peter Reitinger' street='Birkenweg' houseNr='8' postalCode='93482' city='Pemfling' phone='09971-6131' mail='peter.reitinger(at)gmail.com' />
-                </div>
-                <div className={styles.popupButtonRow}>
-                    <button onClick={() => setImpressum(false)}>SCHLIEẞEN</button>
-                </div>
-            </Popup>
             <Popup visible={detailsPopup && selActivity != null}>
                 <h1 className={styles.headerGroup}>{group}</h1>
                 <h2 className={styles.headerActivity}>{selActivity?.name}</h2>
@@ -445,19 +399,6 @@ export default function Page({ params }: { params: { group: string; phoneNr: str
                 <div className={styles.popupButtonRow}>
                     <button onClick={() => setDetailsPopup(false)}>SCHLIEẞEN</button>
                 </div>
-            </Popup>
-            <Popup visible={menu}>
-                <div className={styles.menu}>
-                    <button onClick={() => { setImpressum(true); setMenu(false) }}>IMPRESSUM</button>
-                    <button onClick={() => { setAbout(true); setMenu(false) }}>ABOUT</button>
-                </div>
-                <div className={styles.popupButtonRow}>
-                    <button onClick={() => setMenu(false)}>SCHLIEẞEN</button>
-                </div>
-            </Popup>
-            <Popup visible={cookiePopup} setVisible={setCookiePopup}>
-                Dieser Service benutzt Cookies um temporäre Seitenzustände zu speichern und eine Datenbank um Gruppen, ihre Mitglieder (nur Handynr, Vorname und optional Nachname oder abgekürzter Nachname) zu speichern.
-                Sie dürfen diese Seite nur weiter benutzen, wenn Sie dies akzeptieren. Andernfalls verlassen Sie bitte diese Seite.
             </Popup>
             {
                 spinning &&

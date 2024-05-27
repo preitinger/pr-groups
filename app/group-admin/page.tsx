@@ -9,6 +9,8 @@ import { useEffect, useState } from "react";
 import { GroupAdminGroupsReq, GroupAdminGroupsResp } from "../_lib/api";
 import { SessionContext } from "../_lib/SessionContext";
 import { apiFetchPost } from "../_lib/user-management-client/apiRoutesClient";
+import TabButton from "../_lib/TabButton";
+import TabPage from "../_lib/TabPage";
 
 export default function Page() {
     const user = useUser();

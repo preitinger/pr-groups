@@ -1,43 +1,51 @@
-import { Activity, GroupAdminGroupReq, GroupAdminGroupResp, Member } from "@/app/_lib/api";
+import { GroupAdminMemberUpdateReq, GroupAdminMemberUpdateResp } from "@/app/_lib/api";
 import { ApiResp } from "@/app/_lib/user-management-client/user-management-common/apiRoutesCommon";
 import clientPromise from "@/app/_lib/user-management-server/mongodb";
 import { checkToken } from "@/app/_lib/user-management-server/userManagementServer";
 import { GroupDoc } from "../../documents";
-import { apiPOST } from "@/app/_lib/user-management-server/apiRoutesForServer";
 import { NextRequest } from "next/server";
-import { filterNonNull } from "@/app/_lib/utils";
+import { apiPOST } from "@/app/_lib/user-management-server/apiRoutesForServer";
 
-async function executeGroup(req: GroupAdminGroupReq): Promise<ApiResp<GroupAdminGroupResp>> {
+async function execute(req: GroupAdminMemberUpdateReq): Promise<ApiResp<GroupAdminMemberUpdateResp>> {
     if (!checkToken(req.user, req.token)) {
         return {
             type: 'authFailed'
         }
     }
-
     const client = await clientPromise;
     const db = client.db('pr-groups');
     const col = db.collection<GroupDoc>('groups');
-    const group = await col.findOne<{members: Member[], activities: (Activity|null)[]}>({
+    const res = await col.findOneAndUpdate({
         _id: req.groupId,
         admins: req.user
     }, {
+        $set: {
+            'members.$[i].prename': req.member.prename,
+            'members.$[i].surname': req.member.surname
+        }
+    }, {
+        arrayFilters: [
+            {
+                'i.phoneNr': req.member.phoneNr
+            }
+        ],
+        returnDocument: 'after',
         projection: {
-            members: 1,
-            activities: 1,
+            members: 1
         }
     })
-    if (group == null) {
+    if (res == null) {
         return {
-            type: 'authFailed'
+            type: 'notFound'
         }
     }
+
     return {
         type: 'success',
-        members: group.members,
-        activities: filterNonNull(group.activities)
+        members: res.members
     }
 }
 
 export function POST(req: NextRequest) {
-    return apiPOST(req, executeGroup);
+    return apiPOST(req, execute);
 }

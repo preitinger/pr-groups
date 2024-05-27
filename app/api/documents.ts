@@ -15,7 +15,7 @@ export interface GroupDoc {
     line1: HeaderLine;
     margin: string;
     line2: HeaderLine;
-    activities: Activity[];
+    activities: (Activity|null)[];
 }
 
 export interface ClosedActivityDoc {

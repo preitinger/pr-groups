@@ -2,6 +2,7 @@ import { ActivityAcceptReq, ActivityAcceptResp, Participation } from "@/app/_lib
 import { ApiResp } from "@/app/_lib/user-management-client/user-management-common/apiRoutesCommon";
 import { apiPOST } from "@/app/_lib/user-management-server/apiRoutesForServer";
 import clientPromise from "@/app/_lib/user-management-server/mongodb";
+import { filterNonNull } from "@/app/_lib/utils";
 import { GroupDoc } from "@/app/api/documents";
 import { NextRequest } from "next/server";
 
@@ -37,7 +38,7 @@ async function executeAccept(req: ActivityAcceptReq): Promise<ApiResp<ActivityAc
         }
         return {
             type: 'success',
-            activities: newGroup?.activities
+            activities: filterNonNull(newGroup.activities)
         }
 
     } catch (reason) {

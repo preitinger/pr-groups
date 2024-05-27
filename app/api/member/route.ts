@@ -5,6 +5,7 @@ import { checkToken } from "@/app/_lib/user-management-server/userManagementServ
 import { GroupDoc } from "../documents";
 import { apiPOST } from "@/app/_lib/user-management-server/apiRoutesForServer";
 import { NextRequest } from "next/server";
+import { filterNonNull } from "@/app/_lib/utils";
 
 async function execute(req: MemberDataReq): Promise<ApiResp<MemberDataResp>> {
 
@@ -51,7 +52,7 @@ async function execute(req: MemberDataReq): Promise<ApiResp<MemberDataResp>> {
         line1: group.line1,
         margin: group.margin,
         line2: group.line2,
-        activities: group.activities,
+        activities: filterNonNull(group.activities),
         members: group.members,
     }
 }

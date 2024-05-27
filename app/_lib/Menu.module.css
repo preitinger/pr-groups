@@ -1,0 +1,29 @@
+.menuButton {
+    position: absolute;
+    right: 1rem;
+    top: 1rem;
+    z-index: 100;
+}
+
+.menu {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.popupButtonRow {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.imgTable td {
+    padding: 2rem;
+    background-color: lightgray;
+}
+.center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}

@@ -7,9 +7,26 @@ export function leadingZeros(val: number, digits: number): string {
     return res;
 }
 
-export function formatDateTime(date1: Date | string): string {
+export const weekDaysDe = [
+    'Sonntag',
+    'Montag',
+    'Dienstag',
+    'Mittwoch',
+    'Donnerstag',
+    'Freitag',
+    'Samstag',
+]
+export function weekDayDe(day: number) {
+    if (day < 0 || day > 6) throw new Error('Invalid week day argument');
+    return weekDaysDe[day];
+}
+
+export function formatDateTime(date1: Date | string | number | null, withDayOfWeek?: boolean): string {
+    if (date1 == null) return 'kein Datum';
     let date: Date;
     if (typeof date1 === 'string') {
+        date = new Date(date1);
+    } else if (typeof date1 === 'number') {
         date = new Date(date1);
     } else {
         date = date1;
@@ -20,7 +37,8 @@ export function formatDateTime(date1: Date | string): string {
     const h = date.getHours();
     const min = date.getMinutes();
     const twoDigs = (val: number) => leadingZeros(val, 2);
-    return `${twoDigs(d)}.${twoDigs(m)}.${yyyy} ${twoDigs(h)}:${twoDigs(min)}`
+    const optionalWeekDay = withDayOfWeek ? `${weekDayDe(date.getDay())}, den ` : '';
+    return optionalWeekDay + `${twoDigs(d)}.${twoDigs(m)}.${yyyy} ${twoDigs(h)}:${twoDigs(min)}`
 }
 
 export function formatDate(date: Date): string {
@@ -109,7 +127,8 @@ export function standardJavascriptDateTimeString(year: number, month_1_to_12: nu
  */
 export function parseGermanDate(s: string): Date | number[] | null {
     const re = /(\d+)\.(\d+)\.(\d+) +(\d+):(\d+)/
-    const result = re.exec(s);
+    // const result = re.exec(s);
+    const result = s.match(re)
     if (result == null) return null;
     const dd = parseInt(result[1]);
     const mm = parseInt(result[2]);
@@ -124,4 +143,23 @@ export function parseGermanDate(s: string): Date | number[] | null {
         default: throw new Error('Illegal state');
     }
 
+}
+
+export function filterNonNull<T>(a: (T|null)[]): T[] {
+    const res: T[] = [];
+    for (let i = 0; i < a.length; ++i) {
+        const x = a[i];
+        if (x != null) res.push(x);
+    }
+    return res;
+}
+
+export function dateFromMillisOrNull(ms: number | null) {
+    if (ms == null) return null;
+    return new Date(ms);
+}
+
+export function millisFromDateOrNull(date: Date | null) {
+    if (date == null) return null;
+    return date.getTime();
 }

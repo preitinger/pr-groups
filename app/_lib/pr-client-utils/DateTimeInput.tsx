@@ -7,16 +7,16 @@ export interface DateTimeInputProps {
     initialText: string;
     setDate: (d: Date | null) => void;
 }
-export default function DateTimeInput(p: DateTimeInputProps) {
-    const [text, setText] = useState(p.initialText);
+export default function DateTimeInput({initialText, setDate}: DateTimeInputProps) {
+    const [text, setText] = useState(initialText);
     const [comment, setComment] = useState('');
     const [unclearMESZ, setUnclearMESZ] = useState(false);
     const [userMESZ, setUserMESZ] = useState(false);
-    const setDate = p.setDate;
 
     useEffect(() => {
         function extendedSetText(t: string) {
             const res = parseGermanDate(t);
+            console.log('parsed date', res);
             if (res == null) {
                 setComment('Datum/Uhrzeit ungültig!');
                 setDate(null);
@@ -35,13 +35,13 @@ export default function DateTimeInput(p: DateTimeInputProps) {
             setDate(res);
         }
 
-        console.log('run effect of DateTimeInput')
+        console.log('run effect of DateTimeInput', text, userMESZ)
         extendedSetText(text);
     }, [text, userMESZ, setDate])
 
     return (
         <div>
-            <div><Input id='date' label='Datum/Uhrzeit (MM.DD.JJJJ)' text={text} setText={setText} /> {comment}</div>
+            <div><Input id='date' label='Datum/Uhrzeit (DD.MM.JJJJ hh:mm)' text={text} setText={setText} /> {comment}</div>
             <input readOnly={unclearMESZ} type='checkbox' checked={userMESZ} onChange={() => setUserMESZ(d => !d)} /><span className={unclearMESZ ? '' : styles.disabled } >Sommerzeit</span>
         </div>
     )

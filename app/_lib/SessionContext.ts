@@ -30,4 +30,11 @@ export class SessionContext {
         if (a == null) sessionStorage.removeItem('activities');
         else sessionStorage.setItem('activities', JSON.stringify(a));
     }
+    get cookiesShown(): boolean {
+        return sessionStorage.getItem('cookiesShown') === JSON.stringify(true)
+    }
+    set cookiesShown(shown: boolean) {
+        sessionStorage.setItem('cookiesShown', JSON.stringify(shown));
+    }
+
 }

@@ -118,6 +118,29 @@ export type GroupActivityAddResp = {
     type: 'wasActivity'
 }
 
+export interface GroupActivityDeleteReq {
+    /**
+     * user sending the request
+     */
+    user: string;
+    token: string;
+    group: string;
+    activityIdx: number;
+    /**
+     * for safety check in case of several modifications at the same time
+     */
+    creationDate: number;
+}
+
+export type GroupActivityDeleteResp = {
+    type: 'authFailed'
+} | {
+    type: 'success',
+    activities: Activity[]
+} | {
+    type: 'groupNotFound'
+}
+
 export interface MemberDataReq {
     group: string;
     /**
@@ -199,11 +222,11 @@ export type MembersResp = {
 }
 
 export interface GroupAdminGroupsReq {
-     /**
-     * user sending the request
-     */
-     user: string;
-     token: string;
+    /**
+    * user sending the request
+    */
+    user: string;
+    token: string;
 }
 
 export type GroupAdminGroupsResp = {
@@ -214,11 +237,11 @@ export type GroupAdminGroupsResp = {
 }
 
 export interface GroupAdminGroupReq {
-     /**
-     * user sending the request
-     */
-     user: string;
-     token: string;
+    /**
+    * user sending the request
+    */
+    user: string;
+    token: string;
     groupId: string;
 }
 
@@ -227,4 +250,55 @@ export type GroupAdminGroupResp = {
 } | {
     type: 'success'
     members: Member[]
+    activities: Activity[]
+}
+
+export interface GroupAdminMemberUpdateReq {
+    /**
+    * user sending the request
+    */
+    user: string;
+    token: string;
+    groupId: string;
+    member: Member;
+}
+
+export type GroupAdminMemberUpdateResp = {
+    type: 'authFailed' 
+} | {
+    type: 'notFound'
+} | {
+    type: 'success'
+    members: Member[]
+}
+
+export interface GroupAdminActivityUpdateReq {
+    /**
+    * user sending the request
+    */
+    user: string;
+    token: string;
+    groupId: string;
+    activityIdx: number;
+    /**
+     * to be checked
+     */
+    creationDate: number;
+    /**
+     * to be updated
+     */
+    activityData: {
+        name: string;
+        date: number | null;
+        capacity: number | null;
+    }
+}
+
+export type GroupAdminActivityUpdateResp = {
+    type: 'authFailed'
+} | {
+    type: 'notFound'
+} | {
+    type: 'success'
+    activities: Activity[]
 }

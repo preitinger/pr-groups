@@ -1,9 +1,3 @@
-.menuButton {
-    position: absolute;
-    right: 1rem;
-    top: 1rem;
-    z-index: 100;
-}
 .main {
     display: flex;
     flex-direction: column;
@@ -139,6 +133,9 @@
     background: #aaba98 url('/check-alex.png') no-repeat 5px 50%;
     color: #515151;
 }
+.undecided {
+    background: gray url('/thinking_982997.png') no-repeat 5px 50%;
+}
 
 .doubt {}
 
@@ -208,20 +205,8 @@
     width: 100%;
 }
 
-.popupContent button {
-    /* margin: auto;
-    padding: 1rem; */
-    min-height: 40px;
-}
-
 .impressum {
     overflow: scroll;
     max-height: 80vh;
     max-width: 80vw;
-}
-
-.menu {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
 }
