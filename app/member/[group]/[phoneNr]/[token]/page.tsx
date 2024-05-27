@@ -401,7 +401,7 @@ export default function Page({ params }: { params: { group: string; phoneNr: str
 
             <Popup visible={detailsPopup && selActivity != null}>
                 <h1 className={styles.headerGroup}>{group}</h1>
-                <h2 className={styles.headerActivity}>{selActivity?.name}</h2>
+                <h2 className={styles.headerActivity}>{selActivity?.name} {selActivity?.date != null && formatDateTime(selActivity?.date, true)}</h2>
                 <div className={styles.detailLists}>
                     <h3 className={styles.headerAccepts}>Zusagen</h3>
                     <div>
