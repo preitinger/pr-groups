@@ -9,9 +9,19 @@ import { SessionContext } from "./_lib/SessionContext";
 import useUser from "./_lib/useUser";
 import Header from "./_lib/Header";
 import Menu from "./_lib/Menu";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
   const user = useUser();
+  const router = useRouter()
+
+  function onLoginClick() {
+    router.push('/login');
+  }
+
+  function onRegisterClick() {
+    router.push('/register')
+  }
 
   return (
     <>
@@ -19,10 +29,10 @@ export default function Home() {
       <Menu />
       <div className={styles.buttons}>
         <p>
-          <Link href='/register'>Register</Link>
+          <a onClick={onRegisterClick}>Register</a>
         </p>
         <p>
-          <Link href='/login'>Login</Link>
+          <a onClick={onLoginClick}>Login</a>
         </p>
       </div>
     </>
