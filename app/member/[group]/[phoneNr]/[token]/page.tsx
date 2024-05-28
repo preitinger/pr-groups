@@ -363,7 +363,7 @@ export default function Page({ params }: { params: { group: string; phoneNr: str
                 break;
             }
         }
-    }, [prename, surname, phoneNr, token ])
+    }, [prename, surname, phoneNr, token])
 
     return (
         <>
@@ -403,15 +403,44 @@ export default function Page({ params }: { params: { group: string; phoneNr: str
                 <h1 className={styles.headerGroup}>{group}</h1>
                 <h2 className={styles.headerActivity}>{selActivity?.name} {selActivity?.date != null && formatDateTime(selActivity?.date, true)}</h2>
                 <div className={styles.detailLists}>
-                    <h3 className={styles.headerAccepts}>Zusagen</h3>
+                    <h3 className={styles.headerAccepts}>{accept.length} Zusagen</h3>
                     <div>
-                        {accept.length === 0 ? <span className={styles.none}>keine</span> :
-                            accept.map((participation, i) => <div key={i}>{phoneNrToName(participation.phoneNr)} <span className={styles.date}>{formatDateTime(new Date(participation.date))}</span></div>)}
+                        {
+                            accept.length === 0 ? <span className={styles.none}>keine</span> :
+                                <table>
+                                    <tbody>
+
+                                        {
+                                            accept.map((participation, i) => (
+                                                <tr key={i}>
+                                                    <td className={styles.detailName}>{phoneNrToName(participation.phoneNr)}</td>
+                                                    <td className={styles.detailDate}>{formatDateTime(new Date(participation.date))}</td>
+                                                </tr>))
+                                        }
+
+                                    </tbody>
+                                </table>
+                        }
                     </div>
-                    <h3 className={styles.headerRejects}>Absagen</h3>
+                    <h3 className={styles.headerRejects}>{reject.length} Absagen</h3>
                     <div>
-                        {reject.length === 0 ? <span className={styles.none}>keine</span> :
-                            reject.map((participation, i) => <div key={i}>{phoneNrToName(participation.phoneNr)} <span className={styles.date}>{formatDateTime(new Date(participation.date))}</span></div>)}
+                        {
+                            reject.length === 0 ? <span className={styles.none}>keine</span> :
+                                <table>
+                                    <tbody>
+
+                                        {
+                                            reject.map((participation, i) => (
+                                                <tr key={i}>
+                                                    <td className={styles.detailName}>{phoneNrToName(participation.phoneNr)}</td>
+                                                    <td className={styles.detailDate}>{formatDateTime(new Date(participation.date))}</td>
+                                                </tr>))
+                                        }
+
+                                    </tbody>
+                                </table>
+                        }
+
                     </div>
                 </div>
                 <div className={styles.popupButtonRow}>

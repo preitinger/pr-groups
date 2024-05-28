@@ -210,3 +210,11 @@
     max-height: 80vh;
     max-width: 80vw;
 }
+.detailName {
+    font-size: 1.2rem;
+}
+.detailDate {
+    font-size: small;
+    color: gray;
+    padding-left: 3rem;
+}
