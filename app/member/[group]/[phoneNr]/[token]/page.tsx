@@ -4,7 +4,7 @@ import Link from 'next/link'
 import styles from './page.module.css'
 import { PropsWithChildren, useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Acceptance, Activity, ActivityAcceptReq, ActivityAcceptResp, Logo, Member, MemberDataReq, MemberDataResp, Participation } from '@/app/_lib/api';
+import { Acceptance, Activity, ActivityAcceptReq, ActivityAcceptResp, Logo, Member, MemberDataReq, MemberDataResp, MemberDeleteMeReq, MemberDeleteMeResp, Participation } from '@/app/_lib/api';
 import { formatDate, formatDateTime, formatTime } from '@/app/_lib/utils';
 import { SessionContext } from '@/app/_lib/SessionContext';
 import Profile from '@/app/_lib/Profile';
@@ -355,22 +355,133 @@ export default function Page({ params }: { params: { group: string; phoneNr: str
     const onMenuClick = useCallback((i: number) => () => {
         switch (i) {
             case 0: {
+                const req: MemberDataReq = {
+                    group: group,
+                    phoneNr: phoneNr,
+                    token: token,
+                }
+                const ctx = new SessionContext();
+                setSpinning(true);
+                const abortController = new FixedAbortController();
+                apiFetchPost<MemberDataReq, MemberDataResp>('/api/member', req, abortController.signal).then(resp => {
+                    // console.log('resp', resp);
+                    switch (resp.type) {
+                        case 'authFailed':
+                            setComment('Nicht authorisiert.');
+                            break;
+                        case 'success':
+                            setAdditionalHeaderProps({
+                                logo: resp.logo ?? undefined,
+                                line1: resp.line1,
+                                margin: resp.margin,
+                                line2: resp.line2,
+                            })
+                            setPrename(resp.prename);
+                            setSurname(resp.surname);
+
+                            setActivities(resp.activities);
+                            setMembers(resp.members);
+                            setComment('');
+                            ctx.activities = resp.activities;
+                            const now = Date.now();
+                            const first = resp.activities.findIndex((a) => (a.date ?? 0) > now)
+                            console.log('first', first);
+                            setActivityIdx(first >= 0 ? first : 0);
+                            break;
+                        case 'error':
+                            if (FAKE) {
+                                setAdditionalHeaderProps({
+                                    logo: {
+                                        src: '/logo-von-Homepage.png.webp',
+                                        alt: 'Logo',
+                                        width: 50,
+                                        height: 60,
+                                    },
+                                    line1: {
+                                        text: 'AFTER-WORK',
+                                        fontSize: '1.5rem',
+                                        bold: true
+                                    },
+                                    margin: '0.1rem',
+                                    line2: {
+                                        text: 'TENNIS',
+                                        fontSize: '1.2rem',
+                                        bold: false
+                                    }
+
+                                })
+                                setPrename('Peter');
+                                setComment('');
+                                ctx.group = 'TC Rot-Weiß Cham'
+                                // const date = new Date('2024-05-22T18:00Z+02:00');
+                                // const date = new Date('2024-05-22');
+                                const date = new Date('2024-05-22T18:00+02:00');
+                                // console.log('date', date);
+                                const activity: Activity = {
+                                    name: '',
+                                    date: date.getTime(),
+                                    creationDate: Date.now(),
+                                    capacity: 8,
+                                    participations: []
+                                }
+                                setActivities([activity, {
+                                    ...activity,
+                                    date: date.getTime() + 7 * 24 * 3600 * 1000
+                                }]);
+                                setActivityIdx(1);
+                            } else {
+                                setComment('Unerwarteter Fehler: ' + resp.error)
+                            }
+                            break;
+                    }
+                }).catch(reason => {
+                    if ('name' in reason && reason.name === 'AbortError') {
+                        // ignore
+                    } else {
+                        setComment('Unerwarteter Fehler: ' + JSON.stringify(reason));
+                    }
+                }).finally(() => {
+                    setSpinning(false);
+                })
+                break;
+            }
+            case 1: {
                 if (!confirm(`Wirklich alles zum Benutzer ${prename} ${surname} löschen?`)) return;
                 const ctx = new SessionContext();
                 const phoneNr1 = phoneNr;
                 const token1 = token;
-                alert('Not yet implemented')
+                const req: MemberDeleteMeReq = {
+                    group: group,
+                    phoneNr: phoneNr,
+                    token: token
+                }
+                apiFetchPost<MemberDeleteMeReq, MemberDeleteMeResp>('/api/member/delete-me', req).then(resp => {
+                    switch (resp.type) {
+                        case 'authFailed':
+                            setComment('Nicht authorisiert.');
+                            break;
+                        case 'success':
+                            setComment('Alle Daten entfernt. Dieser Link wird natürlich dann in Zukunft nicht mehr funktionieren.');
+                            break;
+                        case 'error':
+                            setComment('Unerwarteter Fehler: ' + resp.error);
+                            break;
+                    }
+                })
                 break;
             }
         }
-    }, [prename, surname, phoneNr, token])
+    }, [group, phoneNr, prename, surname, token])
 
     return (
         <>
             {additionalHeaderProps != null &&
                 <Header user={null} {...additionalHeaderProps} />
             }
-            <Welcome prename={prename} />
+            {
+                prename != '' &&
+                <Welcome prename={prename} />
+            }
 
             {/* <div className={styles.adminLinks}>
                 <Link className={styles.adminLink} href='/admin'>Admin</Link>
@@ -378,7 +489,7 @@ export default function Page({ params }: { params: { group: string; phoneNr: str
             </div> */}
             {/* <h1 className={styles.headerWelcome}>Hallo {name}!</h1> */}
             {/* <h2 className={styles.headerGroup}>{group}</h2> */}
-            <Menu customLabels={[`Alles über mich (${prename} ${surname}) löschen`]} onCustomClick={onMenuClick} />
+            <Menu customLabels={['DATEN AKTUALISIEREN', `ALLES ÜBER MICH (${prename} ${surname}) LÖSCHEN`]} onCustomClick={onMenuClick} />
             <div className={styles.main}>
                 {comment != '' && <p className={styles.comment}>{comment}</p>}
                 {

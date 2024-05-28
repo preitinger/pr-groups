@@ -302,3 +302,18 @@ export type GroupAdminActivityUpdateResp = {
     type: 'success'
     activities: Activity[]
 }
+
+export interface MemberDeleteMeReq {
+    group: string;
+    /**
+     * user sending the request
+     */
+    phoneNr: string;
+    token: string;
+}
+
+export type MemberDeleteMeResp = {
+    type: 'authFailed'
+} | {
+    type: 'success'
+}

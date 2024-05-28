@@ -15,7 +15,8 @@ async function execute(req: MemberDataReq): Promise<ApiResp<MemberDataResp>> {
     let group: GroupDoc | null = null;
     group = await col.findOne({
         _id: req.group,
-        'members.phoneNr': req.phoneNr
+        'members.phoneNr': req.phoneNr,
+        'members.token': req.token
     }, {
         projection: {
             _id: 1,

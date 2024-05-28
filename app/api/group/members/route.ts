@@ -13,7 +13,8 @@ async function executeMembers(req: MembersReq): Promise<ApiResp<MembersResp>> {
     const col = db.collection<GroupDoc>('groups');
     const group = await col.findOne({
         _id: req.group,
-        'members.phoneNr': req.phoneNr
+        'members.phoneNr': req.phoneNr,
+        'members.token': req.token
     }, {
         projection: {
             members: 1

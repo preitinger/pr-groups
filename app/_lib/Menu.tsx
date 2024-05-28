@@ -48,10 +48,10 @@ export default function Menu({ customLabels, onCustomClick }: MenuProps) {
                 <div className={styles.menu}>
                     <button onClick={() => { setImpressum(true); setMenu(false) }}>IMPRESSUM</button>
                     <button onClick={() => { setAbout(true); setMenu(false) }}>ABOUT</button>
-                    <button onClick={() => { setImgAttr(true); setMenu(false) }}>Bilder von FREEP!K</button>
+                    <button onClick={() => { setImgAttr(true); setMenu(false) }}>BILDER VON FREEP!K</button>
                     {customLabels != null &&
                         customLabels.map((label, i) => 
-                            <button key={i} onClick={onCustomClick == undefined ? undefined : onCustomClick(i)}>{label}</button>
+                            <button key={i} onClick={() => {setMenu(false); if (onCustomClick != undefined) onCustomClick(i)();}}>{label}</button>
                         )
                     }
                 </div>

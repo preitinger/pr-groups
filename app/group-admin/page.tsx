@@ -11,13 +11,16 @@ import { SessionContext } from "../_lib/SessionContext";
 import { apiFetchPost } from "../_lib/user-management-client/apiRoutesClient";
 import TabButton from "../_lib/TabButton";
 import TabPage from "../_lib/TabPage";
+import FixedAbortController from "../_lib/pr-client-utils/FixedAbortController";
 
 export default function Page() {
     const user = useUser();
     const [comment, setComment] = useState('');
     const [groups, setGroups] = useState<string[]>([]);
+    const [spinning, setSpinning] = useState(true);
 
     useEffect(() => {
+        const abortController = new FixedAbortController();
         const ctx = new SessionContext();
         const user1 = ctx.user;
         const token1 = ctx.token;
@@ -30,7 +33,8 @@ export default function Page() {
             user: user1,
             token: token1
         }
-        apiFetchPost<GroupAdminGroupsReq, GroupAdminGroupsResp>('/api/group-admin/groups', req).then(resp => {
+        setSpinning(true);
+        apiFetchPost<GroupAdminGroupsReq, GroupAdminGroupsResp>('/api/group-admin/groups', req, abortController.signal).then(resp => {
             switch (resp.type) {
                 case 'authFailed':
                     setComment('Nicht authorisiert.');
@@ -39,6 +43,18 @@ export default function Page() {
                     setGroups(resp.groupIds);
                     break;
             }
+        }).catch(reason => {
+            if ('name' in reason && reason.name === 'AbortError') {
+                // ignore
+            } else {
+                setComment('Unerwarteter Fehler: ' + JSON.stringify(reason));
+            }
+        }).finally(() => {
+            setSpinning(false);
+        })
+
+        return (() => {
+            abortController.abort();
         })
     }, [])
 
@@ -50,18 +66,18 @@ export default function Page() {
                 <div className={styles.row}>
                     <Link className={styles.linkMemberAdd} href='/group/member/add'>Gruppenmitglied hinzufügen</Link>
                 </div>
-                <div className={styles.row}>
+                {/* <div className={styles.row}>
                     <Link className={styles.linkMemberRemove} href='/group/member/remove'>Gruppenmitglied entfernen</Link>
-                </div>
+                </div> */}
                 <div className={styles.row}>
                     <Link className={styles.linkActivityAdd} href='/group/activity/add'>Aktivität hinzufügen</Link>
                 </div>
-                <div className={styles.row}>
+                {/* <div className={styles.row}>
                     <Link className={styles.linkActivityDelete} href='/group/activity/delete'>Aktivität entfernen</Link>
                 </div>
                 <div className={styles.row}>
                     <Link className={styles.linkActivityChange} href='/group/activity/change'>Aktivität bearbeiten</Link>
-                </div>
+                </div> */}
                 <div className={styles.groups}>
                     {
                         groups.map(group =>
@@ -69,6 +85,10 @@ export default function Page() {
                     }
                 </div>
             </div>
+            {
+                spinning &&
+                <div className={styles.spinner}></div>
+            }
         </>
     )
 }

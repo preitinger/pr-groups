@@ -20,7 +20,8 @@ async function executeAccept(req: ActivityAcceptReq): Promise<ApiResp<ActivityAc
         }
         const newGroup = await groupCol.findOneAndUpdate({
             _id: req.group,
-            'members.phoneNr': req.phoneNr
+            'members.phoneNr': req.phoneNr,
+            'members.token': req.token
         }, {
             $push: {
                 ['activities.' + req.activityIdx + '.participations']: participation
