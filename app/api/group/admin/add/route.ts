@@ -5,6 +5,7 @@ import { ApiResp } from "@/app/_lib/user-management-server/user-management-commo
 import { checkToken } from "@/app/_lib/user-management-server/userManagementServer";
 import { checkAdmin } from "@/app/api/dbTools";
 import { GroupDoc } from "@/app/api/documents";
+import { Filter } from "mongodb";
 import { NextRequest } from "next/server";
 
 async function executeAdd(req: GroupAdminAddReq): Promise<ApiResp<GroupAdminAddResp>> {
@@ -13,10 +14,9 @@ async function executeAdd(req: GroupAdminAddReq): Promise<ApiResp<GroupAdminAddR
             type: 'authFailed'
         }
     }
+    const query: Filter<GroupDoc> = { _id: req.group }
     if (!await checkAdmin(req.user)) {
-        return {
-            type: 'authFailed'
-        }
+        query.admins = req.user
     }
     const client = await clientPromise;
     const db = client.db('pr-groups');
@@ -27,15 +27,26 @@ async function executeAdd(req: GroupAdminAddReq): Promise<ApiResp<GroupAdminAddR
             { $addToSet: { admins: req.groupAdminUser } },
             {
                 projection: {
-                    _id: 0,
-                    admins: true
+                    admins: req.getList ? 1 : 0
                 }
             }
         );
         if (resp == null) {
-            // Group not found
-            return {
-                type: 'groupNotFound'
+            const res2 = await groupsCol.findOne({_id: req.group}, {
+                projection: {
+                    _id: 1,
+                    admins: req.getList ? 1 : 0
+                }
+            })
+            console.log('res2', res2);
+            if (res2 == null) {
+                return {
+                    type: 'groupNotFound'
+                }
+            } else {
+                return {
+                    type: 'authFailed'
+                }
             }
         }
         if (resp.admins.includes(req.groupAdminUser)) {
@@ -44,8 +55,11 @@ async function executeAdd(req: GroupAdminAddReq): Promise<ApiResp<GroupAdminAddR
             }
         }
 
+        resp.admins?.push(req.groupAdminUser);
+
         return {
-            type: 'success'
+            type: 'success',
+            admins: resp.admins
         }
     } catch (reason: any) {
         console.error('Fehler in addToSet for groupAdminUser', reason);

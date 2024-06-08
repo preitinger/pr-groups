@@ -8,6 +8,7 @@
     z-index: -1;
     --beta: 3deg;
     --barTop: 593px;
+    overflow: hidden;
 }
 
 .d1 {
@@ -23,7 +24,7 @@
     position: absolute;
     left: var(--w1);
     top: 0;
-    width: 100vw;
+    width: calc(100vw - var(--w1));
     height: calc(var(--h1) + 9px);
     overflow: hidden;
 }

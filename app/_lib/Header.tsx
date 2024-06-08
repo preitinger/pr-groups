@@ -14,7 +14,7 @@ export interface HeaderProps {
 export default function Header({ user, logo, line1, margin, line2 }: HeaderProps) {
     return (
         <>
-            <Profile user={user} logo={logo} />
+            <Profile user={null} logo={logo} />
             <div className={styles.lines}>
                 <div style={{ marginLeft: logo != null ? '60px' : '0' }}>
                     <div style={{
@@ -29,6 +29,11 @@ export default function Header({ user, logo, line1, margin, line2 }: HeaderProps
                         fontSize: line2.fontSize,
                         fontWeight: line2.bold ? 'bold' : 'normal'
                     }}>{line2.text}</div>
+                    <div style={{
+                        marginLeft: '2rem',
+                        marginTop: '1rem',
+                        color: 'gray'
+                    }}>{user}</div>
                 </div>
             </div >
         </>

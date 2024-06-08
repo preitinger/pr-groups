@@ -2,9 +2,9 @@
 
 import Header from "@/app/_lib/Header";
 import { SessionContext } from "@/app/_lib/SessionContext";
-import { Activity, GroupActivityDeleteReq, GroupActivityDeleteResp, GroupAdminActivityUpdateReq, GroupAdminActivityUpdateResp, GroupAdminGroupReq, GroupAdminGroupResp, GroupAdminMemberUpdateReq, GroupAdminMemberUpdateResp, Member } from "@/app/_lib/api";
+import { Activity, GroupActivityDeleteReq, GroupActivityDeleteResp, GroupAdminActivityUpdateReq, GroupAdminActivityUpdateResp, GroupAdminAddReq, GroupAdminAddResp, GroupAdminDeleteReq, GroupAdminDeleteResp, GroupAdminGroupReq, GroupAdminGroupResp, GroupAdminMemberAddReq, GroupAdminMemberAddResp, GroupAdminMemberUpdateReq, GroupAdminMemberUpdateResp, GroupMemberAddReq, GroupMemberAddResp, Member } from "@/app/_lib/api";
 import useUser from "@/app/_lib/useUser";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import styles from './page.module.css'
 import { apiFetchPost } from "@/app/_lib/user-management-client/apiRoutesClient";
 import TabButton from "@/app/_lib/TabButton";
@@ -16,13 +16,10 @@ import { Popup } from "@/app/Popup";
 import Input from "@/app/_lib/Input";
 import DateTimeInput from "@/app/_lib/pr-client-utils/DateTimeInput";
 import Menu from "@/app/_lib/Menu";
+import MemberAdd from "@/app/_lib/MemberAdd";
 
 function invitationLink(group: string, member: Member): string {
     return `/member/${encodeURIComponent(group)}/${encodeURIComponent(member.phoneNr)}/${encodeURIComponent(member.token)}`
-}
-
-type EditedActivity = Activity & {
-    idx: number;
 }
 
 export default function Page({ params }: { params: { id: string } }) {
@@ -30,15 +27,21 @@ export default function Page({ params }: { params: { id: string } }) {
     const user = useUser();
     const [members, setMembers] = useState<Member[]>([]);
     const [activities, setActivities] = useState<Activity[]>([]);
+    const [admins, setAdmins] = useState<string[]>([]);
     type PhoneNr = string;
     const [copied, setCopied] = useState<Member | null>(null);
     const [sel, setSel] = useState<string>('members');
     const [editedMember, setEditedMember] = useState<Member | null>(null);
-    const [editedActivity, setEditedActivity] = useState<EditedActivity | null>(null);
+    const [editedActivity, setEditedActivity] = useState<Activity | null>(null);
     const [capacityStr, setCapacityStr] = useState('');
     const [spinning, setSpinning] = useState(true);
+    const groupIdRef = useRef<string | null>(null);
+    const [groupId, setGroupId] = useState<string | null>(null);
+    const [addingMember, setAddingMember] = useState(false);
 
     useEffect(() => {
+
+        setGroupId(groupIdRef.current = decodeURIComponent(params.id))
         const ctx = new SessionContext();
         const user1 = ctx.user;
         const token1 = ctx.token;
@@ -49,7 +52,7 @@ export default function Page({ params }: { params: { id: string } }) {
         const req: GroupAdminGroupReq = {
             user: user1,
             token: token1,
-            groupId: params.id
+            groupId: groupIdRef.current
         }
         setSpinning(true);
         apiFetchPost<GroupAdminGroupReq, GroupAdminGroupResp>('/api/group-admin/group/', req).then(resp => {
@@ -60,6 +63,7 @@ export default function Page({ params }: { params: { id: string } }) {
                 case 'success':
                     setMembers(resp.members)
                     setActivities(resp.activities)
+                    setAdmins(resp.admins)
                     break;
             }
         }).finally(() => {
@@ -68,8 +72,9 @@ export default function Page({ params }: { params: { id: string } }) {
     }, [params.id])
 
     const onCopyClick = (member: Member) => () => {
+        if (groupIdRef.current == null) return;
         setCopied(null);
-        navigator.clipboard.writeText(location.origin + invitationLink(params.id, member)).then(() => {
+        navigator.clipboard.writeText(location.origin + invitationLink(groupIdRef.current, member)).then(() => {
             setCopied(member);
         })
     }
@@ -79,21 +84,27 @@ export default function Page({ params }: { params: { id: string } }) {
         setEditedMember(m ?? null);
     }
 
-    const onActivityDeleteClick = (activityIdx: number) => () => {
-        const activity = activities[activityIdx];
+    function activityFromCreationDate(creationDate: number) {
+        const activity = activities.find(a => a.creationDate === creationDate)
+        if (activity == null) {
+            throw new Error('No activity with creationDate: ' + creationDate);
+        }
+        return activity;
+    }
+
+    const onActivityDeleteClick = (creationDate: number) => () => {
+        const activity = activityFromCreationDate(creationDate);
         if (!confirm(`Aktivität ${activity.name} am ${formatDateTime(dateFromMillisOrNull(activity.date))} wirklich löschen?`)) return;
-        console.log('delete activity #', activityIdx)
         const ctx = new SessionContext();
         const user1 = ctx.user;
         const token1 = ctx.token;
 
-        if (user1 == null || token1 == null) return;
+        if (user1 == null || token1 == null || groupIdRef.current == null) return;
         const req: GroupActivityDeleteReq = {
             user: user1,
             token: token1,
-            group: params.id,
-            activityIdx: activityIdx,
-            creationDate: activities[activityIdx].creationDate
+            group: groupIdRef.current,
+            activityCreationDate: creationDate
         }
         setSpinning(true);
         apiFetchPost<GroupActivityDeleteReq, GroupActivityDeleteResp>('/api/group-admin/activity-delete', req).then(resp => {
@@ -117,13 +128,12 @@ export default function Page({ params }: { params: { id: string } }) {
         })
     }
 
-    const onActivityEditClick = (activityIdx: number) => () => {
-        console.log('edit activity #', activityIdx);
+    const onActivityEditClick = (creationDate: number) => () => {
+        const activity = activityFromCreationDate(creationDate);
         setEditedActivity({
-            ...activities[activityIdx],
-            idx: activityIdx
+            ...activity,
         })
-        setCapacityStr(activities[activityIdx].capacity?.toString() ?? '')
+        setCapacityStr(activity.capacity?.toString() ?? '')
     }
 
     function saveEditedMember() {
@@ -131,14 +141,14 @@ export default function Page({ params }: { params: { id: string } }) {
         const ctx = new SessionContext();
         const user1 = ctx.user;
         const token1 = ctx.token;
-        if (user1 == null || token1 == null) {
+        if (user1 == null || token1 == null || groupIdRef.current == null) {
             setComment('Nicht eingeloggt.');
             return;
         }
         const req: GroupAdminMemberUpdateReq = {
             user: user1,
             token: token1,
-            groupId: params.id,
+            groupId: groupIdRef.current,
             member: editedMember
         }
         setSpinning(true);
@@ -170,7 +180,7 @@ export default function Page({ params }: { params: { id: string } }) {
         const ctx = new SessionContext();
         const user1 = ctx.user;
         const token1 = ctx.token;
-        if (user1 == null || token1 == null) {
+        if (user1 == null || token1 == null || groupIdRef.current == null) {
             setComment('Nicht eingeloggt.');
             return;
         }
@@ -183,8 +193,7 @@ export default function Page({ params }: { params: { id: string } }) {
         const req: GroupAdminActivityUpdateReq = {
             user: user1,
             token: token1,
-            groupId: params.id,
-            activityIdx: a.idx,
+            groupId: groupIdRef.current,
             creationDate: a.creationDate,
             activityData: {
                 name: a.name,
@@ -226,22 +235,168 @@ export default function Page({ params }: { params: { id: string } }) {
         })
     }, [])
 
+    const onAdminDeleteClick = (admin: string) => () => {
+        const ctx = new SessionContext();
+        const user1 = ctx.user;
+        const token1 = ctx.token;
+        if (user1 == null || token1 == null || groupIdRef.current == null) {
+            setComment('Nicht eingeloggt.');
+            return;
+        }
+        const sentGroup = groupIdRef.current;
+        const req: GroupAdminDeleteReq = {
+            user: user1,
+            token: token1,
+            group: sentGroup,
+            groupAdminUser: admin,
+            getList: true
+        }
+        setSpinning(true);
+        apiFetchPost<GroupAdminDeleteReq, GroupAdminDeleteResp>('/api/group/admin/delete', req).then(resp => {
+            console.log('resp', resp);
+            switch (resp.type) {
+                case 'authFailed':
+                    setComment('Nicht authorisiert.');
+                    break;
+                case 'success':
+                    setComment(`${admin} ist nun nicht mehr Gruppen-Admin von ${groupIdRef.current}`)
+                    if (resp.admins != null) setAdmins(resp.admins)
+                    break;
+                case 'groupNotFound':
+                    setComment(`Gruppe ${sentGroup} existiert nicht.`);
+                    break;
+                case 'wasNotGroupAdmin':
+                    setComment(`${admin} war kein Gruppen-Admin von ${sentGroup}.`)
+                    break;
+                case 'error':
+                    setComment('Unerwarteter Fehler: ' + resp.error);
+                    break;
+            }
+        }).catch(reason => {
+            console.error(reason);
+            setComment('Unerwarteter Fehler: ' + JSON.stringify(reason))
+        }).finally(() => {
+            setSpinning(false);
+        })
+    }
+
+    function onAdminAddClick() {
+        const newAdmin = prompt(`Which user do you like to add as a new group admin for ${groupIdRef.current}?`);
+        if (newAdmin == null) return;
+        const ctx = new SessionContext();
+        const user1 = ctx.user;
+        const token1 = ctx.token;
+        if (user1 == null || token1 == null || groupIdRef.current == null) {
+            setComment('Nicht eingeloggt.');
+            return;
+        }
+        const sentGroup = groupIdRef.current;
+        const req: GroupAdminAddReq = {
+            user: user1,
+            token: token1,
+            group: sentGroup,
+            groupAdminUser: newAdmin,
+            getList: true
+        }
+        setSpinning(true);
+        apiFetchPost<GroupAdminAddReq, GroupAdminAddResp>('/api/group/admin/add', req).then(resp => {
+            console.log('resp', resp)
+            switch (resp.type) {
+                case 'authFailed':
+                    setComment('Nicht authorisiert.');
+                    break;
+                case 'groupNotFound':
+                    setComment(`Gruppe ${sentGroup} existiert nicht.`);
+                    break;
+                case 'success':
+                    if (resp.admins != null) {
+                        setAdmins(resp.admins)
+                    }
+                    setComment(`${newAdmin} ist nun Gruppen-Admin von ${sentGroup}.`)
+                    break;
+                case 'userNotFound':
+                    setComment(`${newAdmin} ist kein bekannter User.`);
+                    break;
+                case 'wasGroupAdmin':
+                    setComment(`${newAdmin} war bereits Gruppen-Admin von ${sentGroup}.`);
+                    break;
+                case 'error':
+                    setComment('Unerwarteter Fehler: ' + resp.error);
+                    break;
+            }
+        }).catch(reason => {
+            setComment('Unerwarteter Fehler: ' + JSON.stringify(reason))
+        }).finally(() => {
+            setSpinning(false);
+        })
+    }
+
+    function onAddMember() {
+        setAddingMember(true);
+    }
+
+    async function onMemberAdded({ group, newPhoneNr, prename, surname }: { group: string; newPhoneNr: string; prename: string; surname: string }) {
+        const ctx = new SessionContext();
+        const user1 = ctx.user;
+        const token1 = ctx.token;
+        if (user1 == null || token1 == null) {
+            setComment('Du bist nicht eingeloggt.')
+            return;
+        }
+        const req: GroupAdminMemberAddReq = {
+            user: user1,
+            token: token1,
+            groupId: group,
+            phoneNr: newPhoneNr,
+            prename: prename,
+            surname: surname,
+        }
+        setComment('Sende Daten ...');
+        setAddingMember(false);
+        setSpinning(true);
+        try {
+            const resp = await apiFetchPost<GroupAdminMemberAddReq, GroupAdminMemberAddResp>('/api/group-admin/member-add', req)
+            console.log('resp', resp);
+            switch (resp.type) {
+                case 'authFailed':
+                    setComment('Nicht authorisiert.');
+                    break;
+                case 'success':
+                    setMembers(resp.members)
+                    break;
+                case 'groupNotFound':
+                    setComment(`Gruppe ${group} existiert nicht.`);
+                    break;
+                case 'phoneNrContained':
+                    setComment(`Abgebrochen. Es gibt bereits ein Mitglied mit Telefonnr ${newPhoneNr} in Gruppe ${group}.`)
+                    break;
+                case 'error':
+                    setComment(`Unerwarteter Fehler: ${resp.error}`);
+                    break;
+            }
+        } finally {
+            setSpinning(false);
+        }
+    }
+
     return (
-        <>
+        <Menu>
             <Header
                 user={user}
                 line1={{ text: 'pr-groups / Gruppenadmin', fontSize: '1.2em', bold: false }}
                 margin='1em'
-                line2={{ text: params.id, fontSize: '1.5em', bold: true }}
+                line2={{ text: groupId ?? '', fontSize: '1.5em', bold: true }}
             />
             <div className={styles.main}>
                 <div className={styles.buttonRow}>
                     <TabButton label="Mitglieder" ownKey='members' selectedKey={sel} setSelectedKey={setSel} />
                     <TabButton label="Aktivitäten" ownKey='activities' selectedKey={sel} setSelectedKey={setSel} />
+                    <TabButton label="Gruppen-Admins" ownKey='admins' selectedKey={sel} setSelectedKey={setSel} />
                 </div>
                 <div className={styles.selPage}>
                     <TabPage ownKey="members" selectedKey={sel}>
                         <p>{comment}</p>
+                        <div className={`${styles.clickable} ${styles.buttonRow}`} onClick={onAddMember}><Image alt='Mitglied hinzufügen' src='/square_14034302.png' width={32} height={32} /><div className={styles.imgLabel}>Mitglied hinzufügen</div></div>
                         <table border={1} cellPadding={3}>
                             <tbody>
                                 <tr>
@@ -257,7 +412,7 @@ export default function Page({ params }: { params: { id: string } }) {
                                                 {member.prename} {member.surname}
                                             </td>
                                             <td>
-                                                <a href={location.origin + invitationLink(params.id, member)}>{location.origin + invitationLink(params.id, member)}</a>
+                                                <a href={location.origin + invitationLink((groupId ?? '<FEHLER>'), member)}>{location.origin + invitationLink(groupId ?? '<FEHLER>', member)}</a>
                                             </td>
                                             <td><button className={`${styles.copy} ${copied?.phoneNr === member.phoneNr && styles.copied}`} onClick={onCopyClick(member)} /></td>
                                             <td onClick={onMemberEditClick(member.phoneNr)} className={styles.clickable}><Image src='/edit_12000664.png' alt='Bearbeiten' width={32} height={32} /></td>
@@ -270,21 +425,43 @@ export default function Page({ params }: { params: { id: string } }) {
                         </table>
                     </TabPage>
                     <TabPage ownKey='activities' selectedKey={sel}>
+                        <p>{comment}</p>
                         <table border={1} cellPadding={3}>
                             <tbody>
                                 <tr>
                                     <th>Was</th><th>Wann</th><th>Kapazität</th><th>Erstellt</th><th>Löschen</th><th>Bearbeiten</th>
                                 </tr>
                                 {
-                                    activities.map((a, i) =>
-                                    (<tr key={i}>
+                                    activities.map((a) =>
+                                    (<tr key={a.creationDate}>
                                         <td>{a.name}</td>
                                         <td>{formatDateTime(a.date, true)}</td>
                                         <td className={styles.capacity}>{a.capacity}</td>
                                         <td>{formatDateTime(a.creationDate, true)}</td>
-                                        <td onClick={onActivityDeleteClick(i)} className={styles.clickable}><Image src='/cross_8995303.png' alt='Löschen' width={32} height={32} /></td>
-                                        <td onClick={onActivityEditClick(i)} className={styles.clickable}><Image src='/edit_12000664.png' alt='Bearbeiten' width={32} height={32} /></td>
+                                        <td onClick={onActivityDeleteClick(a.creationDate)} className={styles.clickable}><Image src='/cross_8995303.png' alt='Löschen' width={32} height={32} /></td>
+                                        <td onClick={onActivityEditClick(a.creationDate)} className={styles.clickable}><Image src='/edit_12000664.png' alt='Bearbeiten' width={32} height={32} /></td>
                                     </tr>)
+                                    )
+                                }
+                            </tbody>
+                        </table>
+                    </TabPage>
+                    <TabPage ownKey='admins' selectedKey={sel}>
+                        <p>{comment}</p>
+                        <table border={1} cellPadding={3}>
+                            <tbody>
+                                <tr>
+                                    <th>User</th><th>Hinzufügen/Entfernen</th>
+                                </tr>
+                                <tr>
+                                    <td className={styles.add}>(Neuer Gruppen-Admin)</td><td onClick={onAdminAddClick} className={styles.clickable}><Image src='/square_14034302.png' alt='Gruppen-Admin hinzufügen' width={32} height={32} /></td>
+                                </tr>
+                                {
+                                    admins.map((admin) =>
+                                        <tr key={admin}>
+                                            <td>{admin}</td>
+                                            <td onClick={onAdminDeleteClick(admin)} className={styles.clickable}><Image src='/cross_8995303.png' alt='Löschen' width={32} height={32} /></td>
+                                        </tr>
                                     )
                                 }
                             </tbody>
@@ -313,7 +490,7 @@ export default function Page({ params }: { params: { id: string } }) {
                 </div>
             </Popup>
             <Popup visible={editedActivity != null} >
-                <h3>Aktivität {editedActivity?.idx} ({formatDateTime(dateFromMillisOrNull(editedActivity?.creationDate ?? null))}) bearbeiten</h3>
+                <h3>Aktivität erstellt am ({formatDateTime(dateFromMillisOrNull(editedActivity?.creationDate ?? null))}) bearbeiten</h3>
                 <Input id='name' label='Name' text={editedActivity?.name ?? ''} setText={t => {
                     if (editedActivity != null) setEditedActivity({
                         ...editedActivity,
@@ -328,11 +505,16 @@ export default function Page({ params }: { params: { id: string } }) {
                     <button onClick={() => { setEditedActivity(null) }}>ABBRECHEN</button>
                 </div>
             </Popup>
+            {groupId != null &&
+                <Popup visible={addingMember} >
+                    <MemberAdd initialGroup={groupId} onAdd={onMemberAdded} onCancel={() => { setAddingMember(false)}} />
+                </Popup>
+            }
             {
                 spinning &&
                 <div className={styles.spinner}></div>
             }
 
-        </>
+        </Menu>
     )
 }

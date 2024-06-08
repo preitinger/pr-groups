@@ -12,11 +12,12 @@ import { apiFetchPost } from "../_lib/user-management-client/apiRoutesClient";
 import TabButton from "../_lib/TabButton";
 import TabPage from "../_lib/TabPage";
 import FixedAbortController from "../_lib/pr-client-utils/FixedAbortController";
+import Menu from "../_lib/Menu";
 
 export default function Page() {
     const user = useUser();
     const [comment, setComment] = useState('');
-    const [groups, setGroups] = useState<string[]>([]);
+    const [groups, setGroups] = useState<string[] | null>(null);
     const [spinning, setSpinning] = useState(true);
 
     useEffect(() => {
@@ -60,35 +61,40 @@ export default function Page() {
 
     return (
         <>
-            <Header user={user} line1={{ text: 'pr-groups', fontSize: '1.2em', bold: false }} margin='1em' line2={{ text: 'Gruppenadministration', fontSize: '1.5em', bold: true }} />
-            <div className={styles.form}>
-                <p>{comment}</p>
-                <div className={styles.row}>
-                    <Link className={styles.linkMemberAdd} href='/group/member/add'>Gruppenmitglied hinzufügen</Link>
-                </div>
-                {/* <div className={styles.row}>
+            <Menu>
+                <Header user={user} line1={{ text: 'pr-groups', fontSize: '1.2em', bold: false }} margin='1em' line2={{ text: 'Gruppenadministration', fontSize: '1.5em', bold: true }} />
+                <div className={styles.form}>
+                    <p>{comment}</p>
+                    <div className={styles.row}>
+                        <Link className={styles.linkMemberAdd} href='/group/member/add'>Gruppenmitglied hinzufügen</Link>
+                    </div>
+                    {/* <div className={styles.row}>
                     <Link className={styles.linkMemberRemove} href='/group/member/remove'>Gruppenmitglied entfernen</Link>
                 </div> */}
-                <div className={styles.row}>
-                    <Link className={styles.linkActivityAdd} href='/group/activity/add'>Aktivität hinzufügen</Link>
-                </div>
-                {/* <div className={styles.row}>
+                    <div className={styles.row}>
+                        <Link className={styles.linkActivityAdd} href='/group/activity/add'>Aktivität hinzufügen</Link>
+                    </div>
+                    {/* <div className={styles.row}>
                     <Link className={styles.linkActivityDelete} href='/group/activity/delete'>Aktivität entfernen</Link>
                 </div>
                 <div className={styles.row}>
                     <Link className={styles.linkActivityChange} href='/group/activity/change'>Aktivität bearbeiten</Link>
                 </div> */}
-                <div className={styles.groups}>
-                    {
-                        groups.map(group =>
-                            <Link key={group} href={`/group-admin/group/${group}`} >{group}</Link>)
-                    }
+                    <div className={styles.groups}>
+                        {
+                            groups == null ?
+                                <div className={styles.spinner}></div>
+                                :
+                                groups.map(group =>
+                                    <Link key={group} href={`/group-admin/group/${group}`} >{group}</Link>)
+                        }
+                    </div>
                 </div>
-            </div>
-            {
-                spinning &&
-                <div className={styles.spinner}></div>
-            }
+                {
+                    spinning &&
+                    <div className={styles.spinner}></div>
+                }
+            </Menu>
         </>
     )
 }

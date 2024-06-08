@@ -8,7 +8,7 @@ import { NextRequest } from "next/server";
 import { filterNonNull } from "@/app/_lib/utils";
 
 async function executeGroup(req: GroupAdminGroupReq): Promise<ApiResp<GroupAdminGroupResp>> {
-    if (!checkToken(req.user, req.token)) {
+    if (!await checkToken(req.user, req.token)) {
         return {
             type: 'authFailed'
         }
@@ -17,13 +17,14 @@ async function executeGroup(req: GroupAdminGroupReq): Promise<ApiResp<GroupAdmin
     const client = await clientPromise;
     const db = client.db('pr-groups');
     const col = db.collection<GroupDoc>('groups');
-    const group = await col.findOne<{members: Member[], activities: (Activity|null)[]}>({
+    const group = await col.findOne<{members: Member[], activities: (Activity|null)[], admins: string[]}>({
         _id: req.groupId,
         admins: req.user
     }, {
         projection: {
             members: 1,
             activities: 1,
+            admins: 1,
         }
     })
     if (group == null) {
@@ -34,7 +35,8 @@ async function executeGroup(req: GroupAdminGroupReq): Promise<ApiResp<GroupAdmin
     return {
         type: 'success',
         members: group.members,
-        activities: filterNonNull(group.activities)
+        activities: filterNonNull(group.activities),
+        admins: group.admins
     }
 }
 

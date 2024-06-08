@@ -5,6 +5,7 @@ import { transformPasswd } from "./hash";
 import { LoginReq, LoginResp } from "./user-management-common/login";
 import { randomBytes } from "crypto";
 import { LogoutReq, LogoutResp } from "./user-management-common/logout";
+import { DeleteReq, DeleteResp } from "./user-management-common/delete";
 
 interface UserDoc {
     /**
@@ -23,7 +24,7 @@ interface UserDoc {
 
 const dbName = 'user';
 
-export async function executeRegister (req: RegisterReq): Promise<ApiResp<RegisterResp>> {
+export async function executeRegister(req: RegisterReq): Promise<ApiResp<RegisterResp>> {
     if (req.user == null || req.user === '') {
         return {
             type: 'error',
@@ -113,7 +114,7 @@ export async function executeLogout(req: LogoutReq): Promise<ApiResp<LogoutResp>
                 token: null
             }
         });
-    
+
         if (!(updateRes.acknowledged && updateRes.modifiedCount === 1)) {
             return {
                 type: 'wrongUserOrToken'
@@ -128,6 +129,37 @@ export async function executeLogout(req: LogoutReq): Promise<ApiResp<LogoutResp>
             type: 'error',
             error: JSON.stringify(reason)
         }
+    }
+}
+
+export async function executeDelete(req: DeleteReq): Promise<ApiResp<DeleteResp>> {
+
+    const client = await clientPromise;
+    const db = client.db(dbName);
+    const col = db.collection<UserDoc>('users');
+    const res = await col.deleteOne({
+        _id: req.user,
+        token: req.token
+    })
+    if (!res.acknowledged) {
+        return {
+            type: 'error',
+            error: 'deleteOne not acknowledged?!'
+        }
+    }
+    if (res.deletedCount === 0) {
+        return {
+            type: 'authFailed'
+        }
+    }
+    if (res.deletedCount === 1) {
+        return {
+            type: 'success'
+        }
+    }
+    return {
+        type: 'error',
+        error: `deletedCount = ${res.deletedCount} ?!`
     }
 }
 
@@ -154,4 +186,23 @@ export async function checkUser(user: string): Promise<boolean> {
     });
     return res != null;
 
+}
+
+export async function findUsers(users: string[]) {
+    const client = await clientPromise
+    const db = client.db(dbName)
+    console.log('findUsers: users', users);
+    const found = await db.collection<UserDoc>('users').find({
+        _id: {
+            $in: users
+        }
+    // }, {
+    //     projection: {
+    //         _id: 1
+    //     }
+    }).toArray();
+    console.log('findUsers found', found);
+    const res = found.map(x => x._id)
+    console.log('result of findUsers', res);
+    return res;
 }

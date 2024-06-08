@@ -148,6 +148,7 @@ export default function Page({ params }: { params: { group: string; phoneNr: str
     const [prename, setPrename] = useState('');
     const [surname, setSurname] = useState('');
     const [additionalHeaderProps, setAdditionalHeaderProps] = useState<AdditionalHeaderProps | null>(null);
+    const [firstOpen, setFirstOpen] = useState(0)
     const [activityIdx, setActivityIdx] = useState(0)
     const [spinning, setSpinning] = useState(true);
     const [detailsPopup, setDetailsPopup] = useState(false);
@@ -189,7 +190,12 @@ export default function Page({ params }: { params: { group: string; phoneNr: str
                     })
                     setPrename(resp.prename);
                     setSurname(resp.surname);
-
+                    resp.activities.sort((a, b) => {
+                        if (a.date != null && b.date != null) {
+                            return a.date - b.date
+                        }
+                        return 0;
+                    })
                     setActivities(resp.activities);
                     setMembers(resp.members);
                     setComment('');
@@ -198,6 +204,7 @@ export default function Page({ params }: { params: { group: string; phoneNr: str
                     const now = Date.now();
                     const first = resp.activities.findIndex((a) => (a.date ?? 0) > now)
                     console.log('first', first);
+                    setFirstOpen(first);
                     setActivityIdx(first >= 0 ? first : 0);
                     break;
                 case 'error':
@@ -272,10 +279,11 @@ export default function Page({ params }: { params: { group: string; phoneNr: str
             phoneNr: phoneNr,
             token: token,
             group: group,
-            activityIdx: i,
+            activityCreationDate: activities[i].creationDate,
             accept: accept
         }
         apiFetchPost<ActivityAcceptReq, ActivityAcceptResp>('/api/group/activity/accept', req).then(resp => {
+            console.log('resp', resp);
             switch (resp.type) {
                 case 'authFailed':
                     setComment('Nicht authorisiert.');
@@ -287,6 +295,12 @@ export default function Page({ params }: { params: { group: string; phoneNr: str
                     setComment('Unerwarteter Fehler: ' + JSON.stringify(resp.error));
                     break;
                 case 'success':
+                    resp.activities.sort((a, b) => {
+                        if (a.date != null && b.date != null) {
+                            return a.date - b.date
+                        }
+                        return 0;
+                    })
                     setActivities(resp.activities);
                     new SessionContext().activities = resp.activities;
                     setComment('');
@@ -379,6 +393,12 @@ export default function Page({ params }: { params: { group: string; phoneNr: str
                             setPrename(resp.prename);
                             setSurname(resp.surname);
 
+                            resp.activities.sort((a, b) => {
+                                if (a.date != null && b.date != null) {
+                                    return a.date - b.date
+                                }
+                                return 0;
+                            })
                             setActivities(resp.activities);
                             setMembers(resp.members);
                             setComment('');
@@ -495,7 +515,7 @@ export default function Page({ params }: { params: { group: string; phoneNr: str
                 {
                     selActivity != null &&
                     <>
-                        <div className={styles.labelNext}>{activityIdx === 0 ? 'NÄCHSTE VERANSTALTUNG' : 'WEITERE VERANSTALTUNG'}:</div>
+                        <div className={styles.labelNext}>{selActivity.date == null ? selActivity.name : activityIdx === firstOpen ? 'NÄCHSTE VERANSTALTUNG' : activityIdx < firstOpen || firstOpen === -1 ? 'ALTE VERANSTALTUNG' : 'WEITERE VERANSTALTUNG'}:</div>
                         <ActivityComp activity={selActivity} url={`/member/activity-details/${activityIdx}`} user={phoneNr} onAcceptClick={(accept) => onAcceptClick(activityIdx, accept)} onDetailsClick={onDetailsClick(activityIdx)} />
                         {/* <div ref={testRef} className={styles.testRow}><div className={styles.barElem}><DateTimeComp date={new Date()} small={true} /> */}
 

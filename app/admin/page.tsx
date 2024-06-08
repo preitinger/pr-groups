@@ -7,9 +7,42 @@ import { SessionContext } from "../_lib/SessionContext";
 import Profile from "../_lib/Profile";
 import useUser from "../_lib/useUser";
 import Header from "../_lib/Header";
+import { HandleDeletedUsersReq, HandleDeletedUsersResp } from "../_lib/api";
+import { apiFetchPost } from "../_lib/user-management-client/apiRoutesClient";
 
 export default function Page() {
     const user = useUser();
+    const [comment, setComment] = useState('')
+    const [spinning, setSpinning] = useState(false);
+
+    function handleDeletedUsers() {
+        const ctx = new SessionContext();
+        const user1 = ctx.user;
+        const token1 = ctx.token;
+        console.log('handleDeletedUsers')
+        if (user1 == null || token1 == null) return;
+        const req: HandleDeletedUsersReq = {
+            user: user1,
+            token: token1,
+        }
+        setSpinning(true);
+        apiFetchPost<HandleDeletedUsersReq, HandleDeletedUsersResp>('/api/handle-deleted-users', req).then(resp => {
+            console.log('resp', resp);
+            switch (resp.type) {
+                case 'authFailed':
+                    setComment('Nicht authorisiert.');
+                    break;
+                case 'success':
+                    setComment('Deleted users have been handled.');
+                    break;
+            }
+        }).catch(reason => {
+            console.error(reason);
+            setComment('Unerwarteter Fehler: ' + JSON.stringify(reason));
+        }).finally(() => {
+            setSpinning(false);
+        })
+    }
 
     return (
         <>
@@ -33,8 +66,16 @@ export default function Page() {
                 <div className={styles.row}>
                     <Link className={styles.linkGroupAdminDelete} href='/group/admin/delete'>Delete Group Admin</Link>
                 </div>
+                <div className={styles.row}>
+                    <a className={styles.linkHandleDeletedUsers} onClick={handleDeletedUsers}>Handle deleted users</a>
+                </div>
 
+                <p>{comment}</p>
             </div>
-        </>
+            {
+                spinning &&
+                <div className={styles.spinner}></div>
+            }
+       </>
     )
 }

@@ -1,5 +1,6 @@
 import { ObjectId } from "mongodb";
 import { HeaderLine } from "./HeaderLine";
+import { deprecate } from "util";
 
 export type Acceptance = 'accepted' | 'rejected' | 'undecided'
 export interface Participation {
@@ -9,11 +10,14 @@ export interface Participation {
 }
 
 export interface Activity {
+    /**
+     * creationDate is also the key for an Activity among all activities in a group.
+     */
+    creationDate: number;
     name: string;
     date: number | null;
     capacity: number | null;
     participations: Participation[];
-    creationDate: number;
 }
 
 export interface Member {
@@ -59,18 +63,42 @@ export interface GroupAdminAddReq {
     token: string;
     group: string;
     groupAdminUser: string;
+    getList?: boolean;
 }
 
 export type GroupAdminAddResp = {
     type: 'authFailed'
 } | {
     type: 'success'
+    admins?: string[]
 } | {
     type: 'groupNotFound'
 } | {
     type: 'userNotFound'
 } | {
     type: 'wasGroupAdmin'
+}
+
+export interface GroupAdminDeleteReq {
+    /**
+     * user sending the request
+     */
+    user: string;
+    token: string;
+    group: string;
+    groupAdminUser: string;
+    getList?: boolean;
+}
+
+export type GroupAdminDeleteResp = {
+    type: 'authFailed'
+} | {
+    type: 'success'
+    admins?: string[]
+} | {
+    type: 'groupNotFound'
+} | {
+    type: 'wasNotGroupAdmin'
 }
 
 export interface GroupMemberAddReq {
@@ -118,6 +146,7 @@ export type GroupActivityAddResp = {
     type: 'wasActivity'
 }
 
+// TODO adapt related route
 export interface GroupActivityDeleteReq {
     /**
      * user sending the request
@@ -125,11 +154,10 @@ export interface GroupActivityDeleteReq {
     user: string;
     token: string;
     group: string;
-    activityIdx: number;
     /**
      * for safety check in case of several modifications at the same time
      */
-    creationDate: number;
+    activityCreationDate: number;
 }
 
 export type GroupActivityDeleteResp = {
@@ -164,6 +192,7 @@ export type MemberDataResp = {
     members: Member[];
 }
 
+// TODO adapt related route
 export interface ActivityAcceptReq {
     /**
      * user sending the request
@@ -171,7 +200,7 @@ export interface ActivityAcceptReq {
     phoneNr: string;
     token: string;
     group: string;
-    activityIdx: number;
+    activityCreationDate: number;
     accept: Acceptance;
 }
 
@@ -184,6 +213,9 @@ export type ActivityAcceptResp = {
     activities: Activity[];
 }
 
+/**
+ * @deprecated
+ */
 export interface ActivityDetailsReq {
     /**
      * user sending the request
@@ -191,9 +223,12 @@ export interface ActivityDetailsReq {
     user: string;
     token: string;
     group: string;
-    activityIdx: number;
+    activityCreationDate: number;
 }
 
+/**
+ * @deprecated
+ */
 export type ActivityDetailsResp = {
     type: 'authFailed'
 } | {
@@ -251,6 +286,7 @@ export type GroupAdminGroupResp = {
     type: 'success'
     members: Member[]
     activities: Activity[]
+    admins: string[]
 }
 
 export interface GroupAdminMemberUpdateReq {
@@ -272,6 +308,50 @@ export type GroupAdminMemberUpdateResp = {
     members: Member[]
 }
 
+export interface GroupAdminMemberDeleteReq {
+    /**
+    * user sending the request
+    */
+    user: string;
+    token: string;
+    groupId: string;
+    /**
+     * phoneNr of member to delete
+     */
+    phoneNr: string;
+}
+
+export type GroupAdminMemberDeleteResp = {
+    type: 'authFailed'
+} | {
+    type: 'success'
+    members: Member[]
+}
+
+export interface GroupAdminMemberAddReq {
+    /**
+    * user sending the request
+    */
+    user: string;
+    token: string;
+    groupId: string;
+    phoneNr: string;
+    prename: string;
+    surname: string;
+}
+
+export type GroupAdminMemberAddResp = {
+    type: 'authFailed'
+} | {
+    type: 'success'
+    members: Member[]
+} | {
+    type: 'groupNotFound'
+} | {
+    type: 'phoneNrContained'
+}
+
+// TODO update related route and call
 export interface GroupAdminActivityUpdateReq {
     /**
     * user sending the request
@@ -279,7 +359,6 @@ export interface GroupAdminActivityUpdateReq {
     user: string;
     token: string;
     groupId: string;
-    activityIdx: number;
     /**
      * to be checked
      */
@@ -313,6 +392,20 @@ export interface MemberDeleteMeReq {
 }
 
 export type MemberDeleteMeResp = {
+    type: 'authFailed'
+} | {
+    type: 'success'
+}
+
+export interface HandleDeletedUsersReq {
+    /**
+     * user must have admin privileges
+     */
+    user: string;
+    token: string;
+}
+
+export type HandleDeletedUsersResp = {
     type: 'authFailed'
 } | {
     type: 'success'

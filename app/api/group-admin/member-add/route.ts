@@ -1,17 +1,17 @@
-import { GroupMemberAddReq, GroupMemberAddResp } from "@/app/_lib/api";
-import { apiPOST } from "@/app/_lib/user-management-server/apiRoutesForServer";
+import { GroupAdminMemberAddReq, GroupAdminMemberAddResp } from "@/app/_lib/api";
 import clientPromise from "@/app/_lib/user-management-server/mongodb";
 import { ApiResp } from "@/app/_lib/user-management-server/user-management-common/apiRoutesCommon";
 import { checkToken } from "@/app/_lib/user-management-server/userManagementServer";
-import { GroupDoc } from "@/app/api/documents";
 import { randomBytes } from "crypto";
+import { GroupDoc } from "../../documents";
+import { apiPOST } from "@/app/_lib/user-management-server/apiRoutesForServer";
 import { NextRequest } from "next/server";
 
 function createRandomToken(): string {
     return randomBytes(32).toString('hex');
 }
 
-async function executeAdd(req: GroupMemberAddReq): Promise<ApiResp<GroupMemberAddResp>> {
+async function execute(req: GroupAdminMemberAddReq): Promise<ApiResp<GroupAdminMemberAddResp>> {
     if (!await checkToken(req.user, req.token)) {
         return {
             type: 'authFailed'
@@ -23,8 +23,8 @@ async function executeAdd(req: GroupMemberAddReq): Promise<ApiResp<GroupMemberAd
     const client = await clientPromise;
     const db = client.db('pr-groups');
     const col = db.collection<GroupDoc>('groups');
-    const res = await col.updateOne({
-        _id: req.group,
+    const res = await col.findOneAndUpdate({
+        _id: req.groupId,
         admins: req.user,
         $nor: [
             {
@@ -41,13 +41,14 @@ async function executeAdd(req: GroupMemberAddReq): Promise<ApiResp<GroupMemberAd
             }
         }
     })
-    if (res.modifiedCount === 0) {
+
+    if (res == null) {
         // Possibilities: 
         // group _id not found 
         // or req.user is not admin
         // or already containing member with req.phoneNr
         const res2 = await col.findOne({
-            _id: req.group
+            _id: req.groupId
         }, {
             projection: {
                 _id: 1,
@@ -71,11 +72,18 @@ async function executeAdd(req: GroupMemberAddReq): Promise<ApiResp<GroupMemberAd
 
     return {
         type: 'success',
-        invitationUrl: `/member/${encodeURIComponent(req.group)}/${encodeURIComponent(req.phoneNr)}/${encodeURIComponent(newToken)}`
+        members: [
+            ...res.members,
+            {
+                phoneNr: req.phoneNr,
+                prename: req.prename,
+                surname: req.surname,
+                token: newToken
+            }
+        ]
     }
-
 }
 
 export function POST(req: NextRequest) {
-    return apiPOST(req, executeAdd);
+    return apiPOST(req, execute);
 }

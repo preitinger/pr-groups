@@ -8,7 +8,7 @@ import { NextRequest } from "next/server";
 import { apiPOST } from "@/app/_lib/user-management-server/apiRoutesForServer";
 
 async function execute(req: GroupAdminActivityUpdateReq): Promise<ApiResp<GroupAdminActivityUpdateResp>> {
-    if (!checkToken(req.user, req.token)) {
+    if (!await checkToken(req.user, req.token)) {
         return {
             type: 'authFailed'
         }
@@ -19,25 +19,31 @@ async function execute(req: GroupAdminActivityUpdateReq): Promise<ApiResp<GroupA
     const group = await col.findOneAndUpdate({
         _id: req.groupId,
         admins: req.user,
-        [`activities.${req.activityIdx}.creationDate`]: req.creationDate
+        'activities.creationDate': req.creationDate
     }, {
         $set: {
-            [`activities.${req.activityIdx}.name`]: req.activityData.name,
-            [`activities.${req.activityIdx}.date`]: req.activityData.date,
-            [`activities.${req.activityIdx}.capacity`]: req.activityData.capacity,
+            'activities.$[elem].name': req.activityData.name,
+            'activities.$[elem].date': req.activityData.date,
+            'activities.$[elem].capacity': req.activityData.capacity,
         }
     }, {
-        returnDocument: 'after'
-    })
-    if (group == null) {
-        return {
-            type: 'notFound'
-        }
+        returnDocument: 'after',
+        arrayFilters: [
+            {
+                'elem.creationDate': req.creationDate
+            }
+        ]
     }
+    )
+if (group == null) {
     return {
-        type: 'success',
-        activities: filterNonNull(group.activities)
+        type: 'notFound'
     }
+}
+return {
+    type: 'success',
+    activities: filterNonNull(group.activities)
+}
 }
 
 export function POST(req: NextRequest) {

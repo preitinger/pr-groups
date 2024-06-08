@@ -8,7 +8,7 @@ import { NextRequest } from "next/server";
 import { filterNonNull } from "@/app/_lib/utils";
 
 async function execute(req: GroupActivityDeleteReq): Promise<ApiResp<GroupActivityDeleteResp>> {
-    if (!checkToken(req.user, req.token)) {
+    if (!await checkToken(req.user, req.token)) {
         return {
             type: 'authFailed'
         }
@@ -17,13 +17,24 @@ async function execute(req: GroupActivityDeleteReq): Promise<ApiResp<GroupActivi
     const client = await clientPromise;
     const db = client.db('pr-groups');
     const col = db.collection<GroupDoc>('groups');
+    // const res1 = await col.updateOne({
+    //     _id: req.group,
+    //     admins: req.user,
+    //     [`activities.${req.activityIdx}.creationDate`]: req.creationDate
+    // }, {
+    //     $unset: {
+    //         [`activities.${req.activityIdx}`]: ''
+    //     }
+    // })
     const res1 = await col.updateOne({
         _id: req.group,
         admins: req.user,
-        [`activities.${req.activityIdx}.creationDate`]: req.creationDate
+        'activities.creationDate': req.activityCreationDate
     }, {
-        $unset: {
-            [`activities.${req.activityIdx}`]: ''
+        $pull: {
+            activities: {
+                creationDate: req.activityCreationDate
+            }
         }
     })
     if (!(res1.acknowledged && res1.matchedCount === 1)) {

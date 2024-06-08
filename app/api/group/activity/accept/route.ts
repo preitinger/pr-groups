@@ -8,7 +8,7 @@ import { NextRequest } from "next/server";
 
 async function executeAccept(req: ActivityAcceptReq): Promise<ApiResp<ActivityAcceptResp>> {
     try {
-
+        console.log('req', req);
         const client = await clientPromise;
         const db = client.db('pr-groups');
 
@@ -18,20 +18,28 @@ async function executeAccept(req: ActivityAcceptReq): Promise<ApiResp<ActivityAc
             date: Date.now(),
             accept: req.accept
         }
+        console.log('new participation', participation)
         const newGroup = await groupCol.findOneAndUpdate({
             _id: req.group,
             'members.phoneNr': req.phoneNr,
-            'members.token': req.token
+            'members.token': req.token,
+            // 'activities.creationDate': req.activityCreationDate
         }, {
             $push: {
-                ['activities.' + req.activityIdx + '.participations']: participation
+                'activities.$[elem].participations': participation
             }
         }, {
             returnDocument: 'after',
             projection: {
                 activities: true
-            }
+            },
+            arrayFilters: [
+                {
+                    'elem.creationDate': req.activityCreationDate
+                }
+            ]
         })
+        console.log('newGroup', newGroup)
         if (newGroup == null) {
             return {
                 type: 'groupNotFound'

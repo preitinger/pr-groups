@@ -7,7 +7,7 @@ import { GroupDoc } from "@/app/api/documents";
 import { NextRequest } from "next/server";
 
 async function executeGroups(req: GroupAdminGroupsReq): Promise<ApiResp<GroupAdminGroupsResp>> {
-    if (!checkToken(req.user, req.token)) {
+    if (!await checkToken(req.user, req.token)) {
         return {
             type: 'authFailed'
         }

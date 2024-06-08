@@ -7,7 +7,7 @@ import { NextRequest } from "next/server";
 import { apiPOST } from "@/app/_lib/user-management-server/apiRoutesForServer";
 
 async function execute(req: GroupAdminMemberUpdateReq): Promise<ApiResp<GroupAdminMemberUpdateResp>> {
-    if (!checkToken(req.user, req.token)) {
+    if (!await checkToken(req.user, req.token)) {
         return {
             type: 'authFailed'
         }
