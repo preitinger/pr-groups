@@ -1,0 +1,17 @@
+Impressum -> Impressum / Datenschutz
+Dort Button "ALLES ÜBER MICH LÖSCHEN"
+
+Impressum ist nicht skrollbar.
+
+Kontext-Menü-Icon kleiner
+
+About: ist ihm egal
+
+Icons: ich schicke Alex die notwendigen Größen
+
+Details-Link über ganze Bildschirmbreite und untere Hälfte der Überschrift
+
+Liste der Unentschlossenen anzeigen. Zus. Anfangszustand (noch nicht abgestimmt)
+
+Idee: Unentschlossene anklickbar, so dass man ihnen Nachricht schicken kann
+Dann Push-Nachricht für diesen
