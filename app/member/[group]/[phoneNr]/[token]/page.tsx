@@ -203,7 +203,6 @@ export default function Page({ params }: { params: { group: string; phoneNr: str
                     ctx.activities = resp.activities;
                     const now = Date.now();
                     const first = resp.activities.findIndex((a) => (a.date ?? 0) > now)
-                    console.log('first', first);
                     setFirstOpen(first);
                     setActivityIdx(first >= 0 ? first : 0);
                     break;
@@ -283,7 +282,6 @@ export default function Page({ params }: { params: { group: string; phoneNr: str
             accept: accept
         }
         apiFetchPost<ActivityAcceptReq, ActivityAcceptResp>('/api/group/activity/accept', req).then(resp => {
-            console.log('resp', resp);
             switch (resp.type) {
                 case 'authFailed':
                     setComment('Nicht authorisiert.');
@@ -330,7 +328,6 @@ export default function Page({ params }: { params: { group: string; phoneNr: str
         if (testRef.current == null) return;
         let element: HTMLElement | null = testRef.current;
         while (element != null) {
-            console.log('measure', element.offsetTop, element.offsetHeight)
             const parent: Element | null = element.offsetParent;
             if (parent instanceof HTMLElement) {
                 element = parent;
@@ -405,7 +402,6 @@ export default function Page({ params }: { params: { group: string; phoneNr: str
                             ctx.activities = resp.activities;
                             const now = Date.now();
                             const first = resp.activities.findIndex((a) => (a.date ?? 0) > now)
-                            console.log('first', first);
                             setActivityIdx(first >= 0 ? first : 0);
                             break;
                         case 'error':

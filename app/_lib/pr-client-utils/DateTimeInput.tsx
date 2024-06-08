@@ -16,7 +16,6 @@ export default function DateTimeInput({initialText, setDate}: DateTimeInputProps
     useEffect(() => {
         function extendedSetText(t: string) {
             const res = parseGermanDate(t);
-            console.log('parsed date', res);
             if (res == null) {
                 setComment('Datum/Uhrzeit ungültig!');
                 setDate(null);
@@ -31,11 +30,9 @@ export default function DateTimeInput({initialText, setDate}: DateTimeInputProps
             setUnclearMESZ(false);
             setUserMESZ(res.getTimezoneOffset() === -120);
             setComment('');
-            console.log('typeof res', typeof res)
             setDate(res);
         }
 
-        console.log('run effect of DateTimeInput', text, userMESZ)
         extendedSetText(text);
     }, [text, userMESZ, setDate])
 
