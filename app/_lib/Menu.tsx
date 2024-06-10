@@ -7,6 +7,7 @@ import { SessionContext } from "./SessionContext";
 import useUser from "./useUser";
 import { apiFetchPost } from "./user-management-client/apiRoutesClient";
 import { DeleteReq, DeleteResp } from "./user-management-server/user-management-common/delete";
+import { withStopPropagation } from "./utils";
 
 function ImgAndAttrRow({ url, children }: PropsWithChildren<{ url: string }>) {
     return (
@@ -18,11 +19,13 @@ function ImgAndAttrRow({ url, children }: PropsWithChildren<{ url: string }>) {
 }
 
 export interface MenuProps {
-    customLabels?: string[]
+    group: string | null;
+    onDeleteMemberClick: (() => void) | null;
+    customLabels?: string[];
     onCustomClick?: (idx: number) => () => void;
 }
 
-export default function Menu({ customLabels, onCustomClick, children }: PropsWithChildren<MenuProps>) {
+export default function Menu({ group, onDeleteMemberClick, customLabels, onCustomClick, children }: PropsWithChildren<MenuProps>) {
     const [impressum, setImpressum] = useState(false);
     const [about, setAbout] = useState(false);
     const [cookiePopup, setCookiePopup] = useState(false);
@@ -46,7 +49,6 @@ export default function Menu({ customLabels, onCustomClick, children }: PropsWit
     }
 
     function deleteProfile() {
-        alert('Would delete profile now');
         setSpinning(true);
         const ctx = new SessionContext();
         const user1 = ctx.user;
@@ -58,6 +60,7 @@ export default function Menu({ customLabels, onCustomClick, children }: PropsWit
             user: user1,
             token: token1
         }
+        setSpinning(true);
         apiFetchPost<DeleteReq, DeleteResp>('/api/user/delete', req).then(resp => {
             switch (resp.type) {
                 case 'authFailed':
@@ -67,7 +70,14 @@ export default function Menu({ customLabels, onCustomClick, children }: PropsWit
                     setSelfDeleted(true);
                     console.log('deleted your profile');
                     break;
+                case 'error':
+                    console.error('Unerwarteter Fehler: ', resp.error)
+                    break;
             }
+        }).catch(reason => {
+            console.error('Unerwarteter Fehler:', reason, JSON.stringify(reason));
+        }).finally(() => {
+            setSpinning(false);
         })
     }
 
@@ -76,24 +86,22 @@ export default function Menu({ customLabels, onCustomClick, children }: PropsWit
             {
                 selfDeleted ? <p>Your profile was deleted. Please leave this site.</p> :
                     <>
-                        <div className={styles.menuButton} onClick={onMenuClick} >
-                            <Image src='/main-menu.svg' width={32} height={32} alt='Menu' />
+                        <div className={styles.menuButton} onClick={withStopPropagation(() => { onMenuClick() })} >
+                            <Image src='/main-menu.svg' width={32 * 0.65} height={32 * 0.65} alt='Menu' />
                         </div>
                         <Popup visible={menu}>
                             <div className={styles.menu}>
                                 {customLabels != null &&
                                     customLabels.map((label, i) =>
-                                        <button key={i} onClick={() => { setMenu(false); if (onCustomClick != undefined) onCustomClick(i)(); }}>{label}</button>
+                                        <button key={i} onClick={withStopPropagation(() => { setMenu(false); if (onCustomClick != undefined) onCustomClick(i)(); })}>{label}</button>
                                     )
                                 }
-                                {user != null &&
-                                    <button onClick={() => { setMenu(false); deleteProfile() }}>PROFIL VON {user} LÖSCHEN</button>}
-                                <button onClick={() => { setImpressum(true); setMenu(false) }}>IMPRESSUM</button>
-                                <button onClick={() => { setAbout(true); setMenu(false) }}>ABOUT</button>
-                                <button onClick={() => { setImgAttr(true); setMenu(false) }}>BILDER VON FREEP!K</button>
+                                <button onClick={withStopPropagation(() => { setImpressum(true); setMenu(false) })}>IMPRESSUM / DATENSCHUTZ</button>
+                                <button onClick={withStopPropagation(() => { setAbout(true); setMenu(false) })}>ABOUT</button>
+                                <button onClick={withStopPropagation(() => { setImgAttr(true); setMenu(false) })}>BILDER VON FREEP!K</button>
                             </div>
                             <div className={styles.popupButtonRow}>
-                                <button onClick={() => setMenu(false)}>SCHLIEẞEN</button>
+                                <button onClick={withStopPropagation(() => setMenu(false))}>SCHLIEẞEN</button>
                             </div>
                         </Popup>
                         <Popup visible={cookiePopup} setVisible={setCookiePopup}>
@@ -102,10 +110,34 @@ export default function Menu({ customLabels, onCustomClick, children }: PropsWit
                         </Popup>
                         <Popup visible={impressum}>
                             <div className={styles.impressum}>
-                                <Impressum name='Peter Reitinger' street='Birkenweg' houseNr='8' postalCode='93482' city='Pemfling' phone='09971-6131' mail='peter.reitinger(at)gmail.com' />
+                                <Impressum group={group} name='Peter Reitinger' street='Birkenweg' houseNr='8' postalCode='93482' city='Pemfling' phone='09971-6131' mail='peter.reitinger(at)gmail.com' onDeleteClick={group == null ? deleteProfile : onDeleteMemberClick} />
                             </div>
                             <div className={styles.popupButtonRow}>
-                                <button onClick={() => setImpressum(false)}>SCHLIEẞEN</button>
+                                <button onClick={withStopPropagation(() => setImpressum(false))}>SCHLIEẞEN</button>
+                            </div>
+                        </Popup>
+                        <Popup visible={about}>
+                            <h1>About pr-groups</h1>
+                            <table className={styles.aboutTable}>
+                                <tbody>
+                                    <tr>
+                                        <td colSpan={2}>Layout & Design:</td>
+                                    </tr>
+                                    <tr>
+                                        <td>ALEXANDER POHL</td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td colSpan={2}>Programmierung:</td>
+                                    </tr>
+                                    <tr>
+                                        <td>PETER REITINGER</td>
+                                        <td><Image className={styles.picture} src='/Peter-Reitinger.jpg' width={200} height={199} alt='Peter Reitinger' /></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div className={styles.popupButtonRow}>
+                                <button onClick={withStopPropagation(() => setAbout(false))}>SCHLIEẞEN</button>
                             </div>
                         </Popup>
                         <Popup visible={imgAttr} setVisible={setImgAttr}>

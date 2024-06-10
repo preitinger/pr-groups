@@ -13,15 +13,17 @@ export function Popup({ visible, setVisible, children }: PropsWithChildren<Popup
             {
                 visible &&
                 <ModalDialog>
-                    <div className={styles.popupContent}>
-                        {children}
-                        {
-                            setVisible != null &&
-                            <div className={styles.popupButtonRow}>
-                                <button onClick={() => setVisible(false)}>SCHLIEẞEN</button>
-                            </div>
+                    <div className={styles.popupOuter}>
+                        <div className={styles.popupContent}>
+                            {children}
+                            {
+                                setVisible != null &&
+                                <div className={styles.popupButtonRow}>
+                                    <button onClick={(e) => { setVisible(false); e.stopPropagation(); }}>SCHLIEẞEN</button>
+                                </div>
 
-                        }
+                            }
+                        </div>
                     </div>
                 </ModalDialog>
             }

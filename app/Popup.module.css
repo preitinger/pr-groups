@@ -1,7 +1,12 @@
-
-.popupContent {
-    z-index: 100;
+.popupOuter {
     padding: 2rem;
+}
+.popupContent {
+    /* z-index: 100; */
+    /* padding: 2rem; */
+    overflow: scroll;
+    max-width: 95vw;
+    max-height: 85vh;
 }
 
 .popupContent button {

@@ -1,17 +1,27 @@
 Impressum -> Impressum / Datenschutz
+    DONE
 Dort Button "ALLES ÜBER MICH LÖSCHEN"
+    DONE
 
-Impressum ist nicht skrollbar.
+Impressum ist nicht scrollbar.
+    DONE
 
 Kontext-Menü-Icon kleiner
-
-About: ist ihm egal
+    DONE
 
 Icons: ich schicke Alex die notwendigen Größen
+    DONE
 
 Details-Link über ganze Bildschirmbreite und untere Hälfte der Überschrift
+    DONE
 
-Liste der Unentschlossenen anzeigen. Zus. Anfangszustand (noch nicht abgestimmt)
+Liste der Unentschlossenen anzeigen. Zus. Anfangszustand wird nicht implementiert.
+    DONE
+
+Bei überschrittener Kapazität: nicht negative Anzahl von freien Plätzen, sondern überbucht
+    DONE
+    
+About: ist ihm egal
 
 Idee: Unentschlossene anklickbar, so dass man ihnen Nachricht schicken kann
 Dann Push-Nachricht für diesen

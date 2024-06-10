@@ -163,3 +163,11 @@ export function millisFromDateOrNull(date: Date | null) {
     if (date == null) return null;
     return date.getTime();
 }
+
+
+export function withStopPropagation(f: () => void) {
+    return (e: any) => {
+        f();
+        e.stopPropagation();
+    }
+}
