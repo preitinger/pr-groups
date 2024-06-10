@@ -168,6 +168,7 @@ export default function Page({ params }: { params: { group: string; phoneNr: str
     const [activityIdx, setActivityIdx] = useState(0)
     const [spinning, setSpinning] = useState(true);
     const [detailsPopup, setDetailsPopup] = useState(false);
+    const [docTitle, setDocTitle] = useState('pr-groups');
     const [afterDeleteSelf, setAfterDeleteSelf] = useState(false);
 
 
@@ -206,7 +207,6 @@ export default function Page({ params }: { params: { group: string; phoneNr: str
                         margin: resp.margin,
                         line2: resp.line2,
                     })
-                    document.title = (resp.docTitle ?? resp.line1.text);
                     setPrename(resp.prename);
                     setSurname(resp.surname);
                     resp.activities.sort((a, b) => {
@@ -224,6 +224,7 @@ export default function Page({ params }: { params: { group: string; phoneNr: str
                     const first = resp.activities.findIndex((a) => (a.date ?? 0) > now)
                     setFirstOpen(first);
                     setActivityIdx(first >= 0 ? first : 0);
+                    setDocTitle(resp.docTitle ?? resp.line1.text);
                     break;
                 case 'error':
                     if (FAKE) {
@@ -522,108 +523,111 @@ export default function Page({ params }: { params: { group: string; phoneNr: str
     let tmpSurname: string;
 
     return (
-        <div className={styles.page} onClick={withStopPropagation(onDetailsClick)}>
+        <>
+            <title>{docTitle}</title>
+            <div className={styles.page} onClick={withStopPropagation(onDetailsClick)}>
 
-            {!afterDeleteSelf && <>
-                {additionalHeaderProps != null &&
-                    <Header user={null} {...additionalHeaderProps} />
-                }
-                {
-                    prename != '' &&
-                    <Welcome prename={prename} />
-                }
+                {!afterDeleteSelf && <>
+                    {additionalHeaderProps != null &&
+                        <Header user={null} {...additionalHeaderProps} />
+                    }
+                    {
+                        prename != '' &&
+                        <Welcome prename={prename} />
+                    }
 
-                {/* <div className={styles.adminLinks}>
+                    {/* <div className={styles.adminLinks}>
                 <Link className={styles.adminLink} href='/admin'>Admin</Link>
                 <Link className={styles.adminLink} href='/group-admin'>Gruppen-Admin</Link>
             </div> */}
-                {/* <h1 className={styles.headerWelcome}>Hallo {name}!</h1> */}
-                {/* <h2 className={styles.headerGroup}>{group}</h2> */}
-                <Menu group={group} onDeleteMemberClick={onDeleteClick} customLabels={['DATEN AKTUALISIEREN']} onCustomClick={onMenuClick} />
-            </>
-            }
-            <div className={styles.main}>
-                {comment != '' && <p className={styles.comment}>{comment}</p>}
-                {
-                    !afterDeleteSelf && selActivity != null &&
-                    <>
-                        <div className={styles.labelNext}>{selActivity.date == null ? selActivity.name : activityIdx === firstOpen ? 'NÄCHSTE VERANSTALTUNG' : activityIdx < firstOpen || firstOpen === -1 ? 'ALTE VERANSTALTUNG' : 'WEITERE VERANSTALTUNG'}:</div>
-                        <ActivityComp activity={selActivity} user={phoneNr} onAcceptClick={(accept) => onAcceptClick(activityIdx, accept)} />
-                        {/* <div ref={testRef} className={styles.testRow}><div className={styles.barElem}><DateTimeComp date={new Date()} small={true} /> */}
+                    {/* <h1 className={styles.headerWelcome}>Hallo {name}!</h1> */}
+                    {/* <h2 className={styles.headerGroup}>{group}</h2> */}
+                    <Menu group={group} onDeleteMemberClick={onDeleteClick} customLabels={['DATEN AKTUALISIEREN']} onCustomClick={onMenuClick} />
+                </>
+                }
+                <div className={styles.main}>
+                    {comment != '' && <p className={styles.comment}>{comment}</p>}
+                    {
+                        !afterDeleteSelf && selActivity != null &&
+                        <>
+                            <div className={styles.labelNext}>{selActivity.date == null ? selActivity.name : activityIdx === firstOpen ? 'NÄCHSTE VERANSTALTUNG' : activityIdx < firstOpen || firstOpen === -1 ? 'ALTE VERANSTALTUNG' : 'WEITERE VERANSTALTUNG'}:</div>
+                            <ActivityComp activity={selActivity} user={phoneNr} onAcceptClick={(accept) => onAcceptClick(activityIdx, accept)} />
+                            {/* <div ref={testRef} className={styles.testRow}><div className={styles.barElem}><DateTimeComp date={new Date()} small={true} /> */}
 
-                    </>
+                        </>
+                    }
+                </div>
+                {!afterDeleteSelf && <>
+                    <ScrollableContainer className={styles.activityBar} snapOffset={80 - 18} snapWidth={160} snap={activityIdx} setSnap={setActivityIdx}>
+                        {
+                            activities.map((a, i) => <div key={i}><div onClick={withStopPropagation(onBarElemClick(i))} className={styles.barElem + (i === activityIdx ? ' ' + styles.barElemActive : '')}>
+                                {a.date != null ? <DateTimeComp date={new Date(a.date)} small={true} /> : <NameComp name={a.name} small={true} />}
+                            </div></div>)
+                        }
+                    </ScrollableContainer>
+
+                    <Popup visible={detailsPopup && selActivity != null}>
+                        <h1 className={styles.headerGroup}>{group}</h1>
+                        <h2 className={styles.headerActivity}>{selActivity?.name} {selActivity?.date != null && formatDateTime(selActivity?.date, true)}</h2>
+                        <div className={styles.detailLists}>
+                            <h3 className={styles.headerAccepts}>{accept.length} Zusagen</h3>
+                            <div>
+                                {
+                                    accept.length === 0 ? <span className={styles.none}>keine</span> :
+                                        <table>
+                                            <tbody>
+
+                                                {
+                                                    accept.map((participation, i) => (
+                                                        <tr key={i}>
+                                                            <td className={styles.detailName}>{phoneNrToName(participation.phoneNr)}</td>
+                                                            <td className={styles.detailDate}>{formatDateTime(new Date(participation.date))}</td>
+                                                        </tr>))
+                                                }
+
+                                            </tbody>
+                                        </table>
+                                }
+                            </div>
+                            <h3 className={styles.headerRejects}>{reject.length} Absagen</h3>
+                            <div>
+                                {
+                                    reject.length === 0 ? <span className={styles.none}>keine</span> :
+                                        <table>
+                                            <tbody>
+
+                                                {
+                                                    reject.map((participation, i) => (
+                                                        <tr key={i}>
+                                                            <td className={styles.detailName}>{phoneNrToName(participation.phoneNr)}</td>
+                                                            <td className={styles.detailDate}>{formatDateTime(new Date(participation.date))}</td>
+                                                        </tr>))
+                                                }
+
+                                            </tbody>
+                                        </table>
+                                }
+
+                            </div>
+                            <h3 className={styles.headerUndecided}>{undecided.length} haben noch nicht abgestimmt oder können es noch nicht sagen:</h3>
+                            <div>
+                                {
+                                    undecided.map((name, i) => <div key={i}>
+                                        {name}
+                                    </div>)
+                                }
+                            </div>
+                        </div>
+                        <div className={styles.popupButtonRow}>
+                            <button onClick={withStopPropagation(() => setDetailsPopup(false))}>SCHLIEẞEN</button>
+                        </div>
+                    </Popup>
+                </>
+                }            {
+                    spinning &&
+                    <div className={styles.spinner}></div>
                 }
             </div>
-            {!afterDeleteSelf && <>
-                <ScrollableContainer className={styles.activityBar} snapOffset={80 - 18} snapWidth={160} snap={activityIdx} setSnap={setActivityIdx}>
-                    {
-                        activities.map((a, i) => <div key={i}><div onClick={withStopPropagation(onBarElemClick(i))} className={styles.barElem + (i === activityIdx ? ' ' + styles.barElemActive : '')}>
-                            {a.date != null ? <DateTimeComp date={new Date(a.date)} small={true} /> : <NameComp name={a.name} small={true} />}
-                        </div></div>)
-                    }
-                </ScrollableContainer>
-
-                <Popup visible={detailsPopup && selActivity != null}>
-                    <h1 className={styles.headerGroup}>{group}</h1>
-                    <h2 className={styles.headerActivity}>{selActivity?.name} {selActivity?.date != null && formatDateTime(selActivity?.date, true)}</h2>
-                    <div className={styles.detailLists}>
-                        <h3 className={styles.headerAccepts}>{accept.length} Zusagen</h3>
-                        <div>
-                            {
-                                accept.length === 0 ? <span className={styles.none}>keine</span> :
-                                    <table>
-                                        <tbody>
-
-                                            {
-                                                accept.map((participation, i) => (
-                                                    <tr key={i}>
-                                                        <td className={styles.detailName}>{phoneNrToName(participation.phoneNr)}</td>
-                                                        <td className={styles.detailDate}>{formatDateTime(new Date(participation.date))}</td>
-                                                    </tr>))
-                                            }
-
-                                        </tbody>
-                                    </table>
-                            }
-                        </div>
-                        <h3 className={styles.headerRejects}>{reject.length} Absagen</h3>
-                        <div>
-                            {
-                                reject.length === 0 ? <span className={styles.none}>keine</span> :
-                                    <table>
-                                        <tbody>
-
-                                            {
-                                                reject.map((participation, i) => (
-                                                    <tr key={i}>
-                                                        <td className={styles.detailName}>{phoneNrToName(participation.phoneNr)}</td>
-                                                        <td className={styles.detailDate}>{formatDateTime(new Date(participation.date))}</td>
-                                                    </tr>))
-                                            }
-
-                                        </tbody>
-                                    </table>
-                            }
-
-                        </div>
-                        <h3 className={styles.headerUndecided}>{undecided.length} haben noch nicht abgestimmt oder können es noch nicht sagen:</h3>
-                        <div>
-                            {
-                                undecided.map((name, i) => <div key={i}>
-                                    {name}
-                                </div>)
-                            }
-                        </div>
-                    </div>
-                    <div className={styles.popupButtonRow}>
-                        <button onClick={withStopPropagation(() => setDetailsPopup(false))}>SCHLIEẞEN</button>
-                    </div>
-                </Popup>
-            </>
-            }            {
-                spinning &&
-                <div className={styles.spinner}></div>
-            }
-        </div>
+        </>
     )
 }
