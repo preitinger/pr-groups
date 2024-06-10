@@ -380,7 +380,7 @@ export default function Page({ params }: { params: { id: string } }) {
     }
 
     return (
-        <Menu>
+        <Menu onDeleteMemberClick={null} group={null}>
             <Header
                 user={user}
                 line1={{ text: 'pr-groups / Gruppenadmin', fontSize: '1.2em', bold: false }}

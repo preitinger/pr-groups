@@ -19,8 +19,8 @@ function ImgAndAttrRow({ url, children }: PropsWithChildren<{ url: string }>) {
 }
 
 export interface MenuProps {
-    group: string | null;
-    onDeleteMemberClick: (() => void) | null;
+    group?: string | null;
+    onDeleteMemberClick?: (() => void) | null;
     customLabels?: string[];
     onCustomClick?: (idx: number) => () => void;
 }
@@ -110,7 +110,7 @@ export default function Menu({ group, onDeleteMemberClick, customLabels, onCusto
                         </Popup>
                         <Popup visible={impressum}>
                             <div className={styles.impressum}>
-                                <Impressum group={group} name='Peter Reitinger' street='Birkenweg' houseNr='8' postalCode='93482' city='Pemfling' phone='09971-6131' mail='peter.reitinger(at)gmail.com' onDeleteClick={group == null ? deleteProfile : onDeleteMemberClick} />
+                                <Impressum group={group ?? null} name='Peter Reitinger' street='Birkenweg' houseNr='8' postalCode='93482' city='Pemfling' phone='09971-6131' mail='peter.reitinger(at)gmail.com' onDeleteClick={group == null ? deleteProfile : (onDeleteMemberClick ?? null)} />
                             </div>
                             <div className={styles.popupButtonRow}>
                                 <button onClick={withStopPropagation(() => setImpressum(false))}>SCHLIEẞEN</button>
