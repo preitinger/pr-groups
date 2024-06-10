@@ -45,6 +45,7 @@ export interface GroupCreateReq {
     line1: HeaderLine;
     margin: string;
     line2: HeaderLine;
+    docTitle: string;
 }
 
 export type GroupCreateResp = {
@@ -190,6 +191,7 @@ export type MemberDataResp = {
     line2: HeaderLine;
     activities: Activity[];
     members: Member[];
+    docTitle: string | null;
 }
 
 // TODO adapt related route

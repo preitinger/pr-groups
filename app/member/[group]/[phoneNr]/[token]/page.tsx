@@ -206,6 +206,7 @@ export default function Page({ params }: { params: { group: string; phoneNr: str
                         margin: resp.margin,
                         line2: resp.line2,
                     })
+                    document.title = (resp.docTitle ?? resp.line1.text);
                     setPrename(resp.prename);
                     setSurname(resp.surname);
                     resp.activities.sort((a, b) => {

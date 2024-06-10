@@ -26,6 +26,7 @@ async function execute(req: MemberDataReq): Promise<ApiResp<MemberDataResp>> {
             margin: 1,
             line2: 1,
             activities: 1,
+            docTitle: 1
         }
     })
 
@@ -55,6 +56,7 @@ async function execute(req: MemberDataReq): Promise<ApiResp<MemberDataResp>> {
         line2: group.line2,
         activities: filterNonNull(group.activities),
         members: group.members,
+        docTitle: group.docTitle
     }
 }
 

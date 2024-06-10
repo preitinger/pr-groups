@@ -24,6 +24,7 @@ export default function Page() {
     const [line2Text, setline2Text] = useState('');
     const [line2FontSize, setline2FontSize] = useState('');
     const [line2Bold, setline2Bold] = useState(false);
+    const [docTitle, setDocTitle] = useState('');
     const [comment, setComment] = useState('');
     const router = useRouter();
     const user = useUser();
@@ -68,7 +69,8 @@ export default function Page() {
                 text: line2Text,
                 fontSize: line2FontSize,
                 bold: line2Bold
-            }
+            },
+            docTitle: docTitle
         }
         const resp = await apiFetchPost<GroupCreateReq, GroupCreateResp>('/api/group/create', req)
         switch (resp.type) {
@@ -103,6 +105,7 @@ export default function Page() {
                 <Input id='line2Text' label='line2.text' text={line2Text} setText={setline2Text} />
                 <Input id='line2FontSize' label='line2.fontSize' text={line2FontSize} setText={setline2FontSize} />
                 <div><input type='checkbox' checked={line2Bold} onChange={() => setline2Bold(!line2Bold)} /> Bold</div>
+                <Input id='docTitle' label='Titel für Browser-Tab und App-Shortcut' text={docTitle} setText={setDocTitle} />
                 <button className={styles.createGroup} onClick={onCreateGroupClick}>Gruppe erstellen</button>
                 <p>{comment}</p>
             </div>
