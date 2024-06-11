@@ -147,7 +147,6 @@ export type GroupActivityAddResp = {
     type: 'wasActivity'
 }
 
-// TODO adapt related route
 export interface GroupActivityDeleteReq {
     /**
      * user sending the request
@@ -194,7 +193,6 @@ export type MemberDataResp = {
     docTitle: string | null;
 }
 
-// TODO adapt related route
 export interface ActivityAcceptReq {
     /**
      * user sending the request
@@ -353,7 +351,6 @@ export type GroupAdminMemberAddResp = {
     type: 'phoneNrContained'
 }
 
-// TODO update related route and call
 export interface GroupAdminActivityUpdateReq {
     /**
     * user sending the request
