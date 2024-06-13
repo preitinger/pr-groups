@@ -26,6 +26,12 @@
     display: flex;
     flex-flow: column;
 }
+.groups h3 {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    font-size: large;
+    font-weight: bold;
+}
 .groups a {
     color: inherit;
     min-height: 40px;

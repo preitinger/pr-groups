@@ -8,7 +8,7 @@
     color: #ebebeb;
     right: 2rem;
     bottom: 1rem;
-    overflow: scroll;
+    overflow: auto;
 }
 
 .nameLabel,

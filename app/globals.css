@@ -9,6 +9,20 @@
     --beta: 3deg;
     --barTop: 593px;
     overflow: hidden;
+
+}
+
+* {
+    scrollbar-color: #551a0a hsl(13, 99%, 23%);
+    scrollbar-width: thin;
+}
+
+body {
+    scrollbar-color: yellow;
+    scrollbar-arrow-color: gold;
+    scrollbar-3dlight-color: gold;
+    scrollbar-base-color: gold;
+
 }
 
 .d1 {
@@ -101,3 +115,9 @@ button {
     background-color: #333;
     color: inherit;
 }
+
+button:focus {
+    outline: 1px dashed gray;
+    outline-offset: 2px;
+}
+

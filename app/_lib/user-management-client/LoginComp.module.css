@@ -1,12 +1,3 @@
-.form {
-    display: block;
-    position: absolute;
-    top: calc(var(--h1) + 2rem);
-    left: calc(var(--w1) + 4rem);
-    color: #ebebeb;
-    right: 2rem;
-}
-
 .passwdLabel,
 .passwd,
 .loginButton {

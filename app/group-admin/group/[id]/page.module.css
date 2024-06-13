@@ -7,7 +7,7 @@
     left: calc(var(--w1) + 4rem);
     color: #ebebeb;
     right: 2rem;
-    overflow: scroll;
+    overflow: auto;
 }
 .main a {
     color: inherit;

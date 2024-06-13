@@ -23,9 +23,10 @@ export interface MenuProps {
     onDeleteMemberClick?: (() => void) | null;
     customLabels?: string[];
     onCustomClick?: (idx: number) => () => void;
+    customSpinning?: boolean;
 }
 
-export default function Menu({ group, onDeleteMemberClick, customLabels, onCustomClick, children }: PropsWithChildren<MenuProps>) {
+export default function Menu({ group, onDeleteMemberClick, customLabels, customSpinning, onCustomClick, children }: PropsWithChildren<MenuProps>) {
     const [impressum, setImpressum] = useState(false);
     const [about, setAbout] = useState(false);
     const [cookiePopup, setCookiePopup] = useState(false);
@@ -86,10 +87,12 @@ export default function Menu({ group, onDeleteMemberClick, customLabels, onCusto
             {
                 selfDeleted ? <p>Your profile was deleted. Please leave this site.</p> :
                     <>
+                        {children}
+
                         <div className={styles.menuButton} onClick={withStopPropagation(() => { onMenuClick() })} >
-                            <Image src='/main-menu.svg' width={32 * 0.65} height={32 * 0.65} alt='Menu' />
+                            <Image className={styles.menuImg} src='/main-menu.svg' width={32 * 0.65} height={32 * 0.65} alt='Menu' />
                         </div>
-                        <Popup visible={menu}>
+                        <Popup visible={menu} setVisible={setMenu}>
                             <div className={styles.menu}>
                                 {customLabels != null &&
                                     customLabels.map((label, i) =>
@@ -100,23 +103,23 @@ export default function Menu({ group, onDeleteMemberClick, customLabels, onCusto
                                 <button onClick={withStopPropagation(() => { setAbout(true); setMenu(false) })}>ABOUT</button>
                                 <button onClick={withStopPropagation(() => { setImgAttr(true); setMenu(false) })}>BILDER VON FREEP!K</button>
                             </div>
-                            <div className={styles.popupButtonRow}>
+                            {/* <div className={styles.popupButtonRow}>
                                 <button onClick={withStopPropagation(() => setMenu(false))}>SCHLIEẞEN</button>
-                            </div>
+                            </div> */}
                         </Popup>
                         <Popup visible={cookiePopup} setVisible={setCookiePopup}>
                             Dieser Service benutzt Cookies um temporäre Seitenzustände zu speichern und eine Datenbank um Gruppen, ihre Mitglieder (nur Handynr, Vorname und optional Nachname oder abgekürzter Nachname), Gruppenaktivitäten und die Beteiligungen der Mitglieder zu speichern.
                             Sie dürfen diese Seite nur weiter benutzen, wenn Sie dies akzeptieren. Andernfalls verlassen Sie bitte diese Seite.
                         </Popup>
-                        <Popup visible={impressum}>
+                        <Popup visible={impressum} setVisible={setImpressum}>
                             <div className={styles.impressum}>
                                 <Impressum group={group ?? null} name='Peter Reitinger' street='Birkenweg' houseNr='8' postalCode='93482' city='Pemfling' phone='09971-6131' mail='peter.reitinger(at)gmail.com' onDeleteClick={group == null ? deleteProfile : (onDeleteMemberClick ?? null)} />
                             </div>
-                            <div className={styles.popupButtonRow}>
+                            {/* <div className={styles.popupButtonRow}>
                                 <button onClick={withStopPropagation(() => setImpressum(false))}>SCHLIEẞEN</button>
-                            </div>
+                            </div> */}
                         </Popup>
-                        <Popup visible={about}>
+                        <Popup visible={about} setVisible={setAbout}>
                             <h1>About pr-groups</h1>
                             <table className={styles.aboutTable}>
                                 <tbody>
@@ -136,9 +139,9 @@ export default function Menu({ group, onDeleteMemberClick, customLabels, onCusto
                                     </tr>
                                 </tbody>
                             </table>
-                            <div className={styles.popupButtonRow}>
+                            {/* <div className={styles.popupButtonRow}>
                                 <button onClick={withStopPropagation(() => setAbout(false))}>SCHLIEẞEN</button>
-                            </div>
+                            </div> */}
                         </Popup>
                         <Popup visible={imgAttr} setVisible={setImgAttr}>
                             <h3>Vielen Dank für folgende kostenlose Bilder bereit gestellt unter freepik.com:</h3>
@@ -168,10 +171,9 @@ export default function Menu({ group, onDeleteMemberClick, customLabels, onCusto
                             </div>
                         </Popup >
                         {
-                            spinning &&
+                            (spinning || customSpinning) &&
                             <div className={styles.spinner}></div>
                         }
-                        {children}
                     </>
             }
         </>

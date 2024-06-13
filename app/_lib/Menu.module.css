@@ -1,8 +1,16 @@
 .menuButton {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     position: absolute;
-    right: 1rem;
-    top: 1rem;
+    right: calc(1rem - 8px); /* 8 = 40 - 32; 32px ist breite des bildes, 40px ist breite des buttons */
+    top: calc(1rem - 8px);
+    width: 40px;
+    height: 40px;
     z-index: 1;
+}
+.menuImg {
+    /* display: block; */
 }
 
 .menu {
@@ -19,6 +27,7 @@
     display: flex;
     justify-content: center;
     width: 100%;
+    margin-bottom: 1rem;
 }
 
 .imgTable td {
@@ -42,6 +51,7 @@
     right: 0;
     top: 0;
     bottom: 0;
+    z-index: 1100;
 }
 .picture {
     background-color: black;

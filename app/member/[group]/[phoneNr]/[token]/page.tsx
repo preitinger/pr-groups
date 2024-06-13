@@ -566,7 +566,7 @@ export default function Page({ params }: { params: { group: string; phoneNr: str
                         }
                     </ScrollableContainer>
 
-                    <Popup visible={detailsPopup && selActivity != null}>
+                    <Popup visible={detailsPopup && selActivity != null} setVisible={setDetailsPopup}>
                         <h1 className={styles.headerGroup}>{group}</h1>
                         <h2 className={styles.headerActivity}>{selActivity?.name} {selActivity?.date != null && formatDateTime(selActivity?.date, true)}</h2>
                         <div className={styles.detailLists}>
@@ -617,9 +617,6 @@ export default function Page({ params }: { params: { group: string; phoneNr: str
                                     </div>)
                                 }
                             </div>
-                        </div>
-                        <div className={styles.popupButtonRow}>
-                            <button onClick={withStopPropagation(() => setDetailsPopup(false))}>SCHLIEẞEN</button>
                         </div>
                     </Popup>
                 </>
