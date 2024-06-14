@@ -2,12 +2,14 @@
     position: relative;
     padding: 2rem;
 }
+
 .popupContent {
+    box-sizing: border-box;
     /* z-index: 100; */
     /* padding: 2rem; */
     overflow: auto;
-    max-width: 95vw;
-    max-height: 85vh;
+    max-width: calc(95vw - 4rem);
+    max-height: calc(95vh - 4rem);
     padding: 4px;
     scrollbar-color: black #551a0a;
     scrollbar-width: thin;
@@ -26,6 +28,7 @@
     width: 100%;
     margin-bottom: 1rem;
 }
+
 .close {
     position: absolute;
     right: 2px;
