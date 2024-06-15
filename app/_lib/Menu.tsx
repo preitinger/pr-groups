@@ -21,7 +21,7 @@ function ImgAndAttrRow({ url, children }: PropsWithChildren<{ url: string }>) {
 export interface MenuProps {
     group?: string | null;
     onDeleteMemberClick?: (() => void) | null;
-    customLabels?: string[];
+    customLabels?: (string | { label: string; src: string; alt: string; width: number; height: number })[];
     onCustomClick?: (idx: number) => () => void;
     customSpinning?: boolean;
 }
@@ -96,7 +96,13 @@ export default function Menu({ group, onDeleteMemberClick, customLabels, customS
                             <div className={styles.menu}>
                                 {customLabels != null &&
                                     customLabels.map((label, i) =>
-                                        <button key={i} onClick={withStopPropagation(() => { setMenu(false); if (onCustomClick != undefined) onCustomClick(i)(); })}>{label}</button>
+                                        <button key={i} onClick={withStopPropagation(() => {
+                                            setMenu(false);
+                                            if (onCustomClick != undefined) onCustomClick(i)();
+                                        })}>
+                                            {typeof label === 'string' ? label :
+                                                <div className={styles.labelAndImg}>{label.label} <Image src={label.src} alt={label.alt} width={label.width} height={label.height} /></div>}
+                                        </button>
                                     )
                                 }
                                 <button onClick={withStopPropagation(() => { setImpressum(true); setMenu(false) })}>IMPRESSUM / DATENSCHUTZ</button>
@@ -110,6 +116,9 @@ export default function Menu({ group, onDeleteMemberClick, customLabels, customS
                         <Popup visible={cookiePopup} setVisible={setCookiePopup}>
                             Dieser Service benutzt Cookies um temporäre Seitenzustände zu speichern und eine Datenbank um Gruppen, ihre Mitglieder (nur Handynr, Vorname und optional Nachname oder abgekürzter Nachname), Gruppenaktivitäten und die Beteiligungen der Mitglieder zu speichern.
                             Sie dürfen diese Seite nur weiter benutzen, wenn Sie dies akzeptieren. Andernfalls verlassen Sie bitte diese Seite.
+                            <div className={styles.popupButtonRow}>
+                                <button onClick={withStopPropagation(() => { setCookiePopup(false); })}>OK</button>
+                            </div>
                         </Popup>
                         <Popup visible={impressum} setVisible={setImpressum}>
                             <div className={styles.impressum}>

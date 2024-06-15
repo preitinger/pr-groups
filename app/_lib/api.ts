@@ -284,9 +284,14 @@ export type GroupAdminGroupResp = {
     type: 'authFailed'
 } | {
     type: 'success'
+    logo: Logo | null;
+    line1: HeaderLine;
+    margin: string;
+    line2: HeaderLine;
+    docTitle: string | null
+    admins: string[]
     members: Member[]
     activities: Activity[]
-    admins: string[]
 }
 
 export interface GroupAdminMemberUpdateReq {

@@ -26,8 +26,9 @@ body {
 }
 
 .d1 {
+    --bg-color:  #551a0a;
     position: relative;
-    background-color: #551a0a;
+    background-color: var(--bg-color);
     color: #ebebeb;
     width: 100vw;
     height: 100vh;
@@ -121,3 +122,40 @@ button:focus {
     outline-offset: 2px;
 }
 
+.scrollable {
+    /* --bg-color: #551a0a; */
+    overflow: auto;
+
+    /* kopiert von https://css-tricks.com/books/greatest-css-tricks/scroll-shadows/ */
+    background:
+    /* Shadow Cover TOP */
+    linear-gradient(
+      var(--bg-color) 30%,
+
+      #551a0a00
+    ) center top,
+    
+    /* Shadow Cover BOTTOM */
+    linear-gradient(
+      #551a0a00, 
+      var(--bg-color) 70%
+    ) center bottom,
+    
+    /* Shadow TOP */
+    radial-gradient(
+      farthest-side at 50% 0,
+      rgba(255, 255, 255, 0.3),
+      rgba(255, 255, 255, 0)
+    ) center top,
+    
+    /* Shadow BOTTOM */
+    radial-gradient(
+      farthest-side at 50% 100%,
+      rgba(255, 255, 255, 0.3),
+      rgba(255, 255, 255, 0)
+    ) center bottom;
+  
+  background-repeat: no-repeat;
+  background-size: 100% 80px, 100% 80px, 100% 28px, 100% 28px;
+  background-attachment: local, local, scroll, scroll;
+}

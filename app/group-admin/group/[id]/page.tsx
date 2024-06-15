@@ -383,9 +383,9 @@ export default function Page({ params }: { params: { id: string } }) {
         <Menu onDeleteMemberClick={null} group={null}>
             <Header
                 user={user}
-                line1={{ text: 'pr-groups / Gruppenadmin', fontSize: '1.2em', bold: false }}
-                margin='1em'
-                line2={{ text: groupId ?? '', fontSize: '1.5em', bold: true }}
+                line1={{ text: 'pr-groups / Gruppenadmin', fontSize: '1.2rem', bold: false }}
+                margin='1rem'
+                line2={{ text: groupId ?? '', fontSize: '1.5rem', bold: true }}
             />
             <div className={styles.main}>
                 <div className={styles.buttonRow}>

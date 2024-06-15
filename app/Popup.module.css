@@ -13,6 +13,7 @@
     padding: 4px;
     scrollbar-color: black #551a0a;
     scrollbar-width: thin;
+    --bg-color: black;
 }
 
 .popupContent button {

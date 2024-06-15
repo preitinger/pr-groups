@@ -1,0 +1,59 @@
+.main {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    position: absolute;
+    top: calc(var(--h1) + 2rem);
+    left: calc(var(--w1) + 4rem);
+    color: #ebebeb;
+    right: 2rem;
+    bottom: 1rem;
+}
+
+.main a {
+    color: inherit;
+}
+.label {
+    font-size: 0.8rem;
+    /* color: hsl(13, 90%, 32%); */
+    color: hsl(0, 0%, 72%);
+    padding-left: 0rem;
+    padding-bottom: 1rem;
+}
+.content {
+    font-size: 1.3rem;
+    color: #ebebeb;
+    padding-bottom: 2rem;
+}
+.input {
+    min-height: 40px;
+    margin-bottom: 2rem;
+}
+.buttonRow {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+.buttonRow button {
+    margin-right: 1rem;
+}
+.okImg,
+.cancelImg {
+    min-width: 40px;
+    min-height: 40px;
+
+}
+.okImg {
+    background: url('/check-mark_5299035.png') no-repeat center;
+}
+.cancelImg {
+    background: url('/cross_8995303.png') no-repeat center;
+}
+.error {
+    min-height: 40px;
+    padding: 0;
+    margin: 0;
+    color: rgb(255, 56, 56);
+}

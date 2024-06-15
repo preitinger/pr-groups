@@ -20,7 +20,7 @@ export function Popup({ visible, setVisible, children }: PropsWithChildren<Popup
                             <button className={styles.close} onClick={withStopPropagation(() => setVisible(false))} tabIndex={0}>
                             </button>
                         }
-                        <div className={styles.popupContent}>
+                        <div className={styles.popupContent + ' scrollable'}>
                             {children}
                             {/* {
                                 setVisible != null &&

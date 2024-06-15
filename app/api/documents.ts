@@ -9,14 +9,14 @@ export interface AdminsDoc {
 
 export interface GroupDoc {
     _id: string;
-    admins: string[];
-    members: Member[];
     logo: Logo | null;
     line1: HeaderLine;
     margin: string;
     line2: HeaderLine;
-    activities: (Activity|null)[];
     docTitle: string | null;
+    admins: string[];
+    members: Member[];
+    activities: (Activity|null)[];
 }
 
 export interface ClosedActivityDoc {

@@ -107,7 +107,7 @@ export default function Page() {
                                 <h3 className={styles.groupHeader}>Du bist Administrator folgender Gruppen:</h3>
                                     {
                                         groups.map(group =>
-                                            <Link key={group} href={`/group-admin/group/${group}`} >{group}</Link>)
+                                            <Link key={group} href={`/group-admin/group-m/${group}`} >{group}</Link>)
                                     }
                                 </>
                         }

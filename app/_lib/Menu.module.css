@@ -60,3 +60,9 @@
 .aboutTable td {
     padding: 1rem;
 }
+.labelAndImg {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+}
