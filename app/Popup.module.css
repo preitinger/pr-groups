@@ -9,7 +9,7 @@
     /* padding: 2rem; */
     overflow: auto;
     max-width: calc(95vw - 4rem);
-    max-height: calc(95vh - 4rem);
+    max-height: calc(95vh - 4rem - 3rem); /* additional 3rem for address line in browser */
     padding: 4px;
     scrollbar-color: black #551a0a;
     scrollbar-width: thin;
