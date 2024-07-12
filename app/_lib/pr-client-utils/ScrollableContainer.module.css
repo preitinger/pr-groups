@@ -1,6 +1,28 @@
+.outer {
+    display: flex;
+    flex-direction: column;
+}
 .container {
+    overflow-x: scroll;
+    /* overflow-y: hidden; */
+    /* overflow-y:visible; */
+    display: flex;
+    flex: 1 1 auto;
+}
+.inner {
     display: flex;
     flex-direction: row;
-    overflow-x: scroll;
-    justify-content: flex-start;
+    justify-content: center;
+    align-items: stretch;
+    flex: none;
+ }
+.points {
+    height: auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    flex: none;
+}
+.point {
+    margin: 1rem 4px;
 }

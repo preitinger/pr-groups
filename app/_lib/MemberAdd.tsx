@@ -36,11 +36,11 @@ export default function MemberAdd({ initialGroup, onAdd, onCancel }: MemberAddPr
     }
 
     return <>
-        <Input id='group' label='Gruppe' text={group} setText={setGroup} />
-        <Input id='phoneNr' label='Telefonnr. des neuen Gruppenmitglieds' text={newPhoneNr} setText={setNewPhoneNr} />
-        <Input id='prename' label='Vorname des neuen Mitglieds' text={prename} setText={setPrename} />
-        <Input id='surname' label='Nachname (ggf. Kürzel) des neuen Mitglieds' text={surname} setText={setSurname} />
-        <div>
+        <Input label='Gruppe' text={group} setText={setGroup} />
+        <Input label='Telefonnr. des neuen Gruppenmitglieds' text={newPhoneNr} setText={setNewPhoneNr} />
+        <Input label='Vorname des neuen Mitglieds' text={prename} setText={setPrename} />
+        <Input label='Nachname (ggf. Kürzel) des neuen Mitglieds' text={surname} setText={setSurname} />
+        <div className={styles.buttons}>
             <button className={styles.addButton} onClick={onAddClick}>GRUPPENMITGLIED HINZUFÜGEN</button>
             <button className={styles.cancelButton} onClick={onCancel}>ABBRECHEN</button>
         </div>

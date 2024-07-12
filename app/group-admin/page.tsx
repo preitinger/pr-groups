@@ -113,7 +113,7 @@ export default function Page() {
                         }
                     </div>
                 </div>
-                <Popup visible={login} setVisible={undefined}>
+                <Popup visible={login} >
                     <LoginComp onLogin={onLogin} setSpinning={setSpinning} />
                 </Popup>
             </Menu>

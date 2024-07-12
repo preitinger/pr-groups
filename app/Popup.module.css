@@ -1,6 +1,8 @@
 .popupOuter {
     position: relative;
     padding: 2rem;
+    background-color: black;
+    color: white;
 }
 
 .popupContent {

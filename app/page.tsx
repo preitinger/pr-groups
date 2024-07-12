@@ -4,7 +4,7 @@ import Image from "next/image";
 import styles from "./page.module.css";
 import Link from "next/link";
 import Profile from "./_lib/Profile";
-import { useEffect, useState } from "react";
+import { StrictMode, useEffect, useState } from "react";
 import { SessionContext } from "./_lib/SessionContext";
 import useUser from "./_lib/useUser";
 import Header from "./_lib/Header";
@@ -24,7 +24,7 @@ export default function Home() {
   }
 
   return (
-    <>
+    <StrictMode>
       <Header user={user} line1={{ text: 'pr-groups', fontSize: '1.5rem', bold: true }} margin='0' line2={{ text: '', fontSize: '1.2rem', bold: false }} />
       <Menu />
       <div className={styles.buttons}>
@@ -35,6 +35,6 @@ export default function Home() {
           <a onClick={onLoginClick}>Login</a>
         </p>
       </div>
-    </>
+    </StrictMode>
   );
 }

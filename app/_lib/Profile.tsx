@@ -1,10 +1,10 @@
 import Image from 'next/image';
 import styles from './Profile.module.css'
-import { Logo } from './api';
+import { ImgData } from './api';
 
 export interface ProfileProps {
     user: string | null;
-    logo?: Logo;
+    logo?: ImgData;
 }
 
 export default function Profile({ user, logo }: ProfileProps) {

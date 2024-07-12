@@ -74,10 +74,10 @@ export default function Page() {
             <Header user={user} line1={{ text: 'pr-groups / Gruppenadmin', fontSize: '1.2em', bold: false }} margin='1em' line2={{ text: 'Gruppenmitglied hinzufügen', fontSize: '1.5em', bold: true }} />
             <Profile user={user} />
             <div className={styles.form}>
-                <Input id='group' label='Gruppe' text={group} setText={setGroup} />
-                <Input id='phoneNr' label='Telefonnr. des neuen Gruppenmitglieds' text={newPhoneNr} setText={setNewPhoneNr} />
-                <Input id='prename' label='Vorname des neuen Mitglieds' text={prename} setText={setPrename} />
-                <Input id='surname' label='Nachname (ggf. Kürzel) des neuen Mitglieds' text={surname} setText={setSurname} />
+                <Input label='Gruppe' text={group} setText={setGroup} />
+                <Input label='Telefonnr. des neuen Gruppenmitglieds' text={newPhoneNr} setText={setNewPhoneNr} />
+                <Input label='Vorname des neuen Mitglieds' text={prename} setText={setPrename} />
+                <Input label='Nachname (ggf. Kürzel) des neuen Mitglieds' text={surname} setText={setSurname} />
                 <button className={styles.addButton} disabled={user == null} onClick={onAddClick}>Gruppenmitglied hinzufügen</button>
                 <p>{comment}</p>
                 {invitationLink != null &&

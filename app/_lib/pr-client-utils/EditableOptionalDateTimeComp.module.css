@@ -1,0 +1,47 @@
+.labelAndInfo {
+    display: flex;
+    flex-direction: row;
+    border: 1px solid black;
+}
+
+.buttonRow {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.buttonRow button {}
+
+.okImg,
+.cancelImg {
+    min-width: 40px;
+    min-height: 40px;
+
+}
+
+.okImg {
+    background: url('/Asset 15.svg') no-repeat center;
+    background-size: 32px;
+}
+
+.cancelImg {
+    background: url('/Asset 14.svg') no-repeat center;
+    background-size: 32px;
+}
+
+.comment,
+.error {
+    height: 2.5em;
+}
+
+.content {
+    font-size: 1.3rem;
+    color: #ebebeb;
+    margin: 4px;
+    margin-bottom: 2rem;
+    overflow: auto;
+    max-width: calc(100vw - var(--w1) - 8rem);
+    min-height: 40px;
+}

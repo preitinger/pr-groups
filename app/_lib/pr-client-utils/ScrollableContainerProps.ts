@@ -5,4 +5,5 @@ export interface ScrollableContainerProps {
     snapWidth?: number;
     snap?: number;
     setSnap?: (idx: number) => void;
+    points?: boolean;
 }

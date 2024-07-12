@@ -69,9 +69,9 @@ export default function Page() {
         <div>
             <Header user={user} line1={{ text: 'pr-groups / Gruppen-Admin', fontSize: '1.2rem', bold: false }} margin='1rem' line2={{ text: 'Aktivität hinzufügen', fontSize: '1.5rem', bold: true }} />
             <div className={styles.form}>
-                <Input id='group' label='Gruppe' text={group} setText={setGroup} />
-                <Input id='activity' label='Aktivität' text={activity} setText={setActivity} />
-                <Input id='capacity' label='Teilnehmerkapazität' text={capacity} setText={setCapacity} />
+                <Input label='Gruppe' text={group} setText={setGroup} />
+                <Input label='Aktivität' text={activity} setText={setActivity} />
+                <Input label='Teilnehmerkapazität' text={capacity} setText={setCapacity} />
                 <DateTimeInput initialText='' setDate={setDate} />
                 <button className={styles.addButton} onClick={onAddClick}>Aktivität hinzufügen</button>
                 <p className={styles.comment}>

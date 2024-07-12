@@ -4,7 +4,7 @@ import Link from 'next/link'
 import styles from './page.module.css'
 import { MouseEvent, PropsWithChildren, useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Acceptance, Activity, ActivityAcceptReq, ActivityAcceptResp, Logo, Member, MemberDataReq, MemberDataResp, MemberDeleteMeReq, MemberDeleteMeResp, Participation } from '@/app/_lib/api';
+import { Acceptance, Activity, ActivityAcceptReq, ActivityAcceptResp, ImgData, Member, MemberDataReq, MemberDataResp, MemberDeleteMeReq, MemberDeleteMeResp, Participation } from '@/app/_lib/api';
 import { formatDate, formatDateTime, formatTime, withStopPropagation } from '@/app/_lib/utils';
 import { SessionContext } from '@/app/_lib/SessionContext';
 import Profile from '@/app/_lib/Profile';
@@ -116,7 +116,7 @@ function ActivityComp({ user, activity, onAcceptClick }: ActivityProps) {
 }
 
 interface AdditionalHeaderProps {
-    logo?: Logo;
+    logo?: ImgData;
     line1: HeaderLine;
     margin: string;
     line2: HeaderLine;
@@ -558,7 +558,7 @@ export default function Page({ params }: { params: { group: string; phoneNr: str
                     }
                 </div>
                 {!afterDeleteSelf && <>
-                    <ScrollableContainer className={styles.activityBar} snapOffset={80 - 18} snapWidth={160} snap={activityIdx} setSnap={setActivityIdx}>
+                    <ScrollableContainer className={styles.activityBar} snapOffset={80 - 18} snapWidth={160} snap={activityIdx} setSnap={setActivityIdx} >
                         {
                             activities.map((a, i) => <div key={i}><div onClick={withStopPropagation(onBarElemClick(i))} className={styles.barElem + (i === activityIdx ? ' ' + styles.barElemActive : '')}>
                                 {a.date != null ? <DateTimeComp date={new Date(a.date)} small={true} /> : <NameComp name={a.name} small={true} />}

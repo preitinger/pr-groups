@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import styles from './page.module.css'
 import { apiFetchPost } from '@/app/_lib/user-management-client/apiRoutesClient';
-import { GroupCreateReq, GroupCreateResp, Logo } from '@/app/_lib/api';
+import { GroupCreateReq, GroupCreateResp, ImgData } from '@/app/_lib/api';
 import { SessionContext } from '@/app/_lib/SessionContext';
 import { useRouter } from 'next/navigation';
 import Profile from '@/app/_lib/Profile';
@@ -38,7 +38,7 @@ export default function Page() {
             router.push('/login');
             return;
         }
-        let logo: Logo | null = null;
+        let logo: ImgData | null = null;
         try {
             if (logoSrc != '' && logoAlt != '') {
                 const width = parseInt(logoWidth);
@@ -93,19 +93,19 @@ export default function Page() {
         <div>
             <Header user={user} line1={{ text: 'pr-groups | Administration', fontSize: '1.2rem', bold: false }} margin='1rem' line2={{ text: 'Neue Gruppe erstellen', fontSize: '1.5rem', bold: true }} />
             <div className={styles.form}>
-                <Input id='name' label='Name' text={name} setText={setName} />
-                <Input id='logoSrc' label='logo.src (optional)' text={logoSrc} setText={setLogoSrc} />
-                <Input id='logoAlt' label='logo.alt (optional)' text={logoAlt} setText={setLogoAlt} />
-                <Input id='logoWidth' label='logo.width (optional)' text={logoWidth} setText={setLogoWidth} />
-                <Input id='logoHeight' label='logo.height (optional)' text={logoHeight} setText={setLogoHeight} />
-                <Input id='line1Text' label='line1.text' text={line1Text} setText={setLine1Text} />
-                <Input id='line1FontSize' label='line1.fontSize' text={line1FontSize} setText={setLine1FontSize} />
+                <Input label='Name' text={name} setText={setName} />
+                <Input label='logo.src (optional)' text={logoSrc} setText={setLogoSrc} />
+                <Input label='logo.alt (optional)' text={logoAlt} setText={setLogoAlt} />
+                <Input label='logo.width (optional)' text={logoWidth} setText={setLogoWidth} />
+                <Input label='logo.height (optional)' text={logoHeight} setText={setLogoHeight} />
+                <Input label='line1.text' text={line1Text} setText={setLine1Text} />
+                <Input label='line1.fontSize' text={line1FontSize} setText={setLine1FontSize} />
                 <div><input type='checkbox' checked={line1Bold} onChange={() => setLine1Bold(!line1Bold)} /> Bold</div>
-                <Input id='margin' label='Margin zwischen line1 und line2' text={margin} setText={setMargin} />
-                <Input id='line2Text' label='line2.text' text={line2Text} setText={setline2Text} />
-                <Input id='line2FontSize' label='line2.fontSize' text={line2FontSize} setText={setline2FontSize} />
+                <Input label='Margin zwischen line1 und line2' text={margin} setText={setMargin} />
+                <Input label='line2.text' text={line2Text} setText={setline2Text} />
+                <Input label='line2.fontSize' text={line2FontSize} setText={setline2FontSize} />
                 <div><input type='checkbox' checked={line2Bold} onChange={() => setline2Bold(!line2Bold)} /> Bold</div>
-                <Input id='docTitle' label='Titel für Browser-Tab und App-Shortcut' text={docTitle} setText={setDocTitle} />
+                <Input label='Titel für Browser-Tab und App-Shortcut' text={docTitle} setText={setDocTitle} />
                 <button className={styles.createGroup} onClick={onCreateGroupClick}>Gruppe erstellen</button>
                 <p>{comment}</p>
             </div>

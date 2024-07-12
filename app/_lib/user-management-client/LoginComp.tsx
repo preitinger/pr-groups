@@ -48,7 +48,7 @@ export default function LoginComp({ onLogin, setSpinning }: LoginProps) {
         })
     }
     return <>
-        <Input id='user' label='User' text={user} setText={setUser} />
+        <Input label='User' text={user} setText={setUser} />
         <label className={styles.passwdLabel} htmlFor='passwd'>Passwort</label>
         <input type='password' id='passwd' className={styles.passwd} value={passwd} onChange={(e) => setPasswd(e.target.value)} />
         <button className={styles.loginButton} onClick={onLoginClick}>Login</button>

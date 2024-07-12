@@ -21,11 +21,16 @@ export async function apiPOST<MyReq, MySuccessResp>(request: NextRequest, execut
         // console.log('length of stringified response: ', JSON.stringify(mySuccessResp).length);
         // console.log('returning result from executor: ', JSON.stringify(mySuccessResp));
         return NextResponse.json(mySuccessResp);
-    } catch (reason) {
+    } catch (reason: any) {
         console.error('caught in executor: ', reason);
+        let errorText = '';
+        if ('name' in reason || 'message' in reason) {
+            if ('name' in reason) errorText += reason.name + ': ';
+            if ('message' in reason) errorText += reason.message;
+        } else errorText = JSON.stringify(reason);
         const resp: MyResp = {
             type: 'error',
-            error: JSON.stringify(reason)
+            error: errorText
         }
         return NextResponse.json(resp);
     }

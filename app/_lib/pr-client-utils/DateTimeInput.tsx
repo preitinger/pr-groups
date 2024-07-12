@@ -38,7 +38,7 @@ export default function DateTimeInput({initialText, setDate}: DateTimeInputProps
 
     return (
         <div>
-            <div><Input id='date' label='Datum/Uhrzeit (DD.MM.JJJJ hh:mm)' text={text} setText={setText} /> {comment}</div>
+            <div><Input label='Datum/Uhrzeit (DD.MM.JJJJ hh:mm)' text={text} setText={setText} /> {comment}</div>
             <input readOnly={unclearMESZ} type='checkbox' checked={userMESZ} onChange={() => setUserMESZ(d => !d)} /><span className={unclearMESZ ? '' : styles.disabled } >Sommerzeit</span>
         </div>
     )

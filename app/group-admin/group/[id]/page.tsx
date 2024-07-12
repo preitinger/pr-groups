@@ -17,6 +17,7 @@ import Input from "@/app/_lib/Input";
 import DateTimeInput from "@/app/_lib/pr-client-utils/DateTimeInput";
 import Menu from "@/app/_lib/Menu";
 import MemberAdd from "@/app/_lib/MemberAdd";
+import { useRouter } from "next/navigation";
 
 function invitationLink(group: string, member: Member): string {
     return `/member/${encodeURIComponent(group)}/${encodeURIComponent(member.phoneNr)}/${encodeURIComponent(member.token)}`
@@ -38,9 +39,10 @@ export default function Page({ params }: { params: { id: string } }) {
     const groupIdRef = useRef<string | null>(null);
     const [groupId, setGroupId] = useState<string | null>(null);
     const [addingMember, setAddingMember] = useState(false);
+    const router = useRouter();
 
     useEffect(() => {
-
+        console.error('effect 0');
         setGroupId(groupIdRef.current = decodeURIComponent(params.id))
         const ctx = new SessionContext();
         const user1 = ctx.user;
@@ -226,11 +228,15 @@ export default function Page({ params }: { params: { id: string } }) {
     }
 
     const setDate = useCallback((d: Date | null) => {
+        console.log('setDate', d?.getTime());
         setEditedActivity((ed) => {
             if (ed == null) return null;
+            console.log('old date', ed.date)
+            const newDate = millisFromDateOrNull(d);
+            console.log('new date', newDate)
             return {
                 ...ed,
-                date: millisFromDateOrNull(d)
+                date: newDate
             }
         })
     }, [])
@@ -379,8 +385,18 @@ export default function Page({ params }: { params: { id: string } }) {
         }
     }
 
+    function onMenuClick(i: number) {
+        return function () {
+            switch (i) {
+                case 0: // MOBILE PAGE
+                    router.push(`/group-admin/group-m/${params.id}`)
+            }
+        }
+    }
+
     return (
-        <Menu onDeleteMemberClick={null} group={null}>
+        <Menu onDeleteMemberClick={null} group={null}
+            customLabels={['LAYOUT FÜR HANDY']} onCustomClick={onMenuClick}>
             <Header
                 user={user}
                 line1={{ text: 'pr-groups / Gruppenadmin', fontSize: '1.2rem', bold: false }}
@@ -471,13 +487,13 @@ export default function Page({ params }: { params: { id: string } }) {
             </div>
             <Popup visible={editedMember != null} >
                 <h3>{editedMember?.phoneNr} bearbeiten</h3>
-                <Input id='prename' label='Vorname' text={editedMember?.prename ?? ''} setText={t => {
+                <Input label='Vorname' text={editedMember?.prename ?? ''} setText={t => {
                     if (editedMember != null) setEditedMember({
                         ...editedMember,
                         prename: t
                     })
                 }} />
-                <Input id='surname' label='Nachname' text={editedMember?.surname ?? ''} setText={t => {
+                <Input label='Nachname' text={editedMember?.surname ?? ''} setText={t => {
                     if (editedMember != null) setEditedMember({
                         ...editedMember,
                         surname: t
@@ -491,7 +507,7 @@ export default function Page({ params }: { params: { id: string } }) {
             </Popup>
             <Popup visible={editedActivity != null} >
                 <h3>Aktivität erstellt am ({formatDateTime(dateFromMillisOrNull(editedActivity?.creationDate ?? null))}) bearbeiten</h3>
-                <Input id='name' label='Name' text={editedActivity?.name ?? ''} setText={t => {
+                <Input label='Name' text={editedActivity?.name ?? ''} setText={t => {
                     if (editedActivity != null) setEditedActivity({
                         ...editedActivity,
                         name: t
@@ -499,7 +515,7 @@ export default function Page({ params }: { params: { id: string } }) {
                 }} />
                 {/* date, capacity */}
                 <DateTimeInput initialText={editedActivity?.date == null ? '' : formatDateTime(new Date(editedActivity?.date))} setDate={setDate} />
-                <Input id='capacity' label='Kapazität' text={capacityStr} setText={setCapacityStr} />
+                <Input label='Kapazität' text={capacityStr} setText={setCapacityStr} />
                 <div className={styles.buttonRow}>
                     <button onClick={saveEditedActivity}>SPEICHERN</button>
                     <button onClick={() => { setEditedActivity(null) }}>ABBRECHEN</button>
@@ -507,7 +523,7 @@ export default function Page({ params }: { params: { id: string } }) {
             </Popup>
             {groupId != null &&
                 <Popup visible={addingMember} >
-                    <MemberAdd initialGroup={groupId} onAdd={onMemberAdded} onCancel={() => { setAddingMember(false)}} />
+                    <MemberAdd initialGroup={groupId} onAdd={onMemberAdded} onCancel={() => { setAddingMember(false) }} />
                 </Popup>
             }
             {

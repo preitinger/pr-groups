@@ -129,6 +129,7 @@
     margin-top: 3px;
     font-size: 1.2rem;
     border: none;
+    min-height: 50px;
 }
 
 
@@ -140,6 +141,10 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    background-repeat: no-repeat;
+    background-position: 5px 50%;
+    background-size: auto 32px;
+
 }
 
 .undecided {
@@ -152,12 +157,14 @@
 
 
 .accepted {
-    background: #aaba98 url('/check-alex.png') no-repeat 5px 50%;
+    background-color: #aaba98;
+    background-image: url('/Asset 15.svg');/* 15, 2 */
     color: #515151;
 }
 
 .undecided {
-    background: gray url('/thinking_982997.png') no-repeat 5px 50%;
+    background-color: gray;
+    background-image: url('/Asset 8.svg');/* 8, 4 */
 }
 
 .doubt {}
@@ -172,11 +179,8 @@
 .rejected {
     color: #852a1e;
     /* background-image: url('/cross_8995303.png'); */
-    background: #ce9d92 url('/reject.png') no-repeat 5px 50%;
-}
-
-.undecided {
-    background-color: gray;
+    background-color: #ce9d92;
+    background-image: url('/Asset 14.svg');
 }
 
 .spinner {

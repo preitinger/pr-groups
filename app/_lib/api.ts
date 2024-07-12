@@ -27,7 +27,7 @@ export interface Member {
     token: string;
 }
 
-export interface Logo {
+export interface ImgData {
     src: string;
     alt: string;
     width: number;
@@ -41,7 +41,7 @@ export interface GroupCreateReq {
     user: string;
     token: string;
     name: string;
-    logo: Logo | null;
+    logo: ImgData | null;
     line1: HeaderLine;
     margin: string;
     line2: HeaderLine;
@@ -184,7 +184,7 @@ export type MemberDataResp = {
     type: 'success';
     prename: string;
     surname: string;
-    logo: Logo | null;
+    logo: ImgData | null;
     line1: HeaderLine;
     margin: string;
     line2: HeaderLine;
@@ -284,7 +284,7 @@ export type GroupAdminGroupResp = {
     type: 'authFailed'
 } | {
     type: 'success'
-    logo: Logo | null;
+    logo: ImgData | null;
     line1: HeaderLine;
     margin: string;
     line2: HeaderLine;
@@ -292,6 +292,30 @@ export type GroupAdminGroupResp = {
     admins: string[]
     members: Member[]
     activities: Activity[]
+}
+
+export interface GroupAdminGroupUpdateReq {
+    /**
+    * user sending the request
+    */
+    user: string;
+    token: string;
+    groupId: string;
+    logo: ImgData | null;
+    line1: HeaderLine;
+    margin: string;
+    line2: HeaderLine;
+    docTitle: string | null;
+    admins: string[];
+    members: Member[];
+    activities: (Activity|null)[];
+    activityIdxToArchive: number[];
+}
+
+export type GroupAdminGroupUpdateResp = {
+    type: 'authFailed'
+} | {
+    type: 'success'
 }
 
 export interface GroupAdminMemberUpdateReq {

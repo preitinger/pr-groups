@@ -80,9 +80,13 @@ export default function Page() {
             <Header user={user} line1={{ text: 'pr-groups', fontSize: '1.2rem', bold: false }} margin='1rem' line2={{ text: 'Login', fontSize: '1.5rem', bold: true }} />
             <Menu />
             <div className={styles.form}>
-                <Input id='user' label='User' text={user} setText={setUser} />
+                <Input label='User' text={user} setText={setUser} onEnter={onLoginClick} />
                 <label className={styles.passwdLabel} htmlFor='passwd'>Passwort</label>
-                <input type='password' id='passwd' className={styles.passwd} value={passwd} onChange={(e) => setPasswd(e.target.value)} />
+                <input type='password' id='passwd' className={styles.passwd} value={passwd} onChange={(e) => setPasswd(e.target.value)} onKeyUp={(e) => {
+                    if (e.key === 'Enter') {
+                        onLoginClick();
+                    }
+                }} />
                 <button className={styles.loginButton} onClick={onLoginClick}>Login</button>
                 <p className={styles.comment}>{comment}</p>
 

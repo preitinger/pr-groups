@@ -1,4 +1,4 @@
-import { Activity, GroupAdminGroupReq, GroupAdminGroupResp, Logo, Member } from "@/app/_lib/api";
+import { Activity, GroupAdminGroupReq, GroupAdminGroupResp, ImgData, Member } from "@/app/_lib/api";
 import { ApiResp } from "@/app/_lib/user-management-client/user-management-common/apiRoutesCommon";
 import clientPromise from "@/app/_lib/user-management-server/mongodb";
 import { checkToken } from "@/app/_lib/user-management-server/userManagementServer";
@@ -18,7 +18,7 @@ async function executeGroup(req: GroupAdminGroupReq): Promise<ApiResp<GroupAdmin
     const client = await clientPromise;
     const db = client.db('pr-groups');
     const col = db.collection<GroupDoc>('groups');
-    const group = await col.findOne<{ logo: Logo | null; line1: HeaderLine; margin: string; line2: HeaderLine; docTitle: string | null; admins: string[]; members: Member[]; activities: (Activity | null)[]; }>({
+    const group = await col.findOne<{ logo: ImgData | null; line1: HeaderLine; margin: string; line2: HeaderLine; docTitle: string | null; admins: string[]; members: Member[]; activities: (Activity | null)[]; }>({
         _id: req.groupId,
         admins: req.user
     }, {

@@ -1,0 +1,11 @@
+
+.label {
+    font-size: 0.8rem;
+    /* color: hsl(13, 90%, 32%); */
+    color: hsl(0, 0%, 72%);
+    padding-left: 0rem;
+    margin-top: 2rem;
+    margin-left: 0;
+    margin-right: 0;
+    margin-bottom: 1rem;
+}

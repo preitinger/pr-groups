@@ -1,59 +1,281 @@
 .main {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
     position: absolute;
     top: calc(var(--h1) + 2rem);
     left: calc(var(--w1) + 4rem);
     color: #ebebeb;
-    right: 2rem;
+    /* right: 2rem; */
+    width: 260px;
+    /* overflow: auto; */
+    overflow: hidden;
     bottom: 1rem;
+    /* height: calc(630px - var(--h1) - 2rem); */
 }
 
-.main a {
+.scrollableContainer {
+    position: absolute;
+    top: 0;
+    bottom: 3em;
+    left: 0;
+    right: 0;
+}
+
+.page {
+    width: 260px;
+
+    /* flex-basis: 260px; */
+    flex: 1 1 auto;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    overflow: hidden;
+}
+
+.groupData,
+.activities {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    overflow-y: auto;
+    height: 200px;
+    flex: 1 1 0;
+}
+
+.box {
+    padding: 0 3px;
+}
+
+.groupData>*,
+.activities>* {
+    margin-left: 3px;
+}
+
+.groupData a {
     color: inherit;
 }
-.label {
-    font-size: 0.8rem;
-    /* color: hsl(13, 90%, 32%); */
-    color: hsl(0, 0%, 72%);
-    padding-left: 0rem;
-    padding-bottom: 1rem;
+
+.groupData input,
+.activities input {
+    max-width: calc(100vw - var(--w1) - 8rem);
+    margin-left: 3px;
 }
+
 .content {
     font-size: 1.3rem;
     color: #ebebeb;
-    padding-bottom: 2rem;
+    /* margin-bottom: 2rem; */
+    overflow: auto;
+    max-width: calc(100vw - var(--w1) - 8rem);
+    min-height: 1.3em;
+    cursor: pointer;
 }
+
+.column {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
 .input {
     min-height: 40px;
     margin-bottom: 2rem;
 }
+
 .buttonRow {
     display: flex;
     flex-direction: row;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
     margin-bottom: 2rem;
 }
+
 .buttonRow button {
-    margin-right: 1rem;
+    cursor: pointer;
 }
+
 .okImg,
 .cancelImg {
     min-width: 40px;
     min-height: 40px;
 
 }
+
 .okImg {
-    background: url('/check-mark_5299035.png') no-repeat center;
+    background: url('/Asset 15.svg') no-repeat center;
+    background-size: 32px;
 }
+
 .cancelImg {
-    background: url('/cross_8995303.png') no-repeat center;
+    background: url('/Asset 14.svg') no-repeat center;
+    background-size: 32px;
 }
+
 .error {
     min-height: 40px;
     padding: 0;
     margin: 0;
     color: rgb(255, 56, 56);
+    width: 100%;
+    height: auto;
+}
+
+.checkbox {
+    margin-bottom: 1rem;
+}
+
+.fieldSet {
+    position: relative;
+    margin-bottom: 2rem;
+}
+
+.labelAndInfo {
+    display: flex;
+    flex-direction: row;
+}
+
+.infoButton {
+    background-color: inherit;
+    margin-left: 1rem;
+    border: none;
+    cursor: pointer;
+}
+
+.infoButton:hover {
+    outline: 2px solid gold;
+}
+
+.info {
+    padding: 0.3rem;
+}
+
+.bottomBar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    flex: none;
+    display: flex;
+    height: 3rem;
+    margin-top: auto;
+}
+
+.bottomBar * {
+    margin: 5px;
+}
+
+.memberPhoneNr {
+    font-size: 0.8rem;
+    /* color: hsl(13, 90%, 32%); */
+    color: hsl(0, 0%, 72%);
+    margin-top: 1rem;
+}
+
+.memberName {
+    margin-top: 0.5em;
+}
+
+.memberLinkLabel {
+    font-size: 0.8rem;
+    /* color: hsl(13, 90%, 32%); */
+    color: hsl(0, 0%, 72%);
+    margin-top: 1rem;
+}
+
+.memberLink {
+    margin-top: 0.5rem;
+}
+
+.whatsapp {
+    margin-top: 0.5rem;
+}
+
+.memberLink a {
+    color: inherit;
+}
+
+.hr {
+    margin-top: 2rem;
+}
+
+.clickable {
+    cursor: pointer;
+    text-align: left;
+    vertical-align: middle;
+}
+
+.imgLabel {
+    margin-left: 1rem;
+}
+
+.add {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.addButton {
+    background: url('/square_14034302.png') no-repeat center left;
+    padding-left: 40px;
+    min-height: 40px;
+}
+
+.lightHint {
+    color: hsl(0, 0%, 75%);
+    margin: 1rem 0;
+}
+
+.activity {
+    position: relative;
+}
+
+.menuDiv {
+    position: absolute;
+    right: 0;
+    top: 0;
+    cursor: pointer;
+    padding: 5px;
+}
+
+.delete {
+    /* background-color: rgb(160, 20, 20) !important; */
+    background-image: url('/Asset 14.svg');
+    background-repeat: no-repeat;
+    background-size: 32px;
+    background-position: 3px center;
+    padding-left: 40px;
+    min-height: 40px;
+    cursor: pointer;
+    margin: 0.5rem;
+}
+.archive {
+    background-image: url('/archive_11294147.png');
+    background-repeat: no-repeat;
+    background-size: 32px;
+    background-position: 3px center;
+    padding-left: 40px;
+    min-height: 40px;
+    cursor: pointer;
+}
+
+.glassPane {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+.onGlassPane {
+    background-color: var(--bg-color);
+}
+.marginTop {
+    margin-top: 2rem;
+}
+
+.optionalEditable {
+    /* margin-top: 2rem; */
+    
+}
+.comment {
 }

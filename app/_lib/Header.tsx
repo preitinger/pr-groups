@@ -1,11 +1,11 @@
 import Profile from "./Profile";
 import styles from './Header.module.css'
 import { HeaderLine } from "./HeaderLine";
-import { Logo } from "./api";
+import { ImgData } from "./api";
 
 export interface HeaderProps {
     user: string | null;
-    logo?: Logo;
+    logo?: ImgData;
     line1: HeaderLine;
     margin: string;
     line2: HeaderLine;
