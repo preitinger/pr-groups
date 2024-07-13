@@ -8,7 +8,14 @@ export async function apiPOST<MyReq, MySuccessResp>(request: NextRequest, execut
     try {
         myReq = await request.json();
     } catch (reason) {
-        console.log('exception in json(): ', reason, 'end of exception in json()');
+        if (request.signal.aborted) {
+            const resp: MyResp = {
+                type: 'error',
+                error: 'Request aborted'
+            }
+            return NextResponse.json(resp);
+        }
+        console.error('exception in json(): ', reason, 'end of exception in json()');
         const resp: MyResp = {
             type: 'error',
             error: JSON.stringify(reason)
