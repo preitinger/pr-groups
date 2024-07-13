@@ -36,14 +36,11 @@ export default function ScrollableContainer({ className, snapOffset, snapWidth, 
 
 
     useEffect(() => {
-        const container = containerRef.current;
-        if (snap == null || container == null || dummyWidth == null || mySnapWidth == null) return;
-        container.scrollLeft = snap * mySnapWidth;
-    }, [snap, children, snapWidth, dummyWidth, mySnapWidth])
-
-    useEffect(() => {
-        if (dummyWidth != null || containerRef.current == null) return;
-        const clientWidth = containerRef.current.clientWidth;
+        const container = containerRef.current
+        if (dummyWidth != null || container == null) {
+            return;
+        }
+        const clientWidth = container.clientWidth;
         // Goal: snapOffset + mySnapWidth + dummyWidth = clientWidth
         // So dummyWidth := clientWidth - snapOffset - mySnapWidth
         const newSnapWidth = snapWidth ?? clientWidth;
@@ -51,6 +48,37 @@ export default function ScrollableContainer({ className, snapOffset, snapWidth, 
         const d = clientWidth - (snapOffset ?? 0) - newSnapWidth
         setDummyWidth(d);
     }, [dummyWidth, snapWidth, snapOffset])
+
+    useEffect(() => {
+        const container = containerRef.current
+        if (container == null) {
+            return
+        }
+        const resizeObserver = new ResizeObserver((entries, observer) => {
+            const clientWidth = container.clientWidth;
+            // Goal: snapOffset + mySnapWidth + dummyWidth = clientWidth
+            // So dummyWidth := clientWidth - snapOffset - mySnapWidth
+            const newSnapWidth = snapWidth ?? clientWidth;
+            if (newSnapWidth !== snapWidth) {
+                setMySnapWidth(newSnapWidth)
+            }
+            const d = clientWidth - (snapOffset ?? 0) - newSnapWidth
+            setDummyWidth(d);
+        })
+
+        resizeObserver.observe(container)
+
+        return () => {
+            resizeObserver.unobserve(container)
+        }
+
+    }, [snapOffset, snapWidth])
+
+    useEffect(() => {
+        const container = containerRef.current;
+        if (snap == null || container == null || dummyWidth == null || mySnapWidth == null) return;
+        container.scrollLeft = snap * mySnapWidth;
+    }, [snap, children, snapWidth, dummyWidth, mySnapWidth])
 
     const childrenLen = Array.isArray(children) ? children.length : 1
 
@@ -76,7 +104,7 @@ export default function ScrollableContainer({ className, snapOffset, snapWidth, 
                         }
                     }
                 }, 200)
-            }}>
+            }} >
                 <div style={{
                     width: `${innerWidth}px`
                 }} className={styles.inner}>
@@ -87,7 +115,7 @@ export default function ScrollableContainer({ className, snapOffset, snapWidth, 
                     {
                         dummyWidth != null && dummyWidth > 0 &&
                         <div>
-                            <div style={{width: dummyWidth}}></div>
+                            <div style={{ width: dummyWidth }}></div>
                         </div>
                     }
                     {/* {
