@@ -24,14 +24,12 @@ export default function Page() {
     const [login, setLogin] = useState(false);
 
     const fetchData = useCallback(function fetchData(abortController?: AbortController) {
-        console.log('starting fetchData');
         const ctx = new SessionContext();
         const user1 = ctx.user;
         const token1 = ctx.token;
         if (user1 == null || token1 == null) {
             setLogin(true);
             setSpinning(false);
-            console.log('quit fetchData for login');
             return;
         }
 
@@ -47,7 +45,6 @@ export default function Page() {
                     break;
                 case 'success':
                     setGroups(resp.groupIds);
-                    console.log('fetchData successful');
                     break;
             }
         }).catch(reason => {
@@ -58,7 +55,6 @@ export default function Page() {
             }
         }).finally(() => {
             setSpinning(false);
-            console.log('ended fetchData')
         })
 
     }, [])
@@ -68,7 +64,6 @@ export default function Page() {
         fetchData(abortController);
         return (() => {
             abortController.abort();
-            console.log('aborted')
         })
     }, [fetchData])
 

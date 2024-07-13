@@ -62,7 +62,6 @@ export default function Menu({ group, onDeleteMemberClick, customLabels, customS
                     break;
                 case 'success':
                     setSelfDeleted(true);
-                    console.log('deleted your profile');
                     break;
                 case 'error':
                     console.error('Unerwarteter Fehler: ', resp.error)

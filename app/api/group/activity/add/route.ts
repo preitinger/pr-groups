@@ -18,7 +18,6 @@ async function executeAdd(req: GroupActivityAddReq): Promise<ApiResp<GroupActivi
 
         const client = await clientPromise;
         const db = client.db('pr-groups');
-        console.log('typeof req.date', typeof req.date);
 
         const activity: Activity = {
             name: req.activity,

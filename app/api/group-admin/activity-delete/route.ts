@@ -45,7 +45,6 @@ async function execute(req: GroupActivityDeleteReq): Promise<ApiResp<GroupActivi
                 _id: 1
             }
         })
-        console.log('res2', res2);
         if (res2 == null) {
             return {
                 type: 'groupNotFound'

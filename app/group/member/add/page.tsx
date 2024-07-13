@@ -39,14 +39,11 @@ export default function Page() {
         setInvitationLink(null);
         setCopied(false);
         const resp = await apiFetchPost<GroupMemberAddReq, GroupMemberAddResp>('/api/group/member/add', req)
-        console.log('resp', resp);
         switch (resp.type) {
             case 'authFailed':
                 setComment('Nicht authorisiert.');
                 break;
             case 'success':
-                console.log('baseURI', document.baseURI);
-                console.log('location.origin', location.origin);
                 setComment(`Einladungslink für ${prename} ${surname}: ${location.origin + resp.invitationUrl}`)
                 setInvitationLink(location.origin + resp.invitationUrl);
                 break;

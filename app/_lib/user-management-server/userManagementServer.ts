@@ -191,7 +191,6 @@ export async function checkUser(user: string): Promise<boolean> {
 export async function findUsers(users: string[]) {
     const client = await clientPromise
     const db = client.db(dbName)
-    console.log('findUsers: users', users);
     const found = await db.collection<UserDoc>('users').find({
         _id: {
             $in: users
@@ -201,8 +200,6 @@ export async function findUsers(users: string[]) {
     //         _id: 1
     //     }
     }).toArray();
-    console.log('findUsers found', found);
     const res = found.map(x => x._id)
-    console.log('result of findUsers', res);
     return res;
 }

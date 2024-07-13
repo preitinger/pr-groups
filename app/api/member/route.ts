@@ -36,8 +36,6 @@ async function execute(req: MemberDataReq): Promise<ApiResp<MemberDataResp>> {
         }
     }
 
-    console.log('group', group);
-
     const member = group.members.find((member) => member.phoneNr === req.phoneNr)
 
     if (member == null) {

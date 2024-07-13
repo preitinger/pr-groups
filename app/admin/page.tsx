@@ -19,7 +19,6 @@ export default function Page() {
         const ctx = new SessionContext();
         const user1 = ctx.user;
         const token1 = ctx.token;
-        console.log('handleDeletedUsers')
         if (user1 == null || token1 == null) return;
         const req: HandleDeletedUsersReq = {
             user: user1,
@@ -27,7 +26,6 @@ export default function Page() {
         }
         setSpinning(true);
         apiFetchPost<HandleDeletedUsersReq, HandleDeletedUsersResp>('/api/handle-deleted-users', req).then(resp => {
-            console.log('resp', resp);
             switch (resp.type) {
                 case 'authFailed':
                     setComment('Nicht authorisiert.');

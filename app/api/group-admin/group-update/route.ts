@@ -34,7 +34,6 @@ async function execute(req: GroupAdminGroupUpdateReq): Promise<ApiResp<GroupAdmi
     }
     if (activitiesArchived.length > 0) {
         const archiveRes = await archiveCol.insertMany(activitiesArchived)
-        console.log('archiveRes', archiveRes);
         if (!archiveRes.acknowledged) {
             return {
                 type: 'error',

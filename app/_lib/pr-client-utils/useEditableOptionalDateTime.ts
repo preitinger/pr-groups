@@ -95,7 +95,6 @@ export default function useEditableOptionalDateTime({ optionalMs, setOptionalMs 
     }, [editing])
 
     const outerSetEnabled = useCallback((enabled: boolean) => {
-        console.log('outerSetEnabled', enabled, optionalMs, lastMs.current)
         setEnabled(enabled)
         if (!enabled) {
             lastMs.current = optionalMs

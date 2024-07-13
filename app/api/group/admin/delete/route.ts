@@ -30,7 +30,6 @@ async function execute(req: GroupAdminDeleteReq): Promise<ApiResp<GroupAdminDele
             admins: req.groupAdminUser
         }
     })
-    console.log('res of pull group admin:', res);
     if (res == null) {
         const res2 = await col.findOne({_id: req.group}, {
             projection: {
@@ -38,7 +37,6 @@ async function execute(req: GroupAdminDeleteReq): Promise<ApiResp<GroupAdminDele
                 admins: req.getList ? 1 : 0
             }
         })
-        console.log('res2', res2);
         if (res2 == null) {
             return {
                 type: 'groupNotFound'

@@ -195,18 +195,15 @@ export async function handleDeletedUsers(): Promise<void> {
     const allGroupAdmins: string[] = [];
 
     while ((row = await cursor.next()) != null) {
-        console.log('row.admins', row.admins);
         addUnique(allGroupAdmins, row.admins);
     }
 
     allGroupAdmins.sort();
-    console.log('allGroupAdmins', allGroupAdmins)
     const found = await findUsers(allGroupAdmins);
     found.sort();
     let i, j: number;
     const li = allGroupAdmins.length;
     const lj = found.length;
-    console.log('li', li, 'lj', lj);
     const toDelete: string[] = [];
     for (i = 0, j = 0; i < li || j < lj; ) {
         if (j >= lj) {
@@ -220,7 +217,6 @@ export async function handleDeletedUsers(): Promise<void> {
         } else {
             const ui = allGroupAdmins[i];
             const uj = found[j];
-            console.log('i', i, 'j', j, 'ui', ui, 'uj', uj);
     
             if (ui < uj) {
                 // ui ist Gruppen-Admin aber kein User mehr
@@ -236,7 +232,6 @@ export async function handleDeletedUsers(): Promise<void> {
         }
     }
 
-    console.log('would delete user roles for', toDelete);
     await deleteUserRoles(toDelete);
     // console.warn('deleteUserRoles commented out');
 }

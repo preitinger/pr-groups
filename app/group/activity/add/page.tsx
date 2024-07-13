@@ -34,9 +34,7 @@ export default function Page() {
         try {
             capacityNum = parseInt(capacity);
         } catch (reason) {}
-        console.log('date', date, 'typeof date', typeof date);
         const test = JSON.parse(JSON.stringify(date));
-        console.log('test', test, 'typeof test', typeof test);
         const req: GroupActivityAddReq = {
             user: user,
             token: token,

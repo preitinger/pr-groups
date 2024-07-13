@@ -35,7 +35,6 @@ export default function Page() {
                 break;
             case 'success':
                 setComment(`${groupAdminUser} ist jetzt ein Gruppen-Admin von ${group}.`)
-                console.log('resp', resp);
                 break;
             case 'wasGroupAdmin':
                 setComment(`${groupAdminUser} war bereits vorher ein Gruppen-Admin von ${group}.`)

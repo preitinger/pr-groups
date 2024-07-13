@@ -79,7 +79,6 @@ export class AccumulatedFetching {
     }
 
     close() {
-        console.log('close: will abort abortController');
         this.abortController.abort();
     }
 
@@ -145,7 +144,6 @@ export class AccumulatedFetching {
                             throw new Error('Unexpected response: ' + JSON.stringify(resp));
                     }
                 } catch (reason) {
-                    console.log('caught silently', reason);
                     this.abortController.signal.throwIfAborted();
                     this.interrupted = true;
                     if (reason instanceof Error) {
@@ -163,7 +161,6 @@ export class AccumulatedFetching {
             }
 
         } catch (reason: any) {
-            console.log('catch in fetch loop');
             if (reason.name !== 'AbortError') {
                 console.error(reason);
             }

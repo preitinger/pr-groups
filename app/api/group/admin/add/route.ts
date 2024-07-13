@@ -38,7 +38,6 @@ async function executeAdd(req: GroupAdminAddReq): Promise<ApiResp<GroupAdminAddR
                     admins: req.getList ? 1 : 0
                 }
             })
-            console.log('res2', res2);
             if (res2 == null) {
                 return {
                     type: 'groupNotFound'
