@@ -13,6 +13,6 @@
     box-sizing: border-box;
 }
 .test {
-    overflow-x: scroll;
+    overflow-x: auto;
     display: flex;
 }

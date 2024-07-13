@@ -222,8 +222,10 @@
 
 .detailLists {
     max-height: 50vh;
-    overflow-y: scroll;
-}
+    overflow-y: auto;
+    scrollbar-color: hsl(0, 0%, 47%) #525252;
+    scrollbar-width: thin;
+  }
 
 .popupButtonRow {
     margin-top: 1rem;

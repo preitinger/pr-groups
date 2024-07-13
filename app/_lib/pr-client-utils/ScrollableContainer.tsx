@@ -31,22 +31,31 @@ function Point({ selected, onPointClick, onEnterDown }: {
 export default function ScrollableContainer({ className, snapOffset, snapWidth, snap, setSnap, children, points }: PropsWithChildren<ScrollableContainerProps>) {
     const timeoutRef = useRef<NodeJS.Timeout | null>(null)
     const containerRef = useRef<HTMLDivElement>(null);
-    const [mySnapWidth, setMySnapWidth] = useState<number | null>(null)
+    const [mySnapWidth, setMySnapWidth] = useState<number | null>(snapWidth ?? null)
+    const [dummyWidth, setDummyWidth] = useState<number | null>(null);
 
 
     useEffect(() => {
         const container = containerRef.current;
-        if (snap == null || container == null) return;
-        const newSnapWidth = snapWidth ?? container.clientWidth;
-        // if (snapWidth == null) {
+        if (snap == null || container == null || dummyWidth == null || mySnapWidth == null) return;
+        container.scrollLeft = snap * mySnapWidth;
+    }, [snap, children, snapWidth, dummyWidth, mySnapWidth])
+
+    useEffect(() => {
+        if (dummyWidth != null || containerRef.current == null) return;
+        const clientWidth = containerRef.current.clientWidth;
+        // Goal: snapOffset + mySnapWidth + dummyWidth = clientWidth
+        // So dummyWidth := clientWidth - snapOffset - mySnapWidth
+        const newSnapWidth = snapWidth ?? clientWidth;
         setMySnapWidth(newSnapWidth)
-        // }
-        container.scrollLeft = snap * newSnapWidth;
-    }, [snap, children, snapWidth])
+        const d = clientWidth - (snapOffset ?? 0) - newSnapWidth
+        setDummyWidth(d);
+    }, [dummyWidth, snapWidth, snapOffset])
 
     const childrenLen = Array.isArray(children) ? children.length : 1
 
-    const innerWidth = (snapOffset ?? 0) + (childrenLen + 1) * (mySnapWidth ?? 0);
+    const innerWidth = (snapOffset ?? 0) + childrenLen * (mySnapWidth ?? 0) + (dummyWidth ?? 0);
+
 
     return (
         <div className={`${styles.outer} ${className}`}>
@@ -58,10 +67,13 @@ export default function ScrollableContainer({ className, snapOffset, snapWidth, 
 
                 timeoutRef.current = setTimeout(() => {
                     if (containerRef.current == null) return;
-                    const snap = Math.round((containerRef.current.scrollLeft - (snapOffset ?? 0)) / mySnapWidth);
-                    containerRef.current.scrollLeft = snap * mySnapWidth;
-                    if (setSnap != null) {
-                        setSnap(snap);
+                    const scrollLeft = containerRef.current.scrollLeft;
+                    const snap = Math.round((scrollLeft /* - (snapOffset ?? 0) */) / mySnapWidth);
+                    if (snap >= 0 && snap < childrenLen) {
+                        containerRef.current.scrollLeft = snap * mySnapWidth;
+                        if (setSnap != null) {
+                            setSnap(snap);
+                        }
                     }
                 }, 200)
             }}>
@@ -73,11 +85,17 @@ export default function ScrollableContainer({ className, snapOffset, snapWidth, 
                     }
                     {children}
                     {
+                        dummyWidth != null && dummyWidth > 0 &&
+                        <div>
+                            <div style={{width: dummyWidth}}></div>
+                        </div>
+                    }
+                    {/* {
                         snapOffset != null && mySnapWidth != null &&
                         <div>
                             <div style={{ width: `${mySnapWidth}px` }}></div>
                         </div>
-                    }
+                    } */}
                 </div>
             </div>
             {
@@ -85,7 +103,7 @@ export default function ScrollableContainer({ className, snapOffset, snapWidth, 
                 <div className={styles.points}>
                     {Array.isArray(children) ? children.map((c, i) => {
                         return <Point key={i} selected={i === snap} onPointClick={() => { if (setSnap != null) setSnap(i) }}
-                        onEnterDown={() => { if (setSnap != null) setSnap(i)}} />
+                            onEnterDown={() => { if (setSnap != null) setSnap(i) }} />
                     }) : <span>kein Array?!</span>}
                 </div>
             }
