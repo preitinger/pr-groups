@@ -20,6 +20,18 @@ export interface Activity {
     participations: Participation[];
 }
 
+export interface EditedActivity {
+    /**
+     * creationDate is also the key for an Activity among all activities in a group.
+     * is here null for new activities
+     */
+    creationDate: number | null;
+    name: string;
+    date: number | null;
+    capacity: number | null;
+    // no participations here because participations can only be changed by members
+}
+
 export interface Member {
     phoneNr: string;
     prename: string;
@@ -308,7 +320,7 @@ export interface GroupAdminGroupUpdateReq {
     docTitle: string | null;
     admins: string[];
     members: Member[];
-    activities: (Activity|null)[];
+    activities: EditedActivity[];
     activityIdxToArchive: number[];
 }
 

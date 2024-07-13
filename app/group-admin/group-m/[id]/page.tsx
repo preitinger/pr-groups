@@ -3,7 +3,7 @@
 import Header from "@/app/_lib/Header";
 import Menu from "@/app/_lib/Menu";
 import { SessionContext } from "@/app/_lib/SessionContext";
-import { Activity, GroupAdminGroupReq, GroupAdminGroupResp, GroupAdminGroupUpdateReq, GroupAdminGroupUpdateResp, GroupAdminMemberAddReq, GroupAdminMemberAddResp, GroupAdminMemberDeleteReq, GroupAdminMemberDeleteResp, GroupAdminMemberUpdateReq, GroupAdminMemberUpdateResp, ImgData, Member } from "@/app/_lib/api";
+import { Activity, EditedActivity, GroupAdminGroupReq, GroupAdminGroupResp, GroupAdminGroupUpdateReq, GroupAdminGroupUpdateResp, GroupAdminMemberAddReq, GroupAdminMemberAddResp, GroupAdminMemberDeleteReq, GroupAdminMemberDeleteResp, GroupAdminMemberUpdateReq, GroupAdminMemberUpdateResp, ImgData, Member } from "@/app/_lib/api";
 import useUser from "@/app/_lib/useUser";
 import { apiFetchPost } from "@/app/_lib/user-management-client/apiRoutesClient";
 import { ChangeEvent, FocusEventHandler, KeyboardEvent, PropsWithChildren, useCallback, useEffect, useRef, useState } from "react";
@@ -632,7 +632,7 @@ function id<T>(t: T) {
 
 interface ActivityCompProps {
     i: number;
-    a: Activity;
+    a: EditedActivity;
     updateName: (name: string) => void;
     updateDate: (ms: number | null) => void;
     updateCapacity: (capacity: number | null) => void;
@@ -733,7 +733,7 @@ export default function Page({ params }: { params: { id: string } }) {
     const [lastDocTitle, setLastDocTitle] = useState<string>('pr-groups');
     const [admins, setAdmins] = useState<string[]>([]);
     const [members, setMembers] = useState<Member[]>([]);
-    const [activities, setActivities] = useState<Activity[]>([]);
+    const [activities, setActivities] = useState<EditedActivity[]>([]);
     const [activityIdxToArchive, setActivityIdxToArchive] = useState<number[]>([]);
     const [login, setLogin] = useState(false)
     const [dirty, setDirty] = useState(false);
@@ -766,6 +766,7 @@ export default function Page({ params }: { params: { id: string } }) {
         const abortController = abortControllerRef.current;
         if (abortController == null) throw new Error('abortController null?!');
         apiFetchPost<GroupAdminGroupReq, GroupAdminGroupResp>('/api/group-admin/group/', req, abortController.signal).then(resp => {
+            console.log('resp', resp);
             switch (resp.type) {
                 case 'authFailed':
                     setComment('Nicht authorisiert.');
@@ -779,6 +780,7 @@ export default function Page({ params }: { params: { id: string } }) {
                     setAdmins(resp.admins)
                     setMembers(resp.members)
                     setActivities(resp.activities)
+                    setActivityIdxToArchive([]);
                     const ctx = new SessionContext();
                     ctx.activities = resp.activities;
                     setDirty(false)
@@ -1089,7 +1091,7 @@ export default function Page({ params }: { params: { id: string } }) {
 
     const addActivity = useCallback(() => {
         setActivities(activities => [...activities, {
-            creationDate: Date.now(),
+            creationDate: null,
             name: 'Unbenannte Aktivität',
             date: null,
             capacity: null,
