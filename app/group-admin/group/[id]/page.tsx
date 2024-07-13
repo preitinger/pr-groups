@@ -110,7 +110,6 @@ export default function Page({ params }: { params: { id: string } }) {
         }
         setSpinning(true);
         apiFetchPost<GroupActivityDeleteReq, GroupActivityDeleteResp>('/api/group-admin/activity-delete', req).then(resp => {
-            console.log('resp', resp);
             switch (resp.type) {
                 case 'authFailed':
                     setComment('Nicht authorisiert');
@@ -228,12 +227,9 @@ export default function Page({ params }: { params: { id: string } }) {
     }
 
     const setDate = useCallback((d: Date | null) => {
-        console.log('setDate', d?.getTime());
         setEditedActivity((ed) => {
             if (ed == null) return null;
-            console.log('old date', ed.date)
             const newDate = millisFromDateOrNull(d);
-            console.log('new date', newDate)
             return {
                 ...ed,
                 date: newDate
@@ -259,7 +255,6 @@ export default function Page({ params }: { params: { id: string } }) {
         }
         setSpinning(true);
         apiFetchPost<GroupAdminDeleteReq, GroupAdminDeleteResp>('/api/group/admin/delete', req).then(resp => {
-            console.log('resp', resp);
             switch (resp.type) {
                 case 'authFailed':
                     setComment('Nicht authorisiert.');
@@ -306,7 +301,6 @@ export default function Page({ params }: { params: { id: string } }) {
         }
         setSpinning(true);
         apiFetchPost<GroupAdminAddReq, GroupAdminAddResp>('/api/group/admin/add', req).then(resp => {
-            console.log('resp', resp)
             switch (resp.type) {
                 case 'authFailed':
                     setComment('Nicht authorisiert.');
@@ -362,7 +356,6 @@ export default function Page({ params }: { params: { id: string } }) {
         setSpinning(true);
         try {
             const resp = await apiFetchPost<GroupAdminMemberAddReq, GroupAdminMemberAddResp>('/api/group-admin/member-add', req)
-            console.log('resp', resp);
             switch (resp.type) {
                 case 'authFailed':
                     setComment('Nicht authorisiert.');

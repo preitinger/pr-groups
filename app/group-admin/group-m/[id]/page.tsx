@@ -70,9 +70,7 @@ function Editable<T>({ disabled, label, info, value, setValue, format, parse }: 
     const [editPos, setEditPos] = useState<{ x: number; y: number }>({ x: 0, y: 0 })
 
     function onEditClick() {
-        console.log('onEditClick: disabled', disabled)
         if (disabled) return;
-        console.log('onEditClick')
         setEditing(true);
         if (dialogRef.current == null) throw new Error('dialogRef.current null')
         dialogRef.current.showModal()
@@ -92,7 +90,6 @@ function Editable<T>({ disabled, label, info, value, setValue, format, parse }: 
         }).catch((s: any) => {
             setValidation('invalid')
             if (typeof s === 'string') {
-                console.log('setError', s)
                 setError(s);
             } else {
                 console.error(s);
@@ -125,7 +122,6 @@ function Editable<T>({ disabled, label, info, value, setValue, format, parse }: 
         }).catch((s: any) => {
             setValidation('invalid')
             if (typeof s === 'string') {
-                console.log('setError', s)
                 setError(s);
             } else {
                 console.error(s);
@@ -134,12 +130,10 @@ function Editable<T>({ disabled, label, info, value, setValue, format, parse }: 
     }
 
     useEffect(() => {
-        console.log('editing', editing, 'inputRef.current', inputRef.current, 'divRef.current', divRef.current)
         if (editing && inputRef.current != null) {
             inputRef.current.focus();
             wasEditingRef.current = true;
         } else if (wasEditingRef.current && !editing && divRef.current != null) {
-            console.log('calling divRef.current.focus()')
             divRef.current.focus();
             wasEditingRef.current = false;
         }
@@ -186,7 +180,7 @@ function Editable<T>({ disabled, label, info, value, setValue, format, parse }: 
                     <button className={styles.cancelImg} onClick={withStopPropagation(onCancel)}></button>
                 </div>
             </div> */}
-            <dialog onClose={() => { console.log('onClose'); onCancel(); }} className='dialog' ref={dialogRef} aria-modal>
+            <dialog onClose={() => { onCancel(); }} className='dialog' ref={dialogRef} aria-modal>
                 <Label>{label}</Label>
                 <input autoFocus className={styles.input} ref={inputRef} value={editedText} onChange={(e) => onChange(e.target.value)} onKeyUp={(e) => {
                     if (e.key === 'Enter') {
@@ -284,7 +278,6 @@ function EditableImg({ label, img, setImg }: EditableImgProps) {
     }
 
     function onFileChange(e: ChangeEvent<HTMLInputElement>) {
-        console.log('onFileChange: value', e.target.value)
         if (e.target.files != null && e.target.files.length === 1) {
             if (img == null) throw new Error('img null');
             setImg({
@@ -691,10 +684,6 @@ function ActivityComp({ i, a, updateName, updateDate, updateCapacity, onDelete, 
             }} parse={(s) => (
                 Promise.resolve(s)
             )} />
-
-        <p>vor Test</p>
-        <input type='datetime-local' value={testDate} />
-        <p>nach Test</p>
         <EditableOptionalDateTimeComp
             label='Wann'
             enabled={date_enabled}
@@ -765,7 +754,6 @@ export default function Page({ params }: { params: { id: string } }) {
         if (user1 == null || token1 == null) {
             setLogin(true);
             setSpinning(false);
-            console.log('quit fetchData for login');
             return;
         }
         assert(groupIdRef.current != null);
@@ -778,7 +766,6 @@ export default function Page({ params }: { params: { id: string } }) {
         const abortController = abortControllerRef.current;
         if (abortController == null) throw new Error('abortController null?!');
         apiFetchPost<GroupAdminGroupReq, GroupAdminGroupResp>('/api/group-admin/group/', req, abortController.signal).then(resp => {
-            console.log('resp', resp);
             switch (resp.type) {
                 case 'authFailed':
                     setComment('Nicht authorisiert.');
@@ -891,7 +878,6 @@ export default function Page({ params }: { params: { id: string } }) {
         }
         setSpinning(true)
         apiFetchPost<GroupAdminGroupUpdateReq, GroupAdminGroupUpdateResp>('/api/group-admin/group-update', req, abortControllerRef.current?.signal).then(resp => {
-            console.log('resp', resp);
             switch (resp.type) {
                 case 'authFailed':
                     setComment('Nicht authorisiert.');
@@ -904,7 +890,6 @@ export default function Page({ params }: { params: { id: string } }) {
                     break;
             }
         }).catch(reason => {
-            console.log('caught', reason);
             if ('name' in reason && reason.name === 'AbortError') return;
             setComment(`Unerwarteter Fehler: ${JSON.stringify(reason)}`)
         }).finally(() => {
@@ -943,7 +928,6 @@ export default function Page({ params }: { params: { id: string } }) {
         setSpinning(true);
         try {
             const resp = await apiFetchPost<GroupAdminMemberAddReq, GroupAdminMemberAddResp>('/api/group-admin/member-add', req)
-            console.log('resp', resp);
             switch (resp.type) {
                 case 'authFailed':
                     setMemberComment('Nicht authorisiert.');
@@ -1076,7 +1060,6 @@ export default function Page({ params }: { params: { id: string } }) {
     }
 
     const updateActivity = useCallback((i: number, attr: string) => <T,>(t: T) => {
-        console.log('updateActivity: i', i, 'attr', attr, 't', t);
         setActivities(d => d.map((a, j) => (
             j === i ? ({
                 ...a,
@@ -1120,7 +1103,6 @@ export default function Page({ params }: { params: { id: string } }) {
                     top: activityScrollableRef.current.scrollHeight,
                     behavior: 'smooth'
                 })
-                console.log('has scrolled to ', activityScrollableRef.current.scrollHeight)
             }
 
         })
@@ -1142,7 +1124,7 @@ export default function Page({ params }: { params: { id: string } }) {
                         line2={{ text: groupId ?? '', fontSize: '1.5rem', bold: true }}
                     />
                     <div className={styles.main}>
-                        <ScrollableContainer className={styles.scrollableContainer} points snap={horPage} setSnap={(i) => { console.log('setSnap', i); setHorPage(i) }} snapWidth={260} snapOffset={0} >
+                        <ScrollableContainer className={styles.scrollableContainer} points snap={horPage} setSnap={(i) => { setHorPage(i) }} snapWidth={260} snapOffset={0} >
                             <div className={styles.page}>
                                 <div className={`scrollable ${styles.groupData}`}>
 
@@ -1164,7 +1146,6 @@ export default function Page({ params }: { params: { id: string } }) {
                                     <HeaderLine label='Überschrift 2' line={line2 ?? { text: '', fontSize: '1rem', bold: false }} setLine={withSetDirty(setLine2)} />
                                     <Checkbox label='Titel in Browser-Tab' value={docTitle != null} setValue={withSetDirty((b) => {
                                         if (b) {
-                                            console.log('setting docTitle to ', lastDocTitle)
                                             setDocTitle(lastDocTitle);
                                         } else {
                                             if (docTitle == null) {

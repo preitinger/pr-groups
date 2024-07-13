@@ -51,7 +51,6 @@ export default function EditableOptionalDateTimeComp({ label, info, enabled, set
     }, [editing, setEditing])
 
     const comment = unclearMESZ ? 'Sommerzeit nicht eindeutig, bitte prüfen' : '';
-    console.log('render EditableOptionalDateTimeComp: optionalMs', optionalMs);
     return (
         <>
             <Checkbox
