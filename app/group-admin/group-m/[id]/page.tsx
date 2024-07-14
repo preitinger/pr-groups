@@ -1110,6 +1110,19 @@ export default function Page({ params }: { params: { id: string } }) {
         })
     }, [])
 
+    const addAdmin = useCallback(() => {
+        const newAdmin = window.prompt('Enter the user name of the admin to add to this group.');
+        if (newAdmin != null) {
+            setAdmins(admins => [...admins, newAdmin]);
+            setDirty(true);
+        }
+    }, [])
+
+    const deleteAdmin = (admin: string) => () => {
+        setAdmins(admins => admins.filter(a => a !== admin));
+        setDirty(true);
+    }
+
     return (
         <Menu
             onDeleteMemberClick={null} group={null}
@@ -1213,7 +1226,20 @@ export default function Page({ params }: { params: { id: string } }) {
 
                             <div className={styles.page}>
                                 <h3>Gruppen-Admins</h3>
-                                <p>Noch nicht implementiert.</p>
+                                <div className={`scrollable ${styles.admins}`}>
+                                    {
+                                        admins.map((a, i) => (
+                                            <div key={a}>
+                                                <div /* className={styles.row} */>
+                                                    <Content>{a}</Content>
+                                                    <button className={styles.delete} onClick={deleteAdmin(a)}>Delete</button>
+                                                </div>
+                                                <hr />
+                                            </div>
+                                        ))
+                                    }
+                                </div>
+                                <button className={`${styles.clickable} ${styles.addButton}`} onClick={addAdmin}>Aktivität hinzufügen</button>
                             </div>
                         </ScrollableContainer>
                         <div className={styles.bottomBar}>

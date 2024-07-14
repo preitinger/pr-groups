@@ -32,7 +32,8 @@
 }
 
 .groupData,
-.activities {
+.activities,
+.admins {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -55,7 +56,8 @@
 }
 
 .groupData input,
-.activities input {
+.activities input,
+.admins input {
     max-width: calc(100vw - var(--w1) - 8rem);
     margin-left: 3px;
 }
@@ -247,6 +249,7 @@
     cursor: pointer;
     margin: 0.5rem;
 }
+
 .archive {
     background-image: url('/archive_11294147.png');
     background-repeat: no-repeat;
@@ -269,13 +272,25 @@
 .onGlassPane {
     background-color: var(--bg-color);
 }
+
 .marginTop {
     margin-top: 2rem;
 }
 
 .optionalEditable {
     /* margin-top: 2rem; */
-    
+
 }
-.comment {
+
+.comment {}
+
+.row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.admins * {
+    margin-left: 0;
 }
