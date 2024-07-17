@@ -1,4 +1,4 @@
-import { ActivitiesInGroup, GroupAdminAllGroupsActivitiesReq, GroupAdminAllGroupsActivitiesResp } from "@/app/_lib/api";
+import { ActivitiesInGroup, Activity, GroupAdminAllGroupsActivitiesReq, GroupAdminAllGroupsActivitiesResp } from "@/app/_lib/api";
 import { ApiResp } from "@/app/_lib/user-management-client/user-management-common/apiRoutesCommon";
 import clientPromise from "@/app/_lib/user-management-server/mongodb";
 import { checkToken } from "@/app/_lib/user-management-server/userManagementServer";
@@ -34,7 +34,7 @@ async function execute(req: GroupAdminAllGroupsActivitiesReq): Promise<ApiResp<G
         resp.push({
             group: group._id,
             members: group.members,
-            activities: group.activities.filter(a => a != null)
+            activities: group.activities.filter(a => a != null) as Activity[]
         })
     }
 
