@@ -114,6 +114,27 @@ export type GroupAdminDeleteResp = {
     type: 'wasNotGroupAdmin'
 }
 
+export interface GroupAdminAllGroupsActivitiesReq {
+    /**
+     * user sending the request
+     */
+    user: string;
+    token: string;
+}
+
+export interface ActivitiesInGroup {
+    group: string;
+    members: Member[];
+    activities: Activity[];
+}
+
+export type GroupAdminAllGroupsActivitiesResp = {
+    type: 'authFailed'
+} | {
+    type: 'success';
+    activitiesInGroups: ActivitiesInGroup[]
+}
+
 export interface GroupMemberAddReq {
     /**
      * user sending the request
@@ -341,7 +362,7 @@ export interface GroupAdminMemberUpdateReq {
 }
 
 export type GroupAdminMemberUpdateResp = {
-    type: 'authFailed' 
+    type: 'authFailed'
 } | {
     type: 'notFound'
 } | {

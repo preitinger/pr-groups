@@ -19,6 +19,7 @@ import Impressum from '@/app/_lib/pr-client-utils/Impressum';
 import { Popup } from '@/app/Popup';
 import Menu from '@/app/_lib/Menu';
 import { after } from 'node:test';
+import WhatsAppLinkComp from '@/app/_lib/WhatsAppLinkComp';
 
 const FAKE = true;
 
@@ -55,10 +56,15 @@ interface ActivityProps {
 function ActivityComp({ user, activity, onAcceptClick }: ActivityProps) {
     // activity.participations can contain objects with equal user, but different accept values. Then, the last array element is the latest decision of the specific user.
     // Now, filter the last decisions:
-    const decisions: { [user: string]: Acceptance } = activity.participations.reduce((d, participation) => ({
-        ...d,
-        [participation.phoneNr]: participation.accept
-    }),
+    const decisions: { [user: string]: Acceptance } = activity.participations.reduce<{ [user: string]: Acceptance }>((d, participation) => {
+        d[participation.phoneNr] = participation.accept
+        return d
+
+        // return ({
+        //     ...d,
+        //     [participation.phoneNr]: participation.accept
+        // })
+    },
         {}
     )
     const [acceptNum, rejectNum] = Object.entries(decisions).reduce(
@@ -213,6 +219,8 @@ export default function Page({ params }: { params: { group: string; phoneNr: str
                         if (a.date != null && b.date != null) {
                             return a.date - b.date
                         }
+                        if (a.date != null && b.date == null) return -1;
+                        if (a.date == null && b.date != null) return 1;
                         return 0;
                     })
                     setActivities(resp.activities);
@@ -317,6 +325,8 @@ export default function Page({ params }: { params: { group: string; phoneNr: str
                         if (a.date != null && b.date != null) {
                             return a.date - b.date
                         }
+                        if (a.date != null && b.date == null) return -1;
+                        if (a.date == null && b.date != null) return 1;
                         return 0;
                     })
                     setActivities(resp.activities);
@@ -376,7 +386,7 @@ export default function Page({ params }: { params: { group: string; phoneNr: str
 
     const accept: Participation[] = decisions == null ? [] : Object.values(decisions).filter((p => p.accept === 'accepted'))
     const reject: Participation[] = decisions == null ? [] : Object.values(decisions).filter((p => p.accept === 'rejected'))
-    const undecided: string[] = decisions == null ? [] : (members.map(member => member.phoneNr).filter(phoneNr => !accept.map(p => p.phoneNr).includes(phoneNr) && !reject.map(p => p.phoneNr).includes(phoneNr))).map(phoneNrToName).sort()
+    const undecided: string[] = decisions == null ? [] : (members.map(member => member.phoneNr).filter(phoneNr => !accept.map(p => p.phoneNr).includes(phoneNr) && !reject.map(p => p.phoneNr).includes(phoneNr)))
 
     function phoneNrToName(phoneNr: string): string {
         if (selActivity == null) return '';
@@ -417,6 +427,8 @@ export default function Page({ params }: { params: { group: string; phoneNr: str
                                 if (a.date != null && b.date != null) {
                                     return a.date - b.date
                                 }
+                                if (a.date != null && b.date == null) return -1;
+                                if (a.date == null && b.date != null) return 1;
                                 return 0;
                             })
                             setActivities(resp.activities);
@@ -581,6 +593,7 @@ export default function Page({ params }: { params: { group: string; phoneNr: str
                                                     accept.map((participation, i) => (
                                                         <tr key={i}>
                                                             <td className={styles.detailName}>{phoneNrToName(participation.phoneNr)}</td>
+                                                            <td><WhatsAppLinkComp phoneNr={participation.phoneNr} /></td>
                                                             <td className={styles.detailDate}>{formatDateTime(new Date(participation.date))}</td>
                                                         </tr>))
                                                 }
@@ -600,6 +613,7 @@ export default function Page({ params }: { params: { group: string; phoneNr: str
                                                     reject.map((participation, i) => (
                                                         <tr key={i}>
                                                             <td className={styles.detailName}>{phoneNrToName(participation.phoneNr)}</td>
+                                                            <td><WhatsAppLinkComp phoneNr={participation.phoneNr} /></td>
                                                             <td className={styles.detailDate}>{formatDateTime(new Date(participation.date))}</td>
                                                         </tr>))
                                                 }
@@ -610,13 +624,16 @@ export default function Page({ params }: { params: { group: string; phoneNr: str
 
                             </div>
                             <h3 className={styles.headerUndecided}>{undecided.length} haben noch nicht abgestimmt oder können es noch nicht sagen:</h3>
-                            <div>
-                                {
-                                    undecided.map((name, i) => <div key={i}>
-                                        {name}
-                                    </div>)
-                                }
-                            </div>
+                            <table>
+                                <tbody>
+                                    {
+                                        undecided.map((phoneNr, i) => <tr key={i}>
+                                            <td className={styles.detailName}>{phoneNrToName(phoneNr)}</td>
+                                            <td><WhatsAppLinkComp phoneNr={phoneNr} /></td>
+                                        </tr>)
+                                    }
+                                </tbody>
+                            </table>
                         </div>
                     </Popup>
                 </>

@@ -21,6 +21,7 @@
 
 .page {
     width: 260px !important;
+    box-sizing: border-box;
 
     /* flex-basis: 260px; */
     flex: 1 1 auto;
@@ -229,6 +230,8 @@
 .activity {
     position: relative;
     width: 100%;
+    box-sizing: border-box;
+    padding: 20px;
 }
 
 .menuDiv {

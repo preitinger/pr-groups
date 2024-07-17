@@ -107,6 +107,9 @@ export default function Page() {
                                 </>
                         }
                     </div>
+                    <div>
+                        <Link href='/group-admin/all-activities'>Alle aktuellen Aktivitäten all deiner Gruppen auf einen Blick</Link>
+                    </div>
                 </div>
                 <Popup visible={login} >
                     <LoginComp onLogin={onLogin} setSpinning={setSpinning} />

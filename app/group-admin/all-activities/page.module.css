@@ -1,0 +1,39 @@
+.main {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+.group {
+    margin: 1rem;
+    background-color: #381107;
+    padding: 1rem;
+    border-radius: 2rem;
+    display: flex;
+    flex-flow: row wrap;
+}
+
+.groupName {
+    color: gold;
+}
+
+.group > * {
+    margin: 1rem;
+}
+.activity {
+    /* margin: 1rem; */
+}
+
+.activity a {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.detailName {
+    font-size: 1.2rem;
+}
+
+.detailDate {
+    font-size: small;
+    color: gray;
+    padding-left: 3rem;
+}
