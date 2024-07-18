@@ -22,7 +22,7 @@ export function Popup({ visible, setVisible, children }: PropsWithChildren<Popup
         <>
             {
                 visible &&
-                <dialog ref={dialogRef} className='dialog'>
+                <dialog ref={dialogRef} className='dialog' onClose={() => { if (setVisible) setVisible(false) }}>
                     <div className={styles.popupOuter}>
                         {
                             setVisible != null &&
