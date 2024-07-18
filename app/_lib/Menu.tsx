@@ -10,6 +10,8 @@ import { DeleteReq, DeleteResp } from "./user-management-server/user-management-
 import { withStopPropagation } from "./utils";
 import ImgAttributions from "./ImgAttributions";
 import { myImgAttributions } from "../myImgAttributions";
+import { LocalContext } from "./LocalContext";
+import { userAndTokenFromStorages } from "./userAndToken";
 
 export interface MenuProps {
     group?: string | null;
@@ -44,9 +46,7 @@ export default function Menu({ group, onDeleteMemberClick, customLabels, customS
 
     function deleteProfile() {
         setSpinning(true);
-        const ctx = new SessionContext();
-        const user1 = ctx.user;
-        const token1 = ctx.token;
+        const [user1, token1] = userAndTokenFromStorages();
         if (user1 == null || token1 == null) {
             return;
         }

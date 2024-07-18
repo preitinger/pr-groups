@@ -18,6 +18,8 @@ import DateTimeInput from "@/app/_lib/pr-client-utils/DateTimeInput";
 import Menu from "@/app/_lib/Menu";
 import MemberAdd from "@/app/_lib/MemberAdd";
 import { useRouter } from "next/navigation";
+import { LocalContext } from "@/app/_lib/LocalContext";
+import { userAndTokenFromStorages } from "@/app/_lib/userAndToken";
 
 function invitationLink(group: string, member: Member): string {
     return `/member/${encodeURIComponent(group)}/${encodeURIComponent(member.phoneNr)}/${encodeURIComponent(member.token)}`
@@ -44,9 +46,7 @@ export default function Page({ params }: { params: { id: string } }) {
     useEffect(() => {
         console.error('effect 0');
         setGroupId(groupIdRef.current = decodeURIComponent(params.id))
-        const ctx = new SessionContext();
-        const user1 = ctx.user;
-        const token1 = ctx.token;
+        const [user1, token1] = userAndTokenFromStorages();
         if (user1 == null || token1 == null) {
             setComment('Nicht eingeloggt.');
             return;
@@ -97,9 +97,7 @@ export default function Page({ params }: { params: { id: string } }) {
     const onActivityDeleteClick = (creationDate: number) => () => {
         const activity = activityFromCreationDate(creationDate);
         if (!confirm(`Aktivität ${activity.name} am ${formatDateTime(dateFromMillisOrNull(activity.date))} wirklich löschen?`)) return;
-        const ctx = new SessionContext();
-        const user1 = ctx.user;
-        const token1 = ctx.token;
+        const [user1, token1] = userAndTokenFromStorages();
 
         if (user1 == null || token1 == null || groupIdRef.current == null) return;
         const req: GroupActivityDeleteReq = {
@@ -139,9 +137,7 @@ export default function Page({ params }: { params: { id: string } }) {
 
     function saveEditedMember() {
         if (editedMember == null) return;
-        const ctx = new SessionContext();
-        const user1 = ctx.user;
-        const token1 = ctx.token;
+        const [user1, token1] = userAndTokenFromStorages();
         if (user1 == null || token1 == null || groupIdRef.current == null) {
             setComment('Nicht eingeloggt.');
             return;
@@ -178,9 +174,7 @@ export default function Page({ params }: { params: { id: string } }) {
 
     function saveEditedActivity() {
         if (editedActivity == null) return;
-        const ctx = new SessionContext();
-        const user1 = ctx.user;
-        const token1 = ctx.token;
+        const [user1, token1] = userAndTokenFromStorages();
         if (user1 == null || token1 == null || groupIdRef.current == null) {
             setComment('Nicht eingeloggt.');
             return;
@@ -238,9 +232,7 @@ export default function Page({ params }: { params: { id: string } }) {
     }, [])
 
     const onAdminDeleteClick = (admin: string) => () => {
-        const ctx = new SessionContext();
-        const user1 = ctx.user;
-        const token1 = ctx.token;
+        const [user1, token1] = userAndTokenFromStorages();
         if (user1 == null || token1 == null || groupIdRef.current == null) {
             setComment('Nicht eingeloggt.');
             return;
@@ -284,9 +276,7 @@ export default function Page({ params }: { params: { id: string } }) {
     function onAdminAddClick() {
         const newAdmin = prompt(`Which user do you like to add as a new group admin for ${groupIdRef.current}?`);
         if (newAdmin == null) return;
-        const ctx = new SessionContext();
-        const user1 = ctx.user;
-        const token1 = ctx.token;
+        const [user1, token1] = userAndTokenFromStorages();
         if (user1 == null || token1 == null || groupIdRef.current == null) {
             setComment('Nicht eingeloggt.');
             return;
@@ -336,9 +326,7 @@ export default function Page({ params }: { params: { id: string } }) {
     }
 
     async function onMemberAdded({ group, newPhoneNr, prename, surname }: { group: string; newPhoneNr: string; prename: string; surname: string }) {
-        const ctx = new SessionContext();
-        const user1 = ctx.user;
-        const token1 = ctx.token;
+        const [user1, token1] = userAndTokenFromStorages();
         if (user1 == null || token1 == null) {
             setComment('Du bist nicht eingeloggt.')
             return;

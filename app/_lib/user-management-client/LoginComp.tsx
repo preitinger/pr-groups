@@ -1,11 +1,13 @@
-import router from "next/router";
+'use client'
+
 import Input from "../Input";
 import { SessionContext } from "../SessionContext";
 import styles from './LoginComp.module.css'
 import { LoginReq } from "./user-management-common/login";
 import { userLoginFetch } from "./userManagementClient";
 import { useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { LocalContext } from "../LocalContext";
+import { userAndTokenToStorages } from "../userAndToken";
 
 export interface LoginProps {
     onLogin: () => void;
@@ -17,7 +19,6 @@ export default function LoginComp({ onLogin, setSpinning }: LoginProps) {
     const [passwd, setPasswd] = useState('');
     const token = useRef<string | null>(null);
     const [comment, setComment] = useState('');
-    const router = useRouter()
 
     function onLoginClick() {
         const req: LoginReq = {
@@ -29,9 +30,7 @@ export default function LoginComp({ onLogin, setSpinning }: LoginProps) {
             switch (resp.type) {
                 case 'success':
                     token.current = resp.token;
-                    const ctx = new SessionContext();
-                    ctx.user = user;
-                    ctx.token = resp.token;
+                    userAndTokenToStorages(user, resp.token);
                     onLogin();
                     break;
 

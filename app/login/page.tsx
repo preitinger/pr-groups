@@ -5,11 +5,10 @@ import styles from './page.module.css'
 import { LoginReq } from '../_lib/user-management-client/user-management-common/login';
 import { userLoginFetch } from '../_lib/user-management-client/userManagementClient';
 import { useRouter } from 'next/navigation';
-import { SessionContext } from '../_lib/SessionContext';
-import Profile from '../_lib/Profile';
 import Header from '../_lib/Header';
 import Input from '../_lib/Input';
 import Menu from '../_lib/Menu';
+import { userAndTokenFromStorages, userAndTokenToStorages } from '../_lib/userAndToken';
 
 export default function Page() {
     const [user, setUser] = useState('');
@@ -24,7 +23,9 @@ export default function Page() {
         alpha: '',
     })
     useEffect(() => {
-        setUser(new SessionContext().user ?? '')
+        const [user1, token1] = userAndTokenFromStorages();
+        if (user1 == null || token1 == null) return;
+        setUser(user1)
     }, [])
 
     function onLoginClick() {
@@ -37,9 +38,7 @@ export default function Page() {
             switch (resp.type) {
                 case 'success':
                     token.current = resp.token;
-                    const ctx = new SessionContext();
-                    ctx.user = user;
-                    ctx.token = resp.token;
+                    userAndTokenToStorages(user, resp.token);
                     router.push('/member');
                     break;
 

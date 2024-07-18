@@ -8,6 +8,7 @@ import { apiFetchPost } from "@/app/_lib/user-management-client/apiRoutesClient"
 import { formatDateTime } from "@/app/_lib/utils";
 import { useEffect, useState } from "react";
 import styles from './page.module.css'
+import { userAndTokenFromStorages } from "@/app/_lib/userAndToken";
 
 export default function Page({ params }: { params: { activityIdx: string } }) {
     const user = useUser();
@@ -17,9 +18,11 @@ export default function Page({ params }: { params: { activityIdx: string } }) {
 
     useEffect(() => {
         const ctx = new SessionContext();
-        setGroup(ctx.group ?? '');
+        const group1 = ctx.group;
+        setGroup(group1 ?? '');
+        const [user1, token1] = userAndTokenFromStorages();
 
-        if (ctx.user == null || ctx.token == null || ctx.group == null) return;
+        if (user1 == null || token1 == null || group1 == null) return;
         const activities = ctx.activities;
         if (activities == null) return;
         const activityIdx = parseInt(params.activityIdx);

@@ -124,6 +124,7 @@ export interface GroupAdminAllGroupsActivitiesReq {
 
 export interface ActivitiesInGroup {
     group: string;
+    groupTitle: string | null;
     members: Member[];
     activities: Activity[];
 }

@@ -8,6 +8,7 @@ import { GroupAdminAddReq, GroupAdminAddResp } from "@/app/_lib/api";
 import { SessionContext } from "@/app/_lib/SessionContext";
 import { apiFetchPost } from "@/app/_lib/user-management-client/apiRoutesClient";
 import Header from "@/app/_lib/Header";
+import { userAndTokenFromStorages } from "@/app/_lib/userAndToken";
 
 export default function Page() {
     const user = useUser();
@@ -16,15 +17,14 @@ export default function Page() {
     const [comment, setComment] = useState('');
 
     async function onAddClick() {
-        const ctx = new SessionContext();
-        const token = ctx.token;
-        if (user == null || token == null) {
+        const [user1, token1] = userAndTokenFromStorages();
+        if (user1 == null || token1 == null) {
             setComment('Du bist nicht eingeloggt.')
             return;
         }
         const req: GroupAdminAddReq = {
-            user: user,
-            token: token,
+            user: user1,
+            token: token1,
             group: group,
             groupAdminUser: groupAdminUser
         }

@@ -1,8 +1,3 @@
-import clientPromise from "@/app/_lib/user-management-server/mongodb"
-import { GroupDoc } from "@/app/api/documents"
-import { Metadata, ResolvingMetadata } from "next"
-import { Inter } from "next/font/google"
-
 
 export default function Layout({
   children,

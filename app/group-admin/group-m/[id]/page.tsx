@@ -26,6 +26,7 @@ import Checkbox from "@/app/_lib/Checkbox";
 import Label from "@/app/_lib/Label";
 import EditableOptionalDateTimeComp from "@/app/_lib/pr-client-utils/EditableOptionalDateTimeComp";
 import useEditableOptionalDateTime from "@/app/_lib/pr-client-utils/useEditableOptionalDateTime";
+import { userAndTokenFromStorages } from "@/app/_lib/userAndToken";
 
 const MAX_GROUP_LENGTH = 20
 const MAX_HEADER_LEN = 20
@@ -748,9 +749,7 @@ export default function Page({ params }: { params: { id: string } }) {
     const activityScrollableRef = useRef<HTMLDivElement>(null);
 
     const fetchData = useCallback(() => {
-        const ctx = new SessionContext();
-        const user1 = ctx.user;
-        const token1 = ctx.token;
+        const [user1, token1] = userAndTokenFromStorages();
         if (user1 == null || token1 == null) {
             setLogin(true);
             setSpinning(false);
@@ -807,9 +806,7 @@ export default function Page({ params }: { params: { id: string } }) {
     useEffect(() => {
         const abortController = abortControllerRef.current = new FixedAbortController();
         setGroupId(groupIdRef.current = decodeURIComponent(params.id))
-        const ctx = new SessionContext();
-        const user1 = ctx.user;
-        const token1 = ctx.token;
+        const [user1, token1] = userAndTokenFromStorages();
         if (user1 == null || token1 == null) {
             setComment('Nicht eingeloggt.');
             setLogin(true)
@@ -851,9 +848,7 @@ export default function Page({ params }: { params: { id: string } }) {
             return;
         }
 
-        const ctx = new SessionContext();
-        const user1 = ctx.user;
-        const token1 = ctx.token;
+        const [user1, token1] = userAndTokenFromStorages();
 
         if (user1 == null || token1 == null) {
             setLogin(true);
@@ -910,9 +905,7 @@ export default function Page({ params }: { params: { id: string } }) {
     }
 
     async function onMemberAdded({ group, newPhoneNr, prename, surname }: { group: string; newPhoneNr: string; prename: string; surname: string }) {
-        const ctx = new SessionContext();
-        const user1 = ctx.user;
-        const token1 = ctx.token;
+        const [user1, token1] = userAndTokenFromStorages();
         if (user1 == null || token1 == null) {
             setMemberComment('Du bist nicht eingeloggt.')
             return;

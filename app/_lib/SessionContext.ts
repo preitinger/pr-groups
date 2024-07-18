@@ -1,17 +1,17 @@
 import { Activity } from "./api";
 
 export class SessionContext {
-    get user(): string | null {
+    get user2(): string | null {
         return sessionStorage.getItem('user');
     }
-    set user(u: string | null) {
+    set user2(u: string | null) {
         if (u == null) sessionStorage.removeItem('user');
         else sessionStorage.setItem('user', u);
     }
-    get token(): string | null {
+    get token2(): string | null {
         return sessionStorage.getItem('token');
     }
-    set token(t: string | null) {
+    set token2(t: string | null) {
         if (t == null) sessionStorage.removeItem('token');
         else sessionStorage.setItem('token', t);
     }

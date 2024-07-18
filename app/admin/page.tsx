@@ -9,6 +9,8 @@ import useUser from "../_lib/useUser";
 import Header from "../_lib/Header";
 import { HandleDeletedUsersReq, HandleDeletedUsersResp } from "../_lib/api";
 import { apiFetchPost } from "../_lib/user-management-client/apiRoutesClient";
+import { LocalContext } from "../_lib/LocalContext";
+import { userAndTokenFromStorages } from "../_lib/userAndToken";
 
 export default function Page() {
     const user = useUser();
@@ -16,10 +18,10 @@ export default function Page() {
     const [spinning, setSpinning] = useState(false);
 
     function handleDeletedUsers() {
-        const ctx = new SessionContext();
-        const user1 = ctx.user;
-        const token1 = ctx.token;
+        const [user1, token1] = userAndTokenFromStorages();
+
         if (user1 == null || token1 == null) return;
+
         const req: HandleDeletedUsersReq = {
             user: user1,
             token: token1,

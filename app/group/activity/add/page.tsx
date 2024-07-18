@@ -11,6 +11,7 @@ import { SessionContext } from "@/app/_lib/SessionContext";
 import Header from "@/app/_lib/Header";
 import { parseGermanDate } from "@/app/_lib/utils";
 import DateTimeInput from "@/app/_lib/pr-client-utils/DateTimeInput";
+import { userAndTokenFromStorages } from "@/app/_lib/userAndToken";
 
 export default function Page() {
     const user = useUser();
@@ -22,9 +23,8 @@ export default function Page() {
     const [unclearMESZ, setUnclearMESZ] = useState(false);
 
     async function onAddClick() {
-        const ctx = new SessionContext();
-        const token = ctx.token;
-        if (user == null || token == null) {
+        const [user1, token1] = userAndTokenFromStorages();
+        if (user1 == null || token1 == null) {
             setComment('Bitte erst einloggen.');
             return;
         }
@@ -36,8 +36,8 @@ export default function Page() {
         } catch (reason) {}
         const test = JSON.parse(JSON.stringify(date));
         const req: GroupActivityAddReq = {
-            user: user,
-            token: token,
+            user: user1,
+            token: token1,
             group: group,
             activity: activity,
             date: date?.getTime() ?? null,

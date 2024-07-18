@@ -23,6 +23,7 @@ async function execute(req: GroupAdminAllGroupsActivitiesReq): Promise<ApiResp<G
             _id: 1,
             members: 1,
             activities: 1,
+            docTitle: 1
         }
     }).batchSize(10)
 
@@ -33,6 +34,7 @@ async function execute(req: GroupAdminAllGroupsActivitiesReq): Promise<ApiResp<G
     while ((group = await res.next()) != null) {
         resp.push({
             group: group._id,
+            groupTitle: group.docTitle,
             members: group.members,
             activities: group.activities.filter(a => a != null) as Activity[]
         })

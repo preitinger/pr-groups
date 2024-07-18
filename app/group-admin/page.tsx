@@ -15,6 +15,8 @@ import FixedAbortController from "../_lib/pr-client-utils/FixedAbortController";
 import Menu from "../_lib/Menu";
 import { Popup } from "../Popup";
 import LoginComp from "../_lib/user-management-client/LoginComp";
+import { LocalContext } from "../_lib/LocalContext";
+import { userAndTokenFromStorages } from "../_lib/userAndToken";
 
 export default function Page() {
     const user = useUser();
@@ -24,9 +26,8 @@ export default function Page() {
     const [login, setLogin] = useState(false);
 
     const fetchData = useCallback(function fetchData(abortController?: AbortController) {
-        const ctx = new SessionContext();
-        const user1 = ctx.user;
-        const token1 = ctx.token;
+        const [user1, token1] = userAndTokenFromStorages();
+
         if (user1 == null || token1 == null) {
             setLogin(true);
             setSpinning(false);

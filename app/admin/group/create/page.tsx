@@ -10,6 +10,8 @@ import Profile from '@/app/_lib/Profile';
 import useUser from '@/app/_lib/useUser';
 import Header from '@/app/_lib/Header';
 import Input from '@/app/_lib/Input';
+import { LocalContext } from '@/app/_lib/LocalContext';
+import { userAndTokenFromStorages } from '@/app/_lib/userAndToken';
 
 export default function Page() {
     const [name, setName] = useState('');
@@ -30,10 +32,8 @@ export default function Page() {
     const user = useUser();
 
     async function onCreateGroupClick() {
-        const ctx = new SessionContext();
-        const user = ctx.user;
-        const token = ctx.token;
-        if (user == null || token == null) {
+        const [user1, token1] = userAndTokenFromStorages();
+        if (user1 == null || token1 == null) {
             alert('Du bist nicht eingeloggt.');
             router.push('/login');
             return;
@@ -55,8 +55,8 @@ export default function Page() {
             }
         } catch (reason) {}
         const req: GroupCreateReq = {
-            user: user,
-            token: token,
+            user: user1,
+            token: token1,
             name: name,
             logo: logo,
             line1: {

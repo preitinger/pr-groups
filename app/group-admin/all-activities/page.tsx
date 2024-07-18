@@ -5,10 +5,14 @@ import FixedAbortController from "@/app/_lib/pr-client-utils/FixedAbortControlle
 import { SessionContext } from "@/app/_lib/SessionContext";
 import { apiFetchPost } from "@/app/_lib/user-management-client/apiRoutesClient";
 import { formatDateTime } from "@/app/_lib/utils";
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import styles from './page.module.css'
 import { Popup } from "@/app/Popup";
 import WhatsAppLinkComp from "@/app/_lib/WhatsAppLinkComp";
+import LoginComp from "@/app/_lib/user-management-client/LoginComp";
+import Menu from "@/app/_lib/Menu";
+import { LocalContext } from "@/app/_lib/LocalContext";
+import { userAndTokenFromStorages } from "@/app/_lib/userAndToken";
 
 interface Details {
     members: Member[];
@@ -51,7 +55,7 @@ function ActivityComp({ members, activity, setDetails }: ActivityProps) {
     return (
         <div className={styles.activity}>
             <div>{activity.name}</div>
-            <div>{formatDateTime(activity.date, true)}</div>
+            <div className={styles.date}>{formatDateTime(activity.date, true)}</div>
             <div><a tabIndex={0} onClick={onDetails} onKeyUp={(e) => { if (e.key === 'Enter' || e.key === ' ') onDetails(); }}>{accepting.length} / {activity.capacity ?? 'unbegrenzt'}</a></div>
         </div>
     )
@@ -64,11 +68,13 @@ interface ActivitiesInGroupProps {
 function ActivitiesInGroupComp({ activitiesInGroup, setDetails }: ActivitiesInGroupProps) {
     return (
         <div className={styles.group}>
-            <div className={styles.groupName}>{activitiesInGroup.group}</div>
-            {
-                activitiesInGroup.activities.map((a, i) => (
-                    <ActivityComp key={i} members={activitiesInGroup.members} activity={a} setDetails={setDetails} />))
-            }
+            <div className={styles.groupName}>{activitiesInGroup.groupTitle} <span className={styles.groupId}>#{activitiesInGroup.group}</span></div>
+            <div className={styles.activities}>
+                {
+                    activitiesInGroup.activities.map((a, i) => (
+                        <ActivityComp key={i} members={activitiesInGroup.members} activity={a} setDetails={setDetails} />))
+                }
+            </div>
         </div>
     )
 }
@@ -77,13 +83,16 @@ export default function Page() {
     const [comment, setComment] = useState('')
     const [activitiesInGroups, setActivitiesInGroups] = useState<ActivitiesInGroup[] | null>(null);
     const [details, setDetails] = useState<Details | null>(null);
+    const [login, setLogin] = useState(false);
+    const [spinning, setSpinning] = useState(false);
+    const abortControllerRef = useRef<AbortController|null>(null);
 
-    useEffect(() => {
-        const ctx = new SessionContext();
-        const user1 = ctx.user;
-        const token1 = ctx.token;
+    const fetch = useCallback(() => {
+        setComment('');
+        const [user1, token1] = userAndTokenFromStorages();
         if (user1 == null || token1 == null) {
             setComment('Nicht authorisiert.');
+            setLogin(true);
             return;
         }
 
@@ -91,8 +100,8 @@ export default function Page() {
             user: user1,
             token: token1
         }
-        const abortController = new FixedAbortController();
-        apiFetchPost<GroupAdminAllGroupsActivitiesReq, GroupAdminAllGroupsActivitiesResp>('/api/group-admin/all-activities', req, abortController.signal).then(resp => {
+        setSpinning(true);
+        apiFetchPost<GroupAdminAllGroupsActivitiesReq, GroupAdminAllGroupsActivitiesResp>('/api/group-admin/all-activities', req, abortControllerRef.current?.signal).then(resp => {
             switch (resp.type) {
                 case 'authFailed':
                     setComment('Nicht authorisiert.');
@@ -113,12 +122,19 @@ export default function Page() {
             } else {
                 setComment('Unerwarteter Fehler: ' + JSON.stringify(reason));
             }
+        }).finally(() => {
+            setSpinning(false)
         })
 
-        return () => {
-            abortController.abort();
-        }
     }, [])
+
+    useEffect(() => {
+        abortControllerRef.current = new FixedAbortController();
+        fetch()
+        return () => {
+            abortControllerRef.current?.abort();
+        }
+    }, [fetch])
 
 
     const decisions: { [user: string]: Participation } | undefined = details?.activity.participations.reduce((d, participation) => ({
@@ -139,9 +155,19 @@ export default function Page() {
         return member.prename + ' ' + member.surname;
     }
 
+    const onLogin = useCallback(() => {
+        setLogin(false);
+        fetch()
+    }, [fetch])
+
     return (
         <>
+            <Menu customSpinning={spinning} />
             <div className={styles.main}>
+                <p>{comment}</p>
+                <Popup visible={login} >
+                    <LoginComp onLogin={onLogin} setSpinning={setSpinning} />
+                </Popup>
                 {
                     activitiesInGroups &&
                     activitiesInGroups.map(activitiesInGroup => <ActivitiesInGroupComp key={activitiesInGroup.group} activitiesInGroup={activitiesInGroup} setDetails={setDetails} />)
