@@ -27,7 +27,7 @@ async function executeAdd(req: GroupAdminAddReq): Promise<ApiResp<GroupAdminAddR
             { $addToSet: { admins: req.groupAdminUser } },
             {
                 projection: {
-                    admins: req.getList ? 1 : 0
+                    admins: 1
                 }
             }
         );
