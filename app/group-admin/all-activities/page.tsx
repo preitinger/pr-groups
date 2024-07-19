@@ -13,6 +13,8 @@ import LoginComp from "@/app/_lib/user-management-client/LoginComp";
 import Menu from "@/app/_lib/Menu";
 import { LocalContext } from "@/app/_lib/LocalContext";
 import { userAndTokenFromStorages } from "@/app/_lib/userAndToken";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 interface Details {
     members: Member[];
@@ -64,11 +66,15 @@ function ActivityComp({ members, activity, setDetails }: ActivityProps) {
 interface ActivitiesInGroupProps {
     activitiesInGroup: ActivitiesInGroup;
     setDetails: (d: Details | null) => void;
+    onEdit: () => void;
 }
-function ActivitiesInGroupComp({ activitiesInGroup, setDetails }: ActivitiesInGroupProps) {
+function ActivitiesInGroupComp({ activitiesInGroup, setDetails, onEdit }: ActivitiesInGroupProps) {
     return (
         <div className={styles.group}>
-            <div className={styles.groupName}>{activitiesInGroup.groupTitle} <span className={styles.groupId}>#{activitiesInGroup.group}</span></div>
+            <div className={styles.groupHeader}>
+                <div>{activitiesInGroup.groupTitle} <span className={styles.groupId}>#{activitiesInGroup.group}</span></div>
+                <button className={styles.edit} onClick={onEdit}>{/* <Image src='/edit_12000664.png' alt='Edit' width={32} height={32} /> */}</button>
+            </div>
             <div className={styles.activities}>
                 {
                     activitiesInGroup.activities.map((a, i) => (
@@ -85,7 +91,9 @@ export default function Page() {
     const [details, setDetails] = useState<Details | null>(null);
     const [login, setLogin] = useState(false);
     const [spinning, setSpinning] = useState(false);
-    const abortControllerRef = useRef<AbortController|null>(null);
+    const abortControllerRef = useRef<AbortController | null>(null);
+
+    const router = useRouter();
 
     const fetch = useCallback(() => {
         setComment('');
@@ -171,7 +179,9 @@ export default function Page() {
                 </Popup>
                 {
                     activitiesInGroups &&
-                    activitiesInGroups.map(activitiesInGroup => <ActivitiesInGroupComp key={activitiesInGroup.group} activitiesInGroup={activitiesInGroup} setDetails={setDetails} />)
+                    activitiesInGroups.map(activitiesInGroup => <ActivitiesInGroupComp key={activitiesInGroup.group} activitiesInGroup={activitiesInGroup} setDetails={setDetails} onEdit={() => {
+                        router.push(`/group-admin/group-m/${activitiesInGroup.group}`)
+                    }} />)
                 }
             </div>
             <Popup visible={details != null} setVisible={(visible) => {
