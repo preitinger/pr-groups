@@ -43,6 +43,7 @@ export default function Page() {
             switch (resp.type) {
                 case 'authFailed':
                     setComment('Nicht authorisiert.');
+                    setLogin(true);
                     break;
                 case 'success':
                     setGroups(resp.groupIds);

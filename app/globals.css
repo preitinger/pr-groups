@@ -196,8 +196,15 @@ button {
 .dialog {
   background-color: black;
   color: white;
-  /* padding: 0; */
+  scrollbar-color: hsl(0, 0%, 47%) #525252;
+  scrollbar-width: thin;
+/* padding: 0; */
   /* border: none; */
+}
+
+.dialog * {
+  scrollbar-color: hsl(0, 0%, 47%) #525252;
+  scrollbar-width: thin;
 }
 
 .dialog input {

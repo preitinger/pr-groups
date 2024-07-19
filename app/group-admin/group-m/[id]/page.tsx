@@ -765,10 +765,10 @@ export default function Page({ params }: { params: { id: string } }) {
         const abortController = abortControllerRef.current;
         if (abortController == null) throw new Error('abortController null?!');
         apiFetchPost<GroupAdminGroupReq, GroupAdminGroupResp>('/api/group-admin/group/', req, abortController.signal).then(resp => {
-            console.log('resp', resp);
             switch (resp.type) {
                 case 'authFailed':
                     setComment('Nicht authorisiert.');
+                    setLogin(true);
                     break;
                 case 'success': {
                     setLogo(resp.logo)
@@ -1232,7 +1232,7 @@ export default function Page({ params }: { params: { id: string } }) {
                                         ))
                                     }
                                 </div>
-                                <button className={`${styles.clickable} ${styles.addButton}`} onClick={addAdmin}>Aktivität hinzufügen</button>
+                                <button className={`${styles.clickable} ${styles.addButton}`} onClick={addAdmin}>Gruppen-Admin hinzufügen</button>
                             </div>
                         </ScrollableContainer>
                         <div className={styles.bottomBar}>

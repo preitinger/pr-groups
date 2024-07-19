@@ -105,6 +105,7 @@ export default function Page() {
             switch (resp.type) {
                 case 'authFailed':
                     setComment('Nicht authorisiert.');
+                    setLogin(true);
                     break;
                 case 'error':
                     setComment('Unerwarteter Fehler: ' + resp.error);
