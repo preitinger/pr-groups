@@ -5,8 +5,8 @@ export default function Layout({
   children: React.ReactNode;
 }>) {
 
-  
-    {/*
+
+  {/*
       <div className='d5'>
              <div className='d6'>
              </div>
@@ -23,17 +23,23 @@ export default function Layout({
 
   return (
     <>
-      <div className='d5'>
-        <div className='d6'>
-        </div>
-        <div id='d4' className='d4'>
+      <div className='memberOuter'>
+        <div className='memberInner'>
+          <div className='d5'>
+            <div className='d6'>
+            </div>
+            <div id='d4' className='d4'>
+            </div>
+          </div>
+          <div className='d2'>
+          </div>
+          {children}
         </div>
       </div>
-      <div className='d2'>
-      </div>
-      <div className='d3'>
+      {/* <div className='d3'>
         {children}
-      </div>
+      </div> */}
+
     </>
   );
 }

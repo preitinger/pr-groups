@@ -1,10 +1,10 @@
 .main {
     position: absolute;
-    top: calc(var(--h1) + 2rem);
-    left: calc(var(--w1) + 4rem);
+    top: calc(var(--h1) - 2rem);
+    left: calc(var(--w1) + 0rem);
     color: #ebebeb;
     /* right: 2rem; */
-    width: 260px;
+    width: 90vw;
     /* overflow: auto; */
     overflow: hidden;
     bottom: 1rem;
@@ -20,7 +20,8 @@
 }
 
 .page {
-    width: 260px !important;
+    /* width directly dynamically in style */
+
     box-sizing: border-box;
 
     /* flex-basis: 260px; */
@@ -29,6 +30,7 @@
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
+    height: 100%;
     overflow: hidden;
 }
 

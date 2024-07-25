@@ -28,12 +28,13 @@ const FAKE = true;
 interface DateTimeProps {
     date: Date
     small: boolean;
+    className?: string;
 }
-function DateTimeComp({ date, small }: DateTimeProps) {
+function DateTimeComp({ date, small, className }: DateTimeProps) {
     return (
         <>
-            <div className={small ? styles.nextDateSmall : styles.nextDate}>{formatDate(date)}</div>
-            <div className={small ? styles.nextTimeSmall : styles.nextTime}>UM {formatTime(date)} UHR</div>
+            <div className={`${small ? styles.nextDateSmall : styles.nextDate} ${className ?? ''}`}>{formatDate(date)}</div>
+            <div className={`${small ? styles.nextTimeSmall : styles.nextTime} ${className}`}>UM {formatTime(date)} UHR</div>
         </>
     )
 }
@@ -49,13 +50,14 @@ function NameComp({ name, small }: NameProps) {
 }
 
 interface ActivityProps {
+    dateHeader: string;
     user: string;
     activity: Activity;
     onAcceptClick: (accept: Acceptance) => void;
     // onDetailsClick: () => void;
 }
 
-function ActivityComp({ user, activity, onAcceptClick }: ActivityProps) {
+function ActivityComp({ dateHeader, user, activity, onAcceptClick }: ActivityProps) {
     // activity.participations can contain objects with equal user, but different accept values. Then, the last array element is the latest decision of the specific user.
     // Now, filter the last decisions:
     const decisions: { [user: string]: Acceptance } = activity.participations.reduce<{ [user: string]: Acceptance }>((d, participation) => {
@@ -78,46 +80,44 @@ function ActivityComp({ user, activity, onAcceptClick }: ActivityProps) {
     // console.log('decisions', decisions);
     return (
         <>
-            <div className={styles.activity}>
-                {/* <div onClick={onDetailsClick}> */}
-                <div >
-                    {date != null &&
-                        <DateTimeComp date={date} small={false} />
-                    }
-                    <div className={styles.participants}>{`${acceptNum} TEILNEHMER`}</div>
-                    {activity.capacity != null && <div className={freePlaces >= 0 ? styles.free : styles.overbooked}>{freePlaces >= 0 ? `NOCH ${freePlaces} FREIE PLÄTZE!` : `${activity.capacity} Plätze überbucht!`}</div>}
+            <div className={`${styles.labelNext} ${styles.indent}`}>{dateHeader}:</div>
+            {date != null &&
+                <div className={styles.indent}>
+                    <DateTimeComp date={date} small={false} />
                 </div>
-                {/* <p>Erstellt: {formatDate(activity.creationDate)}</p> */}
-                {/* <Link href={url}>
+            }
+            <div className={`${styles.participants} ${styles.indent}`}>{`${acceptNum} TEILNEHMER`}</div>
+            {activity.capacity != null && <div className={`${freePlaces >= 0 ? styles.free : styles.overbooked} ${styles.indent}`}>{freePlaces >= 0 ? `NOCH ${freePlaces} FREIE PLÄTZE!` : `${activity.capacity} Plätze überbucht!`}</div>}
+            {/* <p>Erstellt: {formatDate(activity.creationDate)}</p> */}
+            {/* <Link href={url}>
                     <p>{acceptNum} Zusagen</p>
                     <p>{rejectNum} Absagen</p>
                 </Link> */}
-                <div className={styles.activityButtons}>
-                    {
-                        (decisions[user] == null || decisions[user] === 'undecided') &&
-                        <>
-                            <button className={styles.accept} onClick={(e) => { onAcceptClick('accepted'); e.stopPropagation() }}>MITMACHEN</button>
-                            <button className={styles.reject} onClick={(e) => { onAcceptClick('rejected'); e.stopPropagation() }}>ABSAGEN</button>
-                            <div className={styles.undecided}>Entscheide mich noch</div>
-                        </>
-                    }
-                    {
-                        decisions[user] === 'accepted' &&
-                        <>
-                            <div className={styles.accepted}>Ich komme!</div>
-                            <button className={styles.reject} onClick={(e) => { onAcceptClick('rejected'); e.stopPropagation() }}>ABSAGEN</button>
-                            <button className={styles.doubt} onClick={(e) => { onAcceptClick('undecided'); e.stopPropagation() }}>SPÄTER ENTSCHEIDEN</button>
-                        </>
-                    }
-                    {
-                        decisions[user] === 'rejected' &&
-                        <>
-                            <button className={styles.accept} onClick={(e) => { onAcceptClick('accepted'); e.stopPropagation() }}>ZUSAGEN</button>
-                            <div className={styles.rejected}>Ich komme nicht.</div>
-                            <button className={styles.doubt} onClick={(e) => { onAcceptClick('undecided'); e.stopPropagation() }}>SPÄTER ENTSCHEIDEN</button>
-                        </>
-                    }
-                </div>
+            <div className={`${styles.activityButtons} ${styles.indent}`}>
+                {
+                    (decisions[user] == null || decisions[user] === 'undecided') &&
+                    <>
+                        <button className={styles.accept} onClick={(e) => { onAcceptClick('accepted'); e.stopPropagation() }}>MITMACHEN</button>
+                        <button className={styles.reject} onClick={(e) => { onAcceptClick('rejected'); e.stopPropagation() }}>ABSAGEN</button>
+                        <div className={styles.undecided}>Entscheide mich noch</div>
+                    </>
+                }
+                {
+                    decisions[user] === 'accepted' &&
+                    <>
+                        <div className={styles.accepted}>Ich komme!</div>
+                        <button className={styles.reject} onClick={(e) => { onAcceptClick('rejected'); e.stopPropagation() }}>ABSAGEN</button>
+                        <button className={styles.doubt} onClick={(e) => { onAcceptClick('undecided'); e.stopPropagation() }}>SPÄTER ENTSCHEIDEN</button>
+                    </>
+                }
+                {
+                    decisions[user] === 'rejected' &&
+                    <>
+                        <button className={styles.accept} onClick={(e) => { onAcceptClick('accepted'); e.stopPropagation() }}>ZUSAGEN</button>
+                        <div className={styles.rejected}>Ich komme nicht.</div>
+                        <button className={styles.doubt} onClick={(e) => { onAcceptClick('undecided'); e.stopPropagation() }}>SPÄTER ENTSCHEIDEN</button>
+                    </>
+                }
             </div>
         </>
     )
@@ -541,37 +541,43 @@ export default function Page({ params }: { params: { group: string; phoneNr: str
                     <Menu group={group} onDeleteMemberClick={onDeleteClick} customLabels={['DATEN AKTUALISIEREN']} onCustomClick={onMenuClick} />
                 </>
                 }
-                <div className={styles.main}>
-                    {comment != '' && <p className={styles.comment}>{comment}</p>}
+                <div className={styles.mainContainer}>
+                    {/* <div className={styles.main}> */}
+                    {comment != '' && <div className={`${styles.comment} ${styles.indent}`}>{comment}</div>}
                     {
                         !afterDeleteSelf && selActivity != null &&
                         <>
-                            <div className={styles.labelNext}>{selActivity.date == null ? selActivity.name : activityIdx === firstOpen ? 'NÄCHSTE VERANSTALTUNG' : activityIdx < firstOpen || firstOpen === -1 ? 'ALTE VERANSTALTUNG' : 'WEITERE VERANSTALTUNG'}:</div>
-                            <ActivityComp activity={selActivity} user={phoneNr} onAcceptClick={(accept) => onAcceptClick(activityIdx, accept)} />
+                            {/* <div className={styles.labelNext}>{selActivity.date == null ? selActivity.name : activityIdx === firstOpen ? 'NÄCHSTE VERANSTALTUNG' : activityIdx < firstOpen || firstOpen === -1 ? 'ALTE VERANSTALTUNG' : 'WEITERE VERANSTALTUNG'}:</div> */}
+                            <ActivityComp dateHeader={selActivity.date == null ? selActivity.name : activityIdx === firstOpen ? 'NÄCHSTE VERANSTALTUNG' : activityIdx < firstOpen || firstOpen === -1 ? 'ALTE VERANSTALTUNG' : 'WEITERE VERANSTALTUNG'} activity={selActivity} user={phoneNr} onAcceptClick={(accept) => onAcceptClick(activityIdx, accept)} />
                             {/* <div ref={testRef} className={styles.testRow}><div className={styles.barElem}><DateTimeComp date={new Date()} small={true} /> */}
 
                         </>
                     }
                     {!afterDeleteSelf && selActivity == null &&
                         <>
-                            <div className={styles.noActivities}>Noch keine Aktivitäten in dieser Gruppe</div>
+                            <div className={`${styles.noActivities} ${styles.indent}`}>Noch keine Aktivitäten in dieser Gruppe</div>
                         </>
                     }
-                </div>
-                {!afterDeleteSelf && <>
-                    <ScrollableContainer className={styles.activityBar} snapOffset={80 - 18} snapWidth={160} snap={activityIdx} setSnap={setActivityIdx} >
-                        {
-                            activities.map((a, i) => <div key={i}><div onClick={withStopPropagation(onBarElemClick(i))} className={styles.barElem + (i === activityIdx ? ' ' + styles.barElemActive : '')}>
-                                {a.date != null ? <DateTimeComp date={new Date(a.date)} small={true} /> : <NameComp name={a.name} small={true} />}
-                            </div></div>)
-                        }
-                    </ScrollableContainer>
+                    {/* </div> */}
+                    {!afterDeleteSelf && <>
+                        <ScrollableContainer className={styles.activityBar} snapOffset={80 - 18 /* test */ + 10} snapWidth={160} snap={activityIdx} setSnap={setActivityIdx} >
+                            {
+                                activities.map((a, i) => <div key={i}><div onClick={withStopPropagation(onBarElemClick(i))} className={styles.barElem + (i < firstOpen ? ' ' + styles.barElemOld : '') + (i === activityIdx ? ' ' + styles.barElemActive : '')}>
+                                    {a.date != null ? <DateTimeComp date={new Date(a.date)} small={true} /> : <NameComp name={a.name} small={true} />}
+                                </div></div>)
+                            }
+                        </ScrollableContainer>
 
+                    </>
+                    }
+                </div>
+                {
+                    !afterDeleteSelf &&
                     <Popup visible={detailsPopup && selActivity != null} setVisible={setDetailsPopup}>
                         <ActivityDetailsComp group={group} selActivity={selActivity} members={members} />
                     </Popup>
-                </>
-                }            {
+                }
+                {
                     spinning &&
                     <div className={styles.spinner}></div>
                 }

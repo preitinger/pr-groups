@@ -84,7 +84,6 @@ export default function ScrollableContainer({ className, snapOffset, snapWidth, 
 
     const innerWidth = (snapOffset ?? 0) + childrenLen * (mySnapWidth ?? 0) + (dummyWidth ?? 0);
 
-
     return (
         <div className={`${styles.outer} ${className}`}>
             <div ref={containerRef} className={`${styles.container}`} onScroll={(e) => {
@@ -111,7 +110,11 @@ export default function ScrollableContainer({ className, snapOffset, snapWidth, 
                     {
                         snapOffset != null && <div><div style={{ width: snapOffset }}></div></div>
                     }
-                    {children}
+                    {Array.isArray(children) && children.map((child, i) =>
+                        <div key={i} style={{ width: `${mySnapWidth}px` }}>
+                            {child}
+                        </div>
+                    )}
                     {
                         dummyWidth != null && dummyWidth > 0 &&
                         <div>

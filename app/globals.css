@@ -23,7 +23,6 @@ body {
   scrollbar-arrow-color: gold;
   scrollbar-3dlight-color: gold;
   scrollbar-base-color: gold;
-
 }
 
 .d1 {
@@ -90,8 +89,13 @@ body {
   width: 100vw;
   overflow-x: hidden;
   z-index: -1;
-  background-color: #551a0a;
+  /* background-color: #551a0a; */
   color: #ebebeb;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .d3 {
@@ -104,6 +108,40 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
+  overflow: scroll;
+}
+
+.memberOuter {
+  position: absolute;
+  /* top: 50%; */
+  /* left: 50%; */
+  /* z-index: -1; */
+  /* background: inherit; */
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  /* display: flex; */
+  background-color: gray;
+}
+
+.memberInner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--bg-color);
+}
+
+@media((min-width: 610px) and (min-height: 660px)) {
+  .memberInner {
+    margin: auto;
+    width: 600px;
+    height: 650px;
+    border-radius: 2rem;
+    overflow: hidden;
+  }
 }
 
 .debug {
@@ -198,7 +236,7 @@ button {
   color: white;
   scrollbar-color: hsl(0, 0%, 47%) #525252;
   scrollbar-width: thin;
-/* padding: 0; */
+  /* padding: 0; */
   /* border: none; */
 }
 
@@ -239,6 +277,7 @@ button {
   border: 1px solid gold;
   display: flex;
 }
+
 .form {
   background-color: white;
   border-radius: 2rem;
@@ -247,4 +286,3 @@ button {
   color: black;
   /* height: 400px; */
 }
-

@@ -9,5 +9,5 @@
 .delete {
     border-radius: 1rem;
     padding: 1rem;
-    background-color: rgb(160, 20, 20);
+    background-color: rgb(160, 20, 20) !important;
 }

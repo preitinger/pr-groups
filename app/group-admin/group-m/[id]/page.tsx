@@ -6,7 +6,7 @@ import { SessionContext } from "@/app/_lib/SessionContext";
 import { Activity, EditedActivity, GroupAdminGroupReq, GroupAdminGroupResp, GroupAdminGroupUpdateReq, GroupAdminGroupUpdateResp, GroupAdminMemberAddReq, GroupAdminMemberAddResp, GroupAdminMemberDeleteReq, GroupAdminMemberDeleteResp, GroupAdminMemberUpdateReq, GroupAdminMemberUpdateResp, ImgData, Member } from "@/app/_lib/api";
 import useUser from "@/app/_lib/useUser";
 import { apiFetchPost } from "@/app/_lib/user-management-client/apiRoutesClient";
-import { ChangeEvent, FocusEventHandler, KeyboardEvent, PropsWithChildren, useCallback, useEffect, useRef, useState } from "react";
+import { ChangeEvent, FocusEventHandler, KeyboardEvent, PropsWithChildren, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import styles from './page.module.css'
 import { type HeaderLine } from "@/app/_lib/HeaderLine";
 import { dateFromMillisOrNull, formatDateTime, millisFromDateOrNull, parseGermanDate, withStopPropagation } from "@/app/_lib/utils";
@@ -567,7 +567,7 @@ export default function Page({ params }: { params: { id: string } }) {
     const [login, setLogin] = useState(false)
     const [dirty, setDirty] = useState(false);
     const abortControllerRef = useRef<AbortController | null>(null)
-    const [snapWidth, setSnapWidth] = useState<number | undefined>(undefined)
+    // const [snapWidth, setSnapWidth] = useState<number>(260)
     const scrollableContainerRef = useRef<React.JSX.Element>(null)
     const [horPage, setHorPage] = useState(0)
     const [addingMember, setAddingMember] = useState(false);
@@ -575,6 +575,15 @@ export default function Page({ params }: { params: { id: string } }) {
     const [editedMemberIdx, setEditedMemberIdx] = useState<number | null>(null);
     const [editedMember, setEditedMember] = useState<Member | null>(null);
     const activityScrollableRef = useRef<HTMLDivElement>(null);
+    const mainRef = useRef<HTMLDivElement>(null);
+
+    // useEffect(() => {
+    //     if (mainRef.current != null) {
+    //         const newSnapWidth = mainRef.current.offsetWidth;
+    //         console.log('newSnapWidth', newSnapWidth);
+    //         setSnapWidth(newSnapWidth)
+    //     }
+    // }, [])
 
     const fetchData = useCallback(() => {
         const [user1, token1] = userAndTokenFromStorages();
@@ -959,8 +968,8 @@ export default function Page({ params }: { params: { id: string } }) {
                         margin='1rem'
                         line2={{ text: groupId ?? '', fontSize: '1.5rem', bold: true }}
                     />
-                    <div className={styles.main}>
-                        <ScrollableContainer className={styles.scrollableContainer} points snap={horPage} setSnap={(i) => { setHorPage(i) }} snapWidth={260} snapOffset={0} >
+                    <div ref={mainRef} className={styles.main}>
+                        <ScrollableContainer className={styles.scrollableContainer} points snap={horPage} setSnap={(i) => { setHorPage(i) }} snapOffset={0} >
                             <div className={styles.page}>
                                 <div className={`scrollable ${styles.groupData}`}>
 
@@ -999,7 +1008,7 @@ export default function Page({ params }: { params: { id: string } }) {
                             <div className={styles.page}>
                                 <h3>Mitglieder</h3>
                                 {comment && <p>{comment}</p>}
-                                <p>{memberComment}</p>
+                                {memberComment && <p>{memberComment}</p>}
                                 <button className={`${styles.clickable} ${styles.addButton}`} onClick={onAddMember}>Mitglied hinzufügen</button>
                                 {/* <div className={`${styles.clickable} ${styles.add}`} onClick={onAddMember}><Image alt='Mitglied hinzufügen' src='/square_14034302.png' width={32} height={32} /><div className={styles.imgLabel}>Mitglied hinzufügen</div></div> */}
                                 <p className={styles.lightHint}>Zum Bearbeiten Name anklicken</p>
