@@ -5,6 +5,7 @@
     left: calc(var(--w1) + 4rem);
     color: #ebebeb;
     right: 2rem;
+    max-width: 600px;
 }
 
 .userLabel,
@@ -28,4 +29,28 @@
 .passwd,
 .passwdRepeat {
     width: 30ex;
+}
+
+.form fieldset {
+    border-radius: 5px;
+}
+
+.form fieldset:focus-within {
+    border-color: white;
+}
+
+.form fieldset input {
+    background-color: inherit;
+    border: none;
+    color: white;
+    
+}
+
+.form fieldset input:focus {
+    outline: none;
+}
+
+.form fieldset input::selection {
+    background-color: white;
+    color: var(--bg-color);
 }

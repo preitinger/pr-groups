@@ -1,0 +1,42 @@
+.headerGroup {}
+
+.headerActivity {}
+
+.detailLists {
+    max-height: 50vh;
+    overflow-y: auto;
+    scrollbar-color: hsl(0, 0%, 47%) #525252;
+    scrollbar-width: thin;
+}
+
+.headerAccepts {
+
+}
+
+.headerGroup {
+    margin-top:3rem;
+    margin-bottom: 0;
+}
+.headerActivity {
+    margin-top: 3rem;
+    margin-bottom: 0;
+}
+.headerAccepts,
+.headerRejects {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+}
+.headerAccepts {
+    color: green;
+}
+.headerRejects {
+    color: darkred;
+}
+.date {
+    color: darkgray;
+    font-size: smaller;
+}
+.none {
+    color: darkgray;
+    font-style: italic;
+}

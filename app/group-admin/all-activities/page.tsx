@@ -15,20 +15,24 @@ import { LocalContext } from "@/app/_lib/LocalContext";
 import { userAndTokenFromStorages } from "@/app/_lib/userAndToken";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import ActivityDetailsComp from "@/app/_lib/ActivityDetailsComp";
+import { group } from "console";
 
 interface Details {
+    group: string;
     members: Member[];
     activity: Activity;
 }
 
 interface ActivityProps {
+    group: string;
     members: Member[];
     activity: Activity;
     setDetails: (details: Details | null) => void;
 }
-function ActivityComp({ members, activity, setDetails }: ActivityProps) {
+function ActivityComp({ group, members, activity, setDetails }: ActivityProps) {
     function onDetails() {
-        setDetails({ activity, members });
+        setDetails({ group, activity, members });
     }
     let accepting: string[] = []
     let rejecting: string[] = [];
@@ -78,7 +82,7 @@ function ActivitiesInGroupComp({ activitiesInGroup, setDetails, onEdit }: Activi
             <div className={styles.activities}>
                 {
                     activitiesInGroup.activities.map((a, i) => (
-                        <ActivityComp key={i} members={activitiesInGroup.members} activity={a} setDetails={setDetails} />))
+                        <ActivityComp key={i} group={activitiesInGroup.groupTitle ?? activitiesInGroup.group} members={activitiesInGroup.members} activity={a} setDetails={setDetails} />))
                 }
             </div>
         </div>
@@ -187,7 +191,8 @@ export default function Page() {
             <Popup visible={details != null} setVisible={(visible) => {
                 if (!visible) setDetails(null)
             }}>
-                <h2 className={styles.headerActivity}>{details?.activity.name} {details?.activity.date != null && formatDateTime(details?.activity.date, true)}</h2>
+                <ActivityDetailsComp group={details?.group ?? '' } members={details?.members ?? []} selActivity={details?.activity ?? null} />
+                {/* <h2 className={styles.headerActivity}>{details?.activity.name} {details?.activity.date != null && formatDateTime(details?.activity.date, true)}</h2>
                 <div className={styles.detailLists}>
                     <h3 className={styles.headerAccepts}>{accept.length} Zusagen</h3>
                     <div>
@@ -241,7 +246,7 @@ export default function Page() {
                             }
                         </tbody>
                     </table>
-                </div>
+                </div> */}
 
             </Popup>
         </>

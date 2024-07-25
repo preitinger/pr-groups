@@ -229,3 +229,22 @@ button {
   );
   opacity: 0.75;
 } */
+
+.wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border: 1px solid gold;
+  display: flex;
+}
+.form {
+  background-color: white;
+  border-radius: 2rem;
+  margin: auto;
+  padding: 2rem;
+  color: black;
+  /* height: 400px; */
+}
+

@@ -6,6 +6,7 @@ import { userRegisterFetch } from '../_lib/user-management-client/userManagement
 import { RegisterReq } from '../_lib/user-management-client/user-management-common/register';
 import { useRouter } from 'next/navigation';
 import Header from '../_lib/Header';
+import Input from '../_lib/Input';
 
 export default function Page() {
     const [user, setUser] = useState('');
@@ -41,6 +42,11 @@ export default function Page() {
         <>
             <Header user={user} line1={{ text: 'pr-groups', fontSize: '1.2rem', bold: false }} margin='1rem' line2={{ text: 'Als neuer User registrieren', fontSize: '1.5rem', bold: true }} />
             <div className={styles.form}>
+                <Input label='User' text={user} setText={setUser} />
+                <fieldset>
+                    <legend>User</legend>
+                    <input type='text' id='user' value={user} onChange={(e) => setUser(e.target.value)} />
+                </fieldset>
                 <label className={styles.userLabel} htmlFor='user'>User</label>
                 <input type='text' id='user' className={styles.user} value={user} onChange={(e) => setUser(e.target.value)} />
                 <label className={styles.passwdLabel} htmlFor='passwd'>Passwort</label>

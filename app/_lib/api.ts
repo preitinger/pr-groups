@@ -1,6 +1,7 @@
 import { ObjectId } from "mongodb";
 import { HeaderLine } from "./HeaderLine";
 import { deprecate } from "util";
+import { RegisterReq } from "./user-management-client/user-management-common/register";
 
 export type Acceptance = 'accepted' | 'rejected' | 'undecided'
 export interface Participation {

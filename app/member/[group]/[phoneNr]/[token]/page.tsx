@@ -20,6 +20,8 @@ import { Popup } from '@/app/Popup';
 import Menu from '@/app/_lib/Menu';
 import { after } from 'node:test';
 import WhatsAppLinkComp from '@/app/_lib/WhatsAppLinkComp';
+import ActivityDetailsComp from '@/app/_lib/ActivityDetailsComp';
+import Head from 'next/head';
 
 const FAKE = true;
 
@@ -377,24 +379,6 @@ export default function Page({ params }: { params: { group: string; phoneNr: str
     }
 
 
-    const decisions: { [user: string]: Participation } | undefined = selActivity?.participations.reduce((d, participation) => ({
-        ...d,
-        [participation.phoneNr]: participation
-    }),
-        {}
-    )
-
-    const accept: Participation[] = decisions == null ? [] : Object.values(decisions).filter((p => p.accept === 'accepted'))
-    const reject: Participation[] = decisions == null ? [] : Object.values(decisions).filter((p => p.accept === 'rejected'))
-    const undecided: string[] = decisions == null ? [] : (members.map(member => member.phoneNr).filter(phoneNr => !accept.map(p => p.phoneNr).includes(phoneNr) && !reject.map(p => p.phoneNr).includes(phoneNr)))
-
-    function phoneNrToName(phoneNr: string): string {
-        if (selActivity == null) return '';
-        const member = members.find(member => member.phoneNr === phoneNr)
-        if (member == null) return '';
-        return member.prename + ' ' + member.surname;
-    }
-
     const onMenuClick = useCallback((i: number) => () => {
         if (afterDeleteSelf) return;
         switch (i) {
@@ -568,6 +552,11 @@ export default function Page({ params }: { params: { group: string; phoneNr: str
 
                         </>
                     }
+                    {!afterDeleteSelf && selActivity == null &&
+                        <>
+                            <div className={styles.noActivities}>Noch keine Aktivitäten in dieser Gruppe</div>
+                        </>
+                    }
                 </div>
                 {!afterDeleteSelf && <>
                     <ScrollableContainer className={styles.activityBar} snapOffset={80 - 18} snapWidth={160} snap={activityIdx} setSnap={setActivityIdx} >
@@ -579,62 +568,7 @@ export default function Page({ params }: { params: { group: string; phoneNr: str
                     </ScrollableContainer>
 
                     <Popup visible={detailsPopup && selActivity != null} setVisible={setDetailsPopup}>
-                        <h1 className={styles.headerGroup}>{group}</h1>
-                        <h2 className={styles.headerActivity}>{selActivity?.name} {selActivity?.date != null && formatDateTime(selActivity?.date, true)}</h2>
-                        <div className={styles.detailLists}>
-                            <h3 className={styles.headerAccepts}>{accept.length} Zusagen</h3>
-                            <div>
-                                {
-                                    accept.length === 0 ? <span className={styles.none}>keine</span> :
-                                        <table>
-                                            <tbody>
-
-                                                {
-                                                    accept.map((participation, i) => (
-                                                        <tr key={i}>
-                                                            <td className={styles.detailName}>{phoneNrToName(participation.phoneNr)}</td>
-                                                            <td><WhatsAppLinkComp phoneNr={participation.phoneNr} /></td>
-                                                            <td className={styles.detailDate}>{formatDateTime(new Date(participation.date))}</td>
-                                                        </tr>))
-                                                }
-
-                                            </tbody>
-                                        </table>
-                                }
-                            </div>
-                            <h3 className={styles.headerRejects}>{reject.length} Absagen</h3>
-                            <div>
-                                {
-                                    reject.length === 0 ? <span className={styles.none}>keine</span> :
-                                        <table>
-                                            <tbody>
-
-                                                {
-                                                    reject.map((participation, i) => (
-                                                        <tr key={i}>
-                                                            <td className={styles.detailName}>{phoneNrToName(participation.phoneNr)}</td>
-                                                            <td><WhatsAppLinkComp phoneNr={participation.phoneNr} /></td>
-                                                            <td className={styles.detailDate}>{formatDateTime(new Date(participation.date))}</td>
-                                                        </tr>))
-                                                }
-
-                                            </tbody>
-                                        </table>
-                                }
-
-                            </div>
-                            <h3 className={styles.headerUndecided}>{undecided.length} haben noch nicht abgestimmt oder können es noch nicht sagen:</h3>
-                            <table>
-                                <tbody>
-                                    {
-                                        undecided.map((phoneNr, i) => <tr key={i}>
-                                            <td className={styles.detailName}>{phoneNrToName(phoneNr)}</td>
-                                            <td><WhatsAppLinkComp phoneNr={phoneNr} /></td>
-                                        </tr>)
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
+                        <ActivityDetailsComp group={group} selActivity={selActivity} members={members} />
                     </Popup>
                 </>
                 }            {
