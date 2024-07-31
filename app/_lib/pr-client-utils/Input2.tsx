@@ -58,7 +58,7 @@ export default function Input2({ label, text, setText, comment, commentClass, ty
             inputRef.current?.blur();
             if (onEnter) onEnter();
         }
-    }, [doValidate, text])
+    }, [doValidate, text, onEnter])
 
     const id = useId();
     const empty = text === '' && !focussed && !['month', 'date', 'week', 'datetime-local'].includes(type ?? 'text');
