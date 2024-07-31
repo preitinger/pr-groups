@@ -28,6 +28,7 @@ import EditableOptionalDateTimeComp from "@/app/_lib/pr-client-utils/EditableOpt
 import useEditableOptionalDateTime from "@/app/_lib/pr-client-utils/useEditableOptionalDateTime";
 import { userAndTokenFromStorages } from "@/app/_lib/userAndToken";
 import { Editable } from "@/app/_lib/clientUtils";
+import { myCssSupports } from "@/app/_lib/pr-client-utils/myCssSupports";
 
 const MAX_GROUP_LENGTH = 20
 const MAX_HEADER_LEN = 20
@@ -431,7 +432,7 @@ function HeaderLine({ children, label, line, setLine }: PropsWithChildren<{ labe
                                 }}
                                 format={id}
                                 parse={text => {
-                                    if (CSS.supports('font-size', text)) {
+                                    if (myCssSupports('font-size', text)) {
                                         return Promise.resolve(text)
                                     } else {
                                         return Promise.reject('Kein gültiger CSS-Wert für font-size');
@@ -576,6 +577,7 @@ export default function Page({ params }: { params: { id: string } }) {
     const [editedMember, setEditedMember] = useState<Member | null>(null);
     const activityScrollableRef = useRef<HTMLDivElement>(null);
     const mainRef = useRef<HTMLDivElement>(null);
+    const [cookiesAccepted, setCookiesAccepted] = useState(false);
 
     // useEffect(() => {
     //     if (mainRef.current != null) {
@@ -959,8 +961,9 @@ export default function Page({ params }: { params: { id: string } }) {
             customLabels={[{ label: 'LAYOUT FÜR DESKTOP', src: '/edit_12000664.png', alt: 'EDIT', width: 32, height: 32 }]}
             customSpinning={spinning}
             onCustomClick={onMenuClick}
+            setCookiesAccepted={setCookiesAccepted}
         >
-            {groupId != null &&
+            {cookiesAccepted && groupId != null &&
                 <>
                     <Header
                         user={user}
@@ -981,7 +984,7 @@ export default function Page({ params }: { params: { id: string } }) {
                                     <HeaderLine label='Überschrift 1' line={line1 ?? { text: '', fontSize: '1rem', bold: false }} setLine={withSetDirty(setLine1)} />
                                     <Editable label='Abstand zwischen Überschrift 1 und Überschrift 2'
                                         value={margin} setValue={withSetDirty(setMargin)} format={id<string>} parse={(s) => {
-                                            if (CSS.supports('margin', s)) {
+                                            if (myCssSupports('margin', s)) {
                                                 return Promise.resolve(s)
                                             } else {
                                                 return Promise.reject('Ungültiger CSS-Wert für margin')
@@ -1029,9 +1032,9 @@ export default function Page({ params }: { params: { id: string } }) {
                                                     <div className={styles.memberLink}>
                                                         <a style={{/* maxWidth: '100%', */ overflow: 'auto', display: 'block' }} href={location.origin + invitationLink((groupId ?? '<FEHLER>'), m)}>{location.origin + invitationLink(groupId ?? '<FEHLER>', m)}</a>
                                                     </div>
-                                                    <button className={styles.whatsapp} onClick={() => {
+                                                    <button className={styles.whatsApp} onClick={() => {
                                                         window.open(whatsappLink(m.phoneNr, `Hallo ${m.prename}, hier ist dein persönlicher Einladungslink für die Gruppe ${groupId} (${line1?.text}):\n\n${link}\n\n(Dieser Link ersetzt die Anmeldung mit Benutzername und Passwort, ist also nur speziell für dich und sollte nicht weiter gegeben werden.)`))
-                                                    }}>Link per Whatsapp versenden</button>
+                                                    }}>{m.prename} {m.surname} einladen</button>
                                                 </div>
                                             )
                                         })

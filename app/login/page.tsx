@@ -9,6 +9,8 @@ import Header from '../_lib/Header';
 import Input from '../_lib/Input';
 import Menu from '../_lib/Menu';
 import { userAndTokenFromStorages, userAndTokenToStorages } from '../_lib/userAndToken';
+import FormComp from '../_lib/pr-client-utils/FormComp';
+import Input2 from '../_lib/pr-client-utils/Input2';
 
 export default function Page() {
     const [user, setUser] = useState('');
@@ -22,11 +24,14 @@ export default function Page() {
         width: '',
         alpha: '',
     })
+    const [cookiesAccepted, setCookiesAccepted] = useState(false);
+
     useEffect(() => {
+        if (!cookiesAccepted) return;
         const [user1, token1] = userAndTokenFromStorages();
         if (user1 == null || token1 == null) return;
         setUser(user1)
-    }, [])
+    }, [cookiesAccepted])
 
     function onLoginClick() {
         const req: LoginReq = {
@@ -76,19 +81,20 @@ export default function Page() {
 
     return (
         <>
-            <Header user={user} line1={{ text: 'pr-groups', fontSize: '1.2rem', bold: false }} margin='1rem' line2={{ text: 'Login', fontSize: '1.5rem', bold: true }} />
-            <Menu />
-            <div className={styles.form}>
-                <Input label='User' text={user} setText={setUser} onEnter={onLoginClick} />
-                <label className={styles.passwdLabel} htmlFor='passwd'>Passwort</label>
-                <input type='password' id='passwd' className={styles.passwd} value={passwd} onChange={(e) => setPasswd(e.target.value)} onKeyUp={(e) => {
-                    if (e.key === 'Enter') {
-                        onLoginClick();
-                    }
-                }} />
-                <button className={styles.loginButton} onClick={onLoginClick}>Login</button>
-                <p className={styles.comment}>{comment}</p>
+            {/* <Header user={user} line1={{ text: 'pr-groups', fontSize: '1.2rem', bold: false }} margin='1rem' line2={{ text: 'Login', fontSize: '1.5rem', bold: true }} /> */}
+            <Menu setCookiesAccepted={setCookiesAccepted} />
+            <div className={styles.main}>
+                <h1>pr-groups</h1>
+                <FormComp decoImg={{ src: '/group-friends-jumping-top-hill.jpg', alt: 'Gruppe', width: 714, height: 576 }} maxWidth={1200} >
+                    <div className={styles.innerForm}>
+                        <h1>Anmelden</h1>
+                        <Input2 label='User' text={user} setText={setUser} onEnter={onLoginClick} />
+                        <Input2 label='Passwort' type='password' text={passwd} setText={setPasswd} />
+                        <button className={styles.loginButton} onClick={onLoginClick}>Login</button>
+                        <p className={styles.comment}>{comment}</p>
 
+                    </div>
+                </FormComp>
             </div>
         </>
 

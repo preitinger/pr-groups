@@ -1,0 +1,17 @@
+.dlg {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: auto;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+
+    padding: 2rem;
+    z-index: 1000;
+}
+
+.dlg button {
+    min-width: 40px;
+    min-height: 40px;
+}

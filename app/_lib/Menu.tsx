@@ -12,6 +12,7 @@ import ImgAttributions from "./ImgAttributions";
 import { myImgAttributions } from "../myImgAttributions";
 import { LocalContext } from "./LocalContext";
 import { userAndTokenFromStorages } from "./userAndToken";
+import CookieDlg from "./pr-client-utils/CookieDlg";
 
 export interface MenuProps {
     group?: string | null;
@@ -19,26 +20,27 @@ export interface MenuProps {
     customLabels?: (string | { label: string; src: string; alt: string; width: number; height: number })[];
     onCustomClick?: (idx: number) => () => void;
     customSpinning?: boolean;
+    setCookiesAccepted: (accepted: boolean) => void;
 }
 
-export default function Menu({ group, onDeleteMemberClick, customLabels, customSpinning, onCustomClick, children }: PropsWithChildren<MenuProps>) {
+export default function Menu({ group, onDeleteMemberClick, customLabels, customSpinning, onCustomClick, setCookiesAccepted, children }: PropsWithChildren<MenuProps>) {
     const [impressum, setImpressum] = useState(false);
     const [about, setAbout] = useState(false);
-    const [cookiePopup, setCookiePopup] = useState(false);
+    // const [cookiePopup, setCookiePopup] = useState(false);
     const [imgAttr, setImgAttr] = useState(false);
     const [menu, setMenu] = useState(false);
     const user = useUser();
     const [spinning, setSpinning] = useState(false);
     const [selfDeleted, setSelfDeleted] = useState(false);
 
-    useEffect(() => {
-        const ctx = new SessionContext();
-        const cookiesShown = ctx.cookiesShown;
-        if (!cookiesShown) {
-            setCookiePopup(true);
-            ctx.cookiesShown = true;
-        }
-    }, [])
+    // useEffect(() => {
+    //     const ctx = new SessionContext();
+    //     const cookiesShown = ctx.cookiesShown;
+    //     if (!cookiesShown) {
+    //         setCookiePopup(true);
+    //         ctx.cookiesShown = true;
+    //     }
+    // }, [])
 
     function onMenuClick() {
         setMenu(visible => !visible);
@@ -107,13 +109,18 @@ export default function Menu({ group, onDeleteMemberClick, customLabels, customS
                                 <button onClick={withStopPropagation(() => setMenu(false))}>SCHLIEẞEN</button>
                             </div> */}
                         </Popup>
-                        <Popup visible={cookiePopup} setVisible={setCookiePopup}>
+                        <CookieDlg setCookiesAccepted={setCookiesAccepted}/>
+                        {/* {
+                            cookiePopup &&
+                            <CookieDlg onOk={() => setCookiePopup(false)}  />
+                        } */}
+                        {/* <Popup visible={cookiePopup} setVisible={setCookiePopup}>
                             Dieser Service benutzt Cookies um temporäre Seitenzustände zu speichern und eine Datenbank um Gruppen, ihre Mitglieder (nur Handynr, Vorname und optional Nachname oder abgekürzter Nachname), Gruppenaktivitäten und die Beteiligungen der Mitglieder zu speichern.
                             Sie dürfen diese Seite nur weiter benutzen, wenn Sie dies akzeptieren. Andernfalls verlassen Sie bitte diese Seite.
                             <div className={styles.popupButtonRow}>
                                 <button onClick={withStopPropagation(() => { setCookiePopup(false); })}>OK</button>
                             </div>
-                        </Popup>
+                        </Popup> */}
                         <Popup visible={impressum} setVisible={setImpressum}>
                             <div className={styles.impressum}>
                                 <Impressum group={group ?? null} name='Peter Reitinger' street='Birkenweg' houseNr='8' postalCode='93482' city='Pemfling' phone='09971-6131' mail='peter.reitinger(at)gmail.com' onDeleteClick={group == null ? deleteProfile : (onDeleteMemberClick ?? null)} />

@@ -49,5 +49,13 @@ export const myImgAttributions: ImgAttribution[] = [
     {
         imgUrl: '/archive_11294147.png',
         attribution: <a href="https://www.freepik.com/icon/archive_11294147#fromView=search&page=1&position=58&uuid=15edea8f-00f6-4415-9d87-b17d0a8913c0">Icon by Anggara</a>
+    },
+    {
+        imgUrl: '/group-friends-jumping-top-hill.jpg',
+        attribution: <a href="https://www.freepik.com/free-photo/group-friends-jumping-top-hill_10419965.htm#fromView=search&page=1&position=1&uuid=f8465827-f131-418a-9192-0f05b8dcce97">Image by wayhomestudio on Freepik</a>
+    },
+    {
+        imgUrl: '/43702940_9078334.jpg',
+        attribution: <a href="https://www.freepik.com/free-psd/medium-shot-friends-reunion-after-covid_43702940.htm#fromView=search&page=1&position=12&uuid=11a09d1c-f33f-4319-82b7-461f0dd5b8e5">Image by freepik</a>
     }
 ]

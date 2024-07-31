@@ -1,3 +1,10 @@
+.main {
+    position: absolute;
+    top: 3rem;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
 .form {
     display: block;
     position: absolute;
@@ -16,7 +23,7 @@
 .passwdRepeat,
 .registerButton {
     display: block;
-    margin: 1rem;
+    margin: 2rem;
 }
 
 .user,
@@ -53,4 +60,21 @@
 .form fieldset input::selection {
     background-color: white;
     color: var(--bg-color);
+}
+
+.innerForm {
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+    /* align-items: stretch; */
+    width: calc(200px + 4rem);
+}
+
+.innerForm h1 {
+    margin-left: 2rem;
+    margin-top: 3rem;
+}
+
+.registerButton {
+    align-self: center;
 }

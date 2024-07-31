@@ -1,3 +1,10 @@
+.main {
+    position: absolute;
+    top: 3rem;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
 .form {
     display: block;
     position: absolute;
@@ -31,4 +38,25 @@
 }
 .passwd {
     margin-bottom: 2rem;
+}
+
+.innerForm {
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+    /* align-items: stretch; */
+    width: calc(200px + 4rem);
+}
+
+.innerForm h1 {
+    margin-left: 2rem;
+    margin-top: 3rem;
+}
+
+.innerForm p {
+    margin-left: 2rem;
+}
+
+.loginButton {
+    align-self: center;
 }

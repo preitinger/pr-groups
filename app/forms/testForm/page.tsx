@@ -1,6 +1,6 @@
 'use client'
 
-import Input2 from "@/app/_lib/Input2";
+import Input2 from "@/app/_lib/pr-client-utils/Input2";
 import { useCallback, useRef, useState } from "react";
 
 import styles from './page.module.css'

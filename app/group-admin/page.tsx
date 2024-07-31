@@ -24,6 +24,7 @@ export default function Page() {
     const [groups, setGroups] = useState<string[] | null>(null);
     const [spinning, setSpinning] = useState(true);
     const [login, setLogin] = useState(false);
+    const [cookiesAccepted, setCookiesAccepted] = useState(false);
 
     const fetchData = useCallback(function fetchData(abortController?: AbortController) {
         const [user1, token1] = userAndTokenFromStorages();
@@ -76,7 +77,7 @@ export default function Page() {
 
     return (
         <>
-            <Menu customSpinning={spinning}>
+            <Menu customSpinning={spinning} setCookiesAccepted={setCookiesAccepted}>
                 <Header user={user} line1={{ text: 'pr-groups', fontSize: '1.2em', bold: false }} margin='1em' line2={{ text: 'Gruppenadministration', fontSize: '1.5em', bold: true }} />
                 <div className={styles.form}>
                     <p>{comment}</p>

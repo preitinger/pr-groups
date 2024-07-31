@@ -41,10 +41,11 @@ export default function Page({ params }: { params: { id: string } }) {
     const groupIdRef = useRef<string | null>(null);
     const [groupId, setGroupId] = useState<string | null>(null);
     const [addingMember, setAddingMember] = useState(false);
+    const [cookiesAccepted, setCookiesAccepted] = useState(false);
     const router = useRouter();
 
     useEffect(() => {
-        console.error('effect 0');
+        if (!cookiesAccepted) return;
         setGroupId(groupIdRef.current = decodeURIComponent(params.id))
         const [user1, token1] = userAndTokenFromStorages();
         if (user1 == null || token1 == null) {
@@ -71,7 +72,7 @@ export default function Page({ params }: { params: { id: string } }) {
         }).finally(() => {
             setSpinning(false);
         })
-    }, [params.id])
+    }, [params.id, cookiesAccepted])
 
     const onCopyClick = (member: Member) => () => {
         if (groupIdRef.current == null) return;
@@ -377,7 +378,8 @@ export default function Page({ params }: { params: { id: string } }) {
 
     return (
         <Menu onDeleteMemberClick={null} group={null}
-            customLabels={['LAYOUT FÜR HANDY']} onCustomClick={onMenuClick}>
+            customLabels={['LAYOUT FÜR HANDY']} onCustomClick={onMenuClick}
+            setCookiesAccepted={setCookiesAccepted}>
             <Header
                 user={user}
                 line1={{ text: 'pr-groups / Gruppenadmin', fontSize: '1.2rem', bold: false }}

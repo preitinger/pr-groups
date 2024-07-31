@@ -36,5 +36,4 @@ export class SessionContext {
     set cookiesShown(shown: boolean) {
         sessionStorage.setItem('cookiesShown', JSON.stringify(shown));
     }
-
 }

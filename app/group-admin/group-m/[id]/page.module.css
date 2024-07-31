@@ -190,8 +190,19 @@
     margin-top: 0.5rem;
 }
 
-.whatsapp {
+.whatsApp {
     margin-top: 0.5rem;
+    background-image: url('/WhatsApp/Digital_Inline_Dark_Green.svg');
+    background-size: 80px;
+    background-repeat: no-repeat;
+    background-position: 5px 50%;
+    width: 300px;
+    height: 50px;
+    background-color: lightgreen;
+    color: black;
+    padding: 1rem;
+    text-align: right;
+    border-radius: 8px;
 }
 
 .memberLink a {

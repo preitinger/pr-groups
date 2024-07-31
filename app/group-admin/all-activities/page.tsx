@@ -96,6 +96,7 @@ export default function Page() {
     const [login, setLogin] = useState(false);
     const [spinning, setSpinning] = useState(false);
     const abortControllerRef = useRef<AbortController | null>(null);
+    const [cookiesAccepted, setCookiesAccepted] = useState(false);
 
     const router = useRouter();
 
@@ -142,12 +143,13 @@ export default function Page() {
     }, [])
 
     useEffect(() => {
+        if (!cookiesAccepted) return;
         abortControllerRef.current = new FixedAbortController();
         fetch()
         return () => {
             abortControllerRef.current?.abort();
         }
-    }, [fetch])
+    }, [fetch, cookiesAccepted])
 
 
     const decisions: { [user: string]: Participation } | undefined = details?.activity.participations.reduce((d, participation) => ({
@@ -175,7 +177,7 @@ export default function Page() {
 
     return (
         <>
-            <Menu customSpinning={spinning} />
+            <Menu customSpinning={spinning} setCookiesAccepted={setCookiesAccepted} />
             <div className={styles.main}>
                 <p>{comment}</p>
                 <Popup visible={login} >

@@ -11,7 +11,7 @@ export default function Page() {
     const [groupId, setGroupId] = useState('');
 
     return (
-        <Menu onDeleteMemberClick={null} >
+        <Menu onDeleteMemberClick={null} setCookiesAccepted={() => {}} >
             <Header
                 user={user}
                 line1={{ text: 'pr-groups / Gruppenadmin', fontSize: '1.2rem', bold: false }}

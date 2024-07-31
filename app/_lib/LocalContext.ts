@@ -13,4 +13,10 @@ export class LocalContext {
         if (t == null) localStorage.removeItem('token');
         else localStorage.setItem('token', t);
     }
+    get cookiesAccepted(): boolean {
+        return localStorage.getItem('cookiesAccepted') === JSON.stringify(true)
+    }
+    set cookiesAccepted(shown: boolean) {
+        localStorage.setItem('cookiesAccepted', JSON.stringify(shown));
+    }
 }

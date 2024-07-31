@@ -4,6 +4,7 @@ import { useState } from 'react';
 import styles from './Impressum.module.css'
 import useUser from '../useUser';
 import { withStopPropagation } from '../utils';
+import Privacy from '@/app/Privacy';
 
 export interface ImpressumProps {
     name: string;
@@ -63,6 +64,7 @@ export default function Impressum({ name, street, houseNr, mail, phone, postalCo
                 Unser Angebot enthält Links zu externen Webseiten Dritter, auf deren Inhalte wir keinen Einfluss haben. Deshalb können wir für diese fremden Inhalte auch keine Gewähr übernehmen. Für die Inhalte der verlinkten Seiten ist stets der jeweilige Anbieter oder Betreiber der Seiten verantwortlich.
             </p>
             <h1>Datenschutz</h1>
+            <Privacy />
             {
                 group != null &&
                 <>
