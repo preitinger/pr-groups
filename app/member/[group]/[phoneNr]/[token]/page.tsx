@@ -480,9 +480,14 @@ export default function Page({ params }: { params: { group: string; phoneNr: str
                     setSpinning(false);
                 })
                 break;
+                    
             }
-        }
-    }, [afterDeleteSelf, group, phoneNr, token])
+
+            case 1:
+                router.push('/');
+                break;
+            }
+    }, [afterDeleteSelf, group, phoneNr, token, router])
 
     function onDeleteClick() {
         // Sicherheitsabfrage bereits im Impressum (/ Datenschutz)
@@ -539,7 +544,7 @@ export default function Page({ params }: { params: { group: string; phoneNr: str
             </div> */}
                     {/* <h1 className={styles.headerWelcome}>Hallo {name}!</h1> */}
                     {/* <h2 className={styles.headerGroup}>{group}</h2> */}
-                    <Menu group={group} onDeleteMemberClick={onDeleteClick} customLabels={['DATEN AKTUALISIEREN']} 
+                    <Menu group={group} onDeleteMemberClick={onDeleteClick} customLabels={['DATEN AKTUALISIEREN', 'ZU ADMIN-SEITEN']} 
                     onCustomClick={onMenuClick} 
                     setCookiesAccepted={setCookiesAccepted}/>
                 </>
