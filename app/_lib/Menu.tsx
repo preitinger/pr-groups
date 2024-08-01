@@ -134,7 +134,7 @@ export default function Menu({ group, onDeleteMemberClick, customLabels, customS
                             <table className={styles.aboutTable}>
                                 <tbody>
                                     <tr>
-                                        <td colSpan={2}>Layout & Design:</td>
+                                        <td colSpan={2}>Layout & Design der Abstimmungsseite:</td>
                                     </tr>
                                     <tr>
                                         <td>ALEXANDER POHL</td>
