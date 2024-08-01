@@ -13,6 +13,7 @@ import { myImgAttributions } from "../myImgAttributions";
 import { LocalContext } from "./LocalContext";
 import { userAndTokenFromStorages } from "./userAndToken";
 import CookieDlg from "./pr-client-utils/CookieDlg";
+import Label from "./Label";
 
 export interface MenuProps {
     group?: string | null;
@@ -109,7 +110,7 @@ export default function Menu({ group, onDeleteMemberClick, customLabels, customS
                                 <button onClick={withStopPropagation(() => setMenu(false))}>SCHLIEẞEN</button>
                             </div> */}
                         </Popup>
-                        <CookieDlg setCookiesAccepted={setCookiesAccepted}/>
+                        <CookieDlg setCookiesAccepted={setCookiesAccepted} />
                         {/* {
                             cookiePopup &&
                             <CookieDlg onOk={() => setCookiePopup(false)}  />
@@ -131,7 +132,12 @@ export default function Menu({ group, onDeleteMemberClick, customLabels, customS
                         </Popup>
                         <Popup visible={about} setVisible={setAbout}>
                             <h1>About pr-groups</h1>
-                            <table className={styles.aboutTable}>
+                            <Label>Layout & Design der Abstimmungsseite:</Label>
+                            <p>ALEXANDER POHL</p>
+                            <Label>Layout & Design der Admin-Seiten und Programmierung:</Label>
+                            <Image className={styles.picture} src='/Peter-Reitinger.jpg' width={200} height={199} alt='Peter Reitinger' />
+                            <p>PETER REITINGER </p>
+                            {/* <table className={styles.aboutTable}>
                                 <tbody>
                                     <tr>
                                         <td colSpan={2}>Layout & Design der Abstimmungsseite:</td>
@@ -141,14 +147,14 @@ export default function Menu({ group, onDeleteMemberClick, customLabels, customS
                                         <td></td>
                                     </tr>
                                     <tr>
-                                        <td colSpan={2}>Programmierung:</td>
+                                        <td colSpan={2}>Layout & Design der Admin-Seiten und Programmierung:</td>
                                     </tr>
                                     <tr>
                                         <td>PETER REITINGER</td>
                                         <td><Image className={styles.picture} src='/Peter-Reitinger.jpg' width={200} height={199} alt='Peter Reitinger' /></td>
                                     </tr>
                                 </tbody>
-                            </table>
+                            </table> */}
                             {/* <div className={styles.popupButtonRow}>
                                 <button onClick={withStopPropagation(() => setAbout(false))}>SCHLIEẞEN</button>
                             </div> */}
