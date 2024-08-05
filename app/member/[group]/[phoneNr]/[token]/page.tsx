@@ -17,7 +17,7 @@ import ScrollableContainer from '@/app/_lib/pr-client-utils/ScrollableContainer'
 import ModalDialog from '@/app/_lib/ModalDialog';
 import Impressum from '@/app/_lib/pr-client-utils/Impressum';
 import { Popup } from '@/app/Popup';
-import Menu from '@/app/_lib/Menu';
+import Menu, { CustomMenuItem } from '@/app/_lib/Menu';
 import { after } from 'node:test';
 import WhatsAppLinkComp from '@/app/_lib/WhatsAppLinkComp';
 import ActivityDetailsComp from '@/app/_lib/ActivityDetailsComp';
@@ -480,13 +480,13 @@ export default function Page({ params }: { params: { group: string; phoneNr: str
                     setSpinning(false);
                 })
                 break;
-                    
+
             }
 
             case 1:
                 router.push('/');
                 break;
-            }
+        }
     }, [afterDeleteSelf, group, phoneNr, token, router])
 
     function onDeleteClick() {
@@ -524,6 +524,116 @@ export default function Page({ params }: { params: { group: string; phoneNr: str
     let tmpPrename: string;
     let tmpSurname: string;
 
+    const customMenuItems: CustomMenuItem[] = [
+        {
+            label: 'DATEN AKTUALISIEREN',
+            onClick() {
+                const req: MemberDataReq = {
+                    group: group,
+                    phoneNr: phoneNr,
+                    token: token,
+                }
+                const ctx = new SessionContext();
+                setSpinning(true);
+                const abortController = new FixedAbortController();
+                apiFetchPost<MemberDataReq, MemberDataResp>('/api/member', req, abortController.signal).then(resp => {
+                    // console.log('resp', resp);
+                    switch (resp.type) {
+                        case 'authFailed':
+                            setComment('Nicht authorisiert.');
+                            break;
+                        case 'success':
+                            setAdditionalHeaderProps({
+                                logo: resp.logo ?? undefined,
+                                line1: resp.line1,
+                                margin: resp.margin,
+                                line2: resp.line2,
+                            })
+                            setPrename(resp.prename);
+                            setSurname(resp.surname);
+
+                            resp.activities.sort((a, b) => {
+                                if (a.date != null && b.date != null) {
+                                    return a.date - b.date
+                                }
+                                if (a.date != null && b.date == null) return -1;
+                                if (a.date == null && b.date != null) return 1;
+                                return 0;
+                            })
+                            setActivities(resp.activities);
+                            setMembers(resp.members);
+                            setComment('');
+                            ctx.activities = resp.activities;
+                            const now = Date.now();
+                            const first = resp.activities.findIndex((a) => (a.date ?? 0) > now)
+                            setActivityIdx(first >= 0 ? first : 0);
+                            break;
+                        case 'error':
+                            if (FAKE) {
+                                setAdditionalHeaderProps({
+                                    logo: {
+                                        src: '/logo-von-Homepage.png.webp',
+                                        alt: 'Logo',
+                                        width: 50,
+                                        height: 60,
+                                    },
+                                    line1: {
+                                        text: 'AFTER-WORK',
+                                        fontSize: '1.5rem',
+                                        bold: true
+                                    },
+                                    margin: '0.1rem',
+                                    line2: {
+                                        text: 'TENNIS',
+                                        fontSize: '1.2rem',
+                                        bold: false
+                                    }
+
+                                })
+                                setPrename('Peter');
+                                setComment('');
+                                ctx.group = 'TC Rot-Weiß Cham'
+                                // const date = new Date('2024-05-22T18:00Z+02:00');
+                                // const date = new Date('2024-05-22');
+                                const date = new Date('2024-05-22T18:00+02:00');
+                                // console.log('date', date);
+                                const activity: Activity = {
+                                    name: '',
+                                    date: date.getTime(),
+                                    creationDate: Date.now(),
+                                    capacity: 8,
+                                    participations: []
+                                }
+                                setActivities([activity, {
+                                    ...activity,
+                                    date: date.getTime() + 7 * 24 * 3600 * 1000
+                                }]);
+                                setActivityIdx(1);
+                            } else {
+                                setComment('Unerwarteter Fehler: ' + resp.error)
+                            }
+                            break;
+                    }
+                }).catch(reason => {
+                    if ('name' in reason && reason.name === 'AbortError') {
+                        // ignore
+                    } else {
+                        setComment('Unerwarteter Fehler: ' + JSON.stringify(reason));
+                    }
+                }).finally(() => {
+                    setSpinning(false);
+                })
+
+            }
+        },
+        {
+            label: 'ZU ADMIN-SEITEN',
+            onClick() {
+                router.push('/');
+            }
+        }
+    ]
+
     return (
         <>
             <title>{docTitle}</title>
@@ -544,9 +654,8 @@ export default function Page({ params }: { params: { group: string; phoneNr: str
             </div> */}
                     {/* <h1 className={styles.headerWelcome}>Hallo {name}!</h1> */}
                     {/* <h2 className={styles.headerGroup}>{group}</h2> */}
-                    <Menu group={group} onDeleteMemberClick={onDeleteClick} customLabels={['DATEN AKTUALISIEREN', 'ZU ADMIN-SEITEN']} 
-                    onCustomClick={onMenuClick} 
-                    setCookiesAccepted={setCookiesAccepted}/>
+                    <Menu group={group} onDeleteMemberClick={onDeleteClick} customItems={customMenuItems}
+                        setCookiesAccepted={setCookiesAccepted} />
                 </>
                 }
                 <div className={styles.mainContainer}>
@@ -582,7 +691,7 @@ export default function Page({ params }: { params: { group: string; phoneNr: str
                 {
                     !afterDeleteSelf &&
                     <Popup visible={detailsPopup && selActivity != null} setVisible={setDetailsPopup}>
-                        <ActivityDetailsComp group={group} selActivity={selActivity} members={members} />
+                        <ActivityDetailsComp group={group} selActivity={selActivity} members={members}  />
                     </Popup>
                 }
                 {

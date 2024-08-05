@@ -11,6 +11,7 @@ import Menu from '../_lib/Menu';
 import { userAndTokenFromStorages, userAndTokenToStorages } from '../_lib/userAndToken';
 import FormComp from '../_lib/pr-client-utils/FormComp';
 import Input2 from '../_lib/pr-client-utils/Input2';
+import { LocalContext } from '../_lib/LocalContext';
 
 export default function Page() {
     const [user, setUser] = useState('');
@@ -44,7 +45,13 @@ export default function Page() {
                 case 'success':
                     token.current = resp.token;
                     userAndTokenToStorages(user, resp.token);
-                    router.push('/member');
+                    const ctx = new LocalContext();
+                    if (ctx.allActivitiesAsStartPage) {
+                        router.push('/group-admin/all-activities')
+                    } else {
+                        router.push('/group-admin');
+                    }
+                    
                     break;
 
                 case 'wrongUserOrPasswd':
@@ -89,7 +96,7 @@ export default function Page() {
                     <div className={styles.innerForm}>
                         <h1>Anmelden</h1>
                         <Input2 label='User' text={user} setText={setUser} onEnter={onLoginClick} />
-                        <Input2 label='Passwort' type='password' text={passwd} setText={setPasswd} />
+                        <Input2 label='Passwort' type='password' text={passwd} setText={setPasswd} onEnter={onLoginClick} />
                         <button className={styles.loginButton} onClick={onLoginClick}>Login</button>
                         <p className={styles.comment}>{comment}</p>
 

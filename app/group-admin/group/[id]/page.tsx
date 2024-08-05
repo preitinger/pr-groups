@@ -15,7 +15,7 @@ import Link from "next/link";
 import { Popup } from "@/app/Popup";
 import Input from "@/app/_lib/Input";
 import DateTimeInput from "@/app/_lib/pr-client-utils/DateTimeInput";
-import Menu from "@/app/_lib/Menu";
+import Menu, { CustomMenuItem } from "@/app/_lib/Menu";
 import MemberAdd from "@/app/_lib/MemberAdd";
 import { useRouter } from "next/navigation";
 import { LocalContext } from "@/app/_lib/LocalContext";
@@ -367,18 +367,16 @@ export default function Page({ params }: { params: { id: string } }) {
         }
     }
 
-    function onMenuClick(i: number) {
-        return function () {
-            switch (i) {
-                case 0: // MOBILE PAGE
-                    router.push(`/group-admin/group-m/${params.id}`)
-            }
+    const customMenuItems: CustomMenuItem[] = [
+        {
+            label: 'LAYOUT FÜR HANDY',
+            onClick: () => router.push(`/group-admin/group-m/${params.id}`)
         }
-    }
+    ]
 
     return (
         <Menu onDeleteMemberClick={null} group={null}
-            customLabels={['LAYOUT FÜR HANDY']} onCustomClick={onMenuClick}
+            customItems={customMenuItems}
             setCookiesAccepted={setCookiesAccepted}>
             <Header
                 user={user}

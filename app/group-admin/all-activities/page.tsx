@@ -10,7 +10,7 @@ import styles from './page.module.css'
 import { Popup } from "@/app/Popup";
 import WhatsAppLinkComp from "@/app/_lib/WhatsAppLinkComp";
 import LoginComp from "@/app/_lib/user-management-client/LoginComp";
-import Menu from "@/app/_lib/Menu";
+import Menu, { CustomMenuItem } from "@/app/_lib/Menu";
 import { LocalContext } from "@/app/_lib/LocalContext";
 import { userAndTokenFromStorages } from "@/app/_lib/userAndToken";
 import Image from "next/image";
@@ -97,6 +97,7 @@ export default function Page() {
     const [spinning, setSpinning] = useState(false);
     const abortControllerRef = useRef<AbortController | null>(null);
     const [cookiesAccepted, setCookiesAccepted] = useState(false);
+    const [asStartPage, setAsStartPage] = useState(false);
 
     const router = useRouter();
 
@@ -144,6 +145,8 @@ export default function Page() {
 
     useEffect(() => {
         if (!cookiesAccepted) return;
+        const ctx = new LocalContext()
+        setAsStartPage(ctx.allActivitiesAsStartPage);
         abortControllerRef.current = new FixedAbortController();
         fetch()
         return () => {
@@ -175,9 +178,22 @@ export default function Page() {
         fetch()
     }, [fetch])
 
+    const customMenuItems: CustomMenuItem[] = [
+        {
+            type: 'checkbox',
+            label: 'Diese Seite als Startseite nach dem Login',
+            checked: asStartPage,
+            setChecked(checked: boolean) {
+                setAsStartPage(checked)
+                const ctx = new LocalContext();
+                ctx.allActivitiesAsStartPage = checked;
+            }
+        }
+    ]
+
     return (
         <>
-            <Menu customSpinning={spinning} setCookiesAccepted={setCookiesAccepted} />
+            <Menu customSpinning={spinning} setCookiesAccepted={setCookiesAccepted} customItems={customMenuItems} />
             <div className={styles.main}>
                 <p>{comment}</p>
                 <Popup visible={login} >
@@ -193,7 +209,7 @@ export default function Page() {
             <Popup visible={details != null} setVisible={(visible) => {
                 if (!visible) setDetails(null)
             }}>
-                <ActivityDetailsComp group={details?.group ?? '' } members={details?.members ?? []} selActivity={details?.activity ?? null} />
+                <ActivityDetailsComp group={details?.group ?? ''} members={details?.members ?? []} selActivity={details?.activity ?? null} />
                 {/* <h2 className={styles.headerActivity}>{details?.activity.name} {details?.activity.date != null && formatDateTime(details?.activity.date, true)}</h2>
                 <div className={styles.detailLists}>
                     <h3 className={styles.headerAccepts}>{accept.length} Zusagen</h3>

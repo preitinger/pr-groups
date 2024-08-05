@@ -14,17 +14,28 @@ import { LocalContext } from "./LocalContext";
 import { userAndTokenFromStorages } from "./userAndToken";
 import CookieDlg from "./pr-client-utils/CookieDlg";
 import Label from "./Label";
+import Checkbox from "./Checkbox";
+
+export type CustomMenuItem = {
+    type?: 'normal'
+    label: string | { label: string; src: string; alt: string; width: number; height: number };
+    onClick: () => void;
+} | {
+    type: 'checkbox';
+    label: string;
+    checked: boolean;
+    setChecked: (checked: boolean) => void;
+}
 
 export interface MenuProps {
     group?: string | null;
     onDeleteMemberClick?: (() => void) | null;
-    customLabels?: (string | { label: string; src: string; alt: string; width: number; height: number })[];
-    onCustomClick?: (idx: number) => () => void;
+    customItems?: CustomMenuItem[];
     customSpinning?: boolean;
     setCookiesAccepted: (accepted: boolean) => void;
 }
 
-export default function Menu({ group, onDeleteMemberClick, customLabels, customSpinning, onCustomClick, setCookiesAccepted, children }: PropsWithChildren<MenuProps>) {
+export default function Menu({ group, onDeleteMemberClick, customItems, customSpinning, setCookiesAccepted, children }: PropsWithChildren<MenuProps>) {
     const [impressum, setImpressum] = useState(false);
     const [about, setAbout] = useState(false);
     // const [cookiePopup, setCookiePopup] = useState(false);
@@ -91,15 +102,18 @@ export default function Menu({ group, onDeleteMemberClick, customLabels, customS
                         </div>
                         <Popup visible={menu} setVisible={setMenu}>
                             <div className={styles.menu}>
-                                {customLabels != null &&
-                                    customLabels.map((label, i) =>
-                                        <button key={i} onClick={withStopPropagation(() => {
-                                            setMenu(false);
-                                            if (onCustomClick != undefined) onCustomClick(i)();
-                                        })}>
-                                            {typeof label === 'string' ? label :
-                                                <div className={styles.labelAndImg}>{label.label} <Image src={label.src} alt={label.alt} width={label.width} height={label.height} /></div>}
-                                        </button>
+                                {customItems != null &&
+                                    customItems.map((item, i) =>
+                                        item.type === 'checkbox' ?
+                                            <Checkbox key={i} label={item.label} value={item.checked} setValue={item.setChecked} />
+                                            :
+                                            <button key={i} onClick={withStopPropagation(() => {
+                                                setMenu(false);
+                                                item.onClick();
+                                            })}>
+                                                {typeof item.label === 'string' ? item.label :
+                                                    <div className={styles.labelAndImg}>{item.label.label} <Image src={item.label.src} alt={item.label.alt} width={item.label.width} height={item.label.height} /></div>}
+                                            </button>
                                     )
                                 }
                                 <button onClick={withStopPropagation(() => { setImpressum(true); setMenu(false) })}>IMPRESSUM / DATENSCHUTZ</button>

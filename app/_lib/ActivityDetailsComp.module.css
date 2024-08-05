@@ -40,3 +40,18 @@
     color: darkgray;
     font-style: italic;
 }
+
+
+.detailName {
+    font-size: 1.2rem;
+}
+
+.detailDate {
+    font-size: small;
+    color: gray;
+    padding-left: 3rem;
+}
+
+.detailsCheckbox {
+    color: gray;
+}

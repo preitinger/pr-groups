@@ -6,11 +6,12 @@ interface CheckboxProps {
     value: boolean;
     setValue: (v: boolean) => void;
     onBlur?: FocusEventHandler<HTMLInputElement>;
+    className?: string;
 }
-export default function Checkbox({ label, value, setValue, onBlur }: CheckboxProps) {
+export default function Checkbox({ label, value, setValue, onBlur, className }: CheckboxProps) {
     return (
         <div>
-            <label className={styles.checkbox}><input type='checkbox' checked={value} onChange={() => { setValue(!value) }} onBlur={onBlur} />{label}</label>
+            <label className={styles.checkbox + (className ? ' ' + className :   '')}><input type='checkbox' checked={value} onChange={() => { setValue(!value) }} onBlur={onBlur} />{label}</label>
         </div>
     )
 }

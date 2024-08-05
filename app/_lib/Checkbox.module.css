@@ -6,3 +6,6 @@
     cursor: pointer;
 }
 
+.checkbox input[type=checkbox] {
+    cursor: pointer;
+}

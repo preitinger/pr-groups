@@ -1,7 +1,7 @@
 'use client'
 
 import Header from "@/app/_lib/Header";
-import Menu from "@/app/_lib/Menu";
+import Menu, { CustomMenuItem } from "@/app/_lib/Menu";
 import { SessionContext } from "@/app/_lib/SessionContext";
 import { Activity, EditedActivity, GroupAdminGroupReq, GroupAdminGroupResp, GroupAdminGroupUpdateReq, GroupAdminGroupUpdateResp, GroupAdminMemberAddReq, GroupAdminMemberAddResp, GroupAdminMemberDeleteReq, GroupAdminMemberDeleteResp, GroupAdminMemberUpdateReq, GroupAdminMemberUpdateResp, ImgData, Member } from "@/app/_lib/api";
 import useUser from "@/app/_lib/useUser";
@@ -29,6 +29,7 @@ import useEditableOptionalDateTime from "@/app/_lib/pr-client-utils/useEditableO
 import { userAndTokenFromStorages } from "@/app/_lib/userAndToken";
 import { Editable } from "@/app/_lib/clientUtils";
 import { myCssSupports } from "@/app/_lib/pr-client-utils/myCssSupports";
+import useLogout from "@/app/_lib/useLogout";
 
 const MAX_GROUP_LENGTH = 20
 const MAX_HEADER_LEN = 20
@@ -550,6 +551,9 @@ function ActivityComp({ i, a, updateName, updateDate, updateCapacity, onDelete, 
 
 export default function Page({ params }: { params: { id: string } }) {
     const user = useUser();
+    const logoutMenuItem = useLogout(user, () => {
+
+    })
     const groupIdRef = useRef<string | null>(null);
     const [groupId, setGroupId] = useState<string | null>(null);
     const [spinning, setSpinning] = useState(false);
@@ -657,14 +661,6 @@ export default function Page({ params }: { params: { id: string } }) {
             abortController.abort()
         }
     }, [params.id, fetchData])
-
-    const onMenuClick = (idx: number) => () => {
-        switch (idx) {
-            case 0: // DESKTOP SITE
-                router.push(`/group-admin/group/${params.id}`)
-                break;
-        }
-    }
 
     function onLogin() {
         setLogin(false);
@@ -955,18 +951,33 @@ export default function Page({ params }: { params: { id: string } }) {
         setDirty(true);
     }
 
+    const customMenuItems: CustomMenuItem[] = [
+        {
+            label: {
+                label: 'LAYOUT FÜR DESKTOP', src: '/edit_12000664.png', alt: 'EDIT', width: 32, height: 32
+            },
+            onClick: () => router.push(`/group-admin/group/${params.id}`)
+        },
+        // {
+        //     label: `${user} abmelden`,
+        //     onClick() {
+        //         alert('NYI');
+        //     }
+        // },
+        ...logoutMenuItem
+    ]
+
     return (
         <Menu
             onDeleteMemberClick={null} group={null}
-            customLabels={[{ label: 'LAYOUT FÜR DESKTOP', src: '/edit_12000664.png', alt: 'EDIT', width: 32, height: 32 }]}
+            customItems={customMenuItems}
             customSpinning={spinning}
-            onCustomClick={onMenuClick}
             setCookiesAccepted={setCookiesAccepted}
         >
             {cookiesAccepted && groupId != null &&
                 <>
                     <Header
-                        user={user}
+                        user={null}
                         line1={{ text: 'pr-groups / Gruppenadmin', fontSize: '1.2rem', bold: false }}
                         margin='1rem'
                         line2={{ text: groupId ?? '', fontSize: '1.5rem', bold: true }}

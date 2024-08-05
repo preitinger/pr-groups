@@ -16,12 +16,14 @@
     /* scrollbar-color: black #551a0a; */
     /* scrollbar-width: thin; */
     --bg-color: black;
+    accent-color: green;
 }
 
 .popupContent button {
     /* margin: auto;
     padding: 1rem; */
     min-height: 40px;
+    cursor: pointer;
 }
 
 .popupButtonRow {
@@ -42,4 +44,5 @@
     border: none;
     background-color: inherit;
     border-radius: 1rem;
+    cursor: pointer;
 }

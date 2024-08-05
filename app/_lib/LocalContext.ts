@@ -19,4 +19,16 @@ export class LocalContext {
     set cookiesAccepted(shown: boolean) {
         localStorage.setItem('cookiesAccepted', JSON.stringify(shown));
     }
+    get allActivitiesAsStartPage(): boolean {
+        return localStorage.getItem('allActivitiesAsStartPage') === JSON.stringify(true)
+    }
+    set allActivitiesAsStartPage(b: boolean) {
+        localStorage.setItem('allActivitiesAsStartPage', JSON.stringify(b));
+    }
+    get simpleActivityDetails(): boolean {
+        return localStorage.getItem('simpleActivityDetails') === JSON.stringify(true)
+    }
+    set simpleActivityDetails(b: boolean) {
+        localStorage.setItem('simpleActivityDetails', JSON.stringify(b));
+    }
 }

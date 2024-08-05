@@ -12,6 +12,7 @@
   overflow: hidden;
 
   font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--bg-color);
 }
 
 * {
@@ -24,15 +25,19 @@ body {
   scrollbar-arrow-color: gold;
   scrollbar-3dlight-color: gold;
   scrollbar-base-color: gold;
+  border: 2px solid black;
 }
 
 .d1 {
-  position: relative;
+  position: absolute;
   background-color: var(--bg-color);
   color: #ebebeb;
   width: 100vw;
   height: 100vh;
   /* z-index: -2; */
+  margin: 0;
+  padding: 0;
+  top: 0;
 }
 
 .d5 {
@@ -87,8 +92,7 @@ body {
 body {
   margin: 0;
   padding: 0;
-  width: 100vw;
-  overflow-x: hidden;
+  overflow: hidden;
   z-index: -1;
   /* background-color: #551a0a; */
   color: #ebebeb;
