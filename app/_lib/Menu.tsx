@@ -4,7 +4,6 @@ import Image from "next/image";
 import { Popup } from "../Popup";
 import Impressum from "./pr-client-utils/Impressum";
 import { SessionContext } from "./SessionContext";
-import useUser from "./useUser";
 import { apiFetchPost } from "./user-management-client/apiRoutesClient";
 import { DeleteReq, DeleteResp } from "./user-management-server/user-management-common/delete";
 import { withStopPropagation } from "./utils";
@@ -41,7 +40,6 @@ export default function Menu({ group, onDeleteMemberClick, customItems, customSp
     // const [cookiePopup, setCookiePopup] = useState(false);
     const [imgAttr, setImgAttr] = useState(false);
     const [menu, setMenu] = useState(false);
-    const user = useUser();
     const [spinning, setSpinning] = useState(false);
     const [selfDeleted, setSelfDeleted] = useState(false);
 
