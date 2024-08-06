@@ -4,11 +4,12 @@ import styles from './Popup.module.css'
 import { withStopPropagation } from "./_lib/utils";
 
 export interface PopupProps {
+    round?: boolean;
     visible: boolean;
     setVisible?: (visible: boolean) => void
 }
 
-export function Popup({ visible, setVisible, children }: PropsWithChildren<PopupProps>) {
+export function Popup({ round, visible, setVisible, children }: PropsWithChildren<PopupProps>) {
     const dialogRef = useRef<HTMLDialogElement>(null);
 
     useEffect(() => {
@@ -23,7 +24,7 @@ export function Popup({ visible, setVisible, children }: PropsWithChildren<Popup
             {
                 visible &&
                 <dialog ref={dialogRef} className='dialog' onClose={() => { if (setVisible) setVisible(false) }}>
-                    <div className={styles.popupOuter}>
+                    <div className={styles.popupOuter + (round ? ' ' + styles.round : '')}>
                         {
                             setVisible != null &&
                             <button className={styles.close} onClick={withStopPropagation(() => setVisible(false))} tabIndex={0}>

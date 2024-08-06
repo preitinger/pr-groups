@@ -29,7 +29,9 @@ import useEditableOptionalDateTime from "@/app/_lib/pr-client-utils/useEditableO
 import { userAndTokenFromStorages } from "@/app/_lib/userAndToken";
 import { Editable } from "@/app/_lib/clientUtils";
 import { myCssSupports } from "@/app/_lib/pr-client-utils/myCssSupports";
-import useLogout from "@/app/_lib/useLogout";
+import { LogoutReq } from "@/app/_lib/user-management-client/user-management-common/logout";
+import { userLogoutFetch } from "@/app/_lib/user-management-client/userManagementClient";
+import useLoginLogout from "@/app/_lib/useLoginLogout";
 
 const MAX_GROUP_LENGTH = 20
 const MAX_HEADER_LEN = 20
@@ -550,13 +552,9 @@ function ActivityComp({ i, a, updateName, updateDate, updateCapacity, onDelete, 
 }
 
 export default function Page({ params }: { params: { id: string } }) {
-    const user = useUser();
-    const logoutMenuItem = useLogout(user, () => {
-
-    })
     const groupIdRef = useRef<string | null>(null);
     const [groupId, setGroupId] = useState<string | null>(null);
-    const [spinning, setSpinning] = useState(false);
+    const [spinning, setSpinning] = useState(true);
     const [comment, setComment] = useState('');
     const [memberComment, setMemberComment] = useState('')
     const [logo, setLogo] = useState<ImgData | null>(null);
@@ -569,7 +567,6 @@ export default function Page({ params }: { params: { id: string } }) {
     const [members, setMembers] = useState<Member[]>([]);
     const [activities, setActivities] = useState<EditedActivity[]>([]);
     const [activityIdxToArchive, setActivityIdxToArchive] = useState<number[]>([]);
-    const [login, setLogin] = useState(false)
     const [dirty, setDirty] = useState(false);
     const abortControllerRef = useRef<AbortController | null>(null)
     // const [snapWidth, setSnapWidth] = useState<number>(260)
@@ -583,6 +580,18 @@ export default function Page({ params }: { params: { id: string } }) {
     const mainRef = useRef<HTMLDivElement>(null);
     const [cookiesAccepted, setCookiesAccepted] = useState(false);
 
+    function onLogin() {
+        setComment('');
+        fetchData();
+    }
+
+    const onLogout = useCallback(() => {
+        // ?
+    }, [])
+
+    const [user, onLoginClick, onLogoutClick, loginLogoutSpinning, userText, setUserText, passwdText, setPasswdText, loginError, logoutError] = useLoginLogout(onLogin, onLogout)
+
+
     // useEffect(() => {
     //     if (mainRef.current != null) {
     //         const newSnapWidth = mainRef.current.offsetWidth;
@@ -592,9 +601,10 @@ export default function Page({ params }: { params: { id: string } }) {
     // }, [])
 
     const fetchData = useCallback(() => {
+        const signal = abortControllerRef.current?.signal;
         const [user1, token1] = userAndTokenFromStorages();
         if (user1 == null || token1 == null) {
-            setLogin(true);
+            onLogoutClick();
             setSpinning(false);
             return;
         }
@@ -605,13 +615,14 @@ export default function Page({ params }: { params: { id: string } }) {
             groupId: groupIdRef.current
         }
         setSpinning(true);
+        const id = Math.random();
         const abortController = abortControllerRef.current;
         if (abortController == null) throw new Error('abortController null?!');
-        apiFetchPost<GroupAdminGroupReq, GroupAdminGroupResp>('/api/group-admin/group/', req, abortController.signal).then(resp => {
+        apiFetchPost<GroupAdminGroupReq, GroupAdminGroupResp>('/api/group-admin/group/', req, signal).then(resp => {
+            signal?.throwIfAborted();
             switch (resp.type) {
                 case 'authFailed':
                     setComment('Nicht authorisiert.');
-                    setLogin(true);
                     break;
                 case 'success': {
                     setLogo(resp.logo)
@@ -640,7 +651,7 @@ export default function Page({ params }: { params: { id: string } }) {
             setSpinning(false);
         })
 
-    }, [])
+    }, [onLogoutClick])
 
     useEffect(() => {
         // const w = scrollableContainerRef.current?.t
@@ -652,21 +663,15 @@ export default function Page({ params }: { params: { id: string } }) {
         const [user1, token1] = userAndTokenFromStorages();
         if (user1 == null || token1 == null) {
             setComment('Nicht eingeloggt.');
-            setLogin(true)
             return;
         }
+        const id = Math.random();
         fetchData();
 
         return () => {
             abortController.abort()
         }
     }, [params.id, fetchData])
-
-    function onLogin() {
-        setLogin(false);
-        setComment('');
-        fetchData();
-    }
 
     function withSetDirty<T>(set: (t: T) => void) {
         return function (t: T) {
@@ -686,7 +691,6 @@ export default function Page({ params }: { params: { id: string } }) {
         const [user1, token1] = userAndTokenFromStorages();
 
         if (user1 == null || token1 == null) {
-            setLogin(true);
             return;
         }
 
@@ -964,7 +968,10 @@ export default function Page({ params }: { params: { id: string } }) {
         //         alert('NYI');
         //     }
         // },
-        ...logoutMenuItem
+        ...(user == null ? [] : [{
+            label: `${user} abmelden`,
+            onClick: onLogoutClick
+        }])
     ]
 
     return (
@@ -1097,8 +1104,8 @@ export default function Page({ params }: { params: { id: string } }) {
                     </div>
                 </>
             }
-            <Popup visible={login} >
-                <LoginComp onLogin={onLogin} setSpinning={setSpinning} />
+            <Popup visible={user == null} >
+                <LoginComp  user={userText} setUser={setUserText} passwd={passwdText} setPasswd={setPasswdText} onLoginClick={onLoginClick} comment={loginError} spinning={loginLogoutSpinning} />
             </Popup>
             {groupId != null &&
                 <Popup visible={addingMember} >
@@ -1132,7 +1139,6 @@ export default function Page({ params }: { params: { id: string } }) {
                     </div>
                 </div>
             </Popup>
-
         </Menu>
     )
 }

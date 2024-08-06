@@ -77,10 +77,12 @@ function createRandomToken(): string {
 export async function executeLogin(req: LoginReq): Promise<ApiResp<LoginResp>> {
     const client = await clientPromise;
     const token = createRandomToken();
+    const transformedPasswd = transformPasswd(req.user, req.passwd);
+    console.log('transformedPasswd', transformedPasswd);
     try {
         const updateRes = await client.db(dbName).collection<UserDoc>('users').updateOne({
             _id: req.user,
-            passwd: transformPasswd(req.user, req.passwd)
+            passwd: transformedPasswd
         }, {
             $set: {
                 token: token

@@ -67,3 +67,7 @@
     /* font-weight: bold; */
     color: gold;
 }
+.empty {
+    margin: 2rem;
+    color: orange;
+}

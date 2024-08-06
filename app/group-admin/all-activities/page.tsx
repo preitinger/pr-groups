@@ -2,21 +2,18 @@
 
 import { ActivitiesInGroup, Activity, GroupAdminAllGroupsActivitiesReq, GroupAdminAllGroupsActivitiesResp, Member, Participation } from "@/app/_lib/api"
 import FixedAbortController from "@/app/_lib/pr-client-utils/FixedAbortController";
-import { SessionContext } from "@/app/_lib/SessionContext";
 import { apiFetchPost } from "@/app/_lib/user-management-client/apiRoutesClient";
 import { formatDateTime } from "@/app/_lib/utils";
 import { useCallback, useEffect, useRef, useState } from "react"
 import styles from './page.module.css'
 import { Popup } from "@/app/Popup";
-import WhatsAppLinkComp from "@/app/_lib/WhatsAppLinkComp";
 import LoginComp from "@/app/_lib/user-management-client/LoginComp";
 import Menu, { CustomMenuItem } from "@/app/_lib/Menu";
 import { LocalContext } from "@/app/_lib/LocalContext";
 import { userAndTokenFromStorages } from "@/app/_lib/userAndToken";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import ActivityDetailsComp from "@/app/_lib/ActivityDetailsComp";
-import { group } from "console";
+import useLoginLogout from "@/app/_lib/useLoginLogout";
 
 interface Details {
     group: string;
@@ -93,20 +90,17 @@ export default function Page() {
     const [comment, setComment] = useState('')
     const [activitiesInGroups, setActivitiesInGroups] = useState<ActivitiesInGroup[] | null>(null);
     const [details, setDetails] = useState<Details | null>(null);
-    const [login, setLogin] = useState(false);
-    const [spinning, setSpinning] = useState(false);
+    // const [login, setLogin] = useState(false);
+    const [spinning, setSpinning] = useState(true);
     const abortControllerRef = useRef<AbortController | null>(null);
     const [cookiesAccepted, setCookiesAccepted] = useState(false);
     const [asStartPage, setAsStartPage] = useState(false);
-
-    const router = useRouter();
 
     const fetch = useCallback(() => {
         setComment('');
         const [user1, token1] = userAndTokenFromStorages();
         if (user1 == null || token1 == null) {
             setComment('Nicht authorisiert.');
-            setLogin(true);
             return;
         }
 
@@ -119,7 +113,7 @@ export default function Page() {
             switch (resp.type) {
                 case 'authFailed':
                     setComment('Nicht authorisiert.');
-                    setLogin(true);
+                    // setLogin(true);
                     break;
                 case 'error':
                     setComment('Unerwarteter Fehler: ' + resp.error);
@@ -129,6 +123,7 @@ export default function Page() {
                         ...aig,
                         activities: aig.activities.toSorted((a, b) => (a.date == null ? (b.date == null ? 0 : 1) : (b.date == null ? -1 : a.date - b.date)))
                     })))
+                    // setLogin(false);
                     break;
             }
         }).catch(reason => {
@@ -142,6 +137,19 @@ export default function Page() {
         })
 
     }, [])
+
+    const onLogin = useCallback(() => {
+        // setLogin(false);
+        fetch()
+    }, [fetch])
+
+    function onLogout() {
+        // setLogin(true);
+    }
+
+    const [user, onLoginClick, onLogoutClick, loginLogoutSpinning, userText, setUserText, passwdText, setPasswdText, loginError, logoutError] = useLoginLogout(onLogin, onLogout)
+
+    const router = useRouter();
 
     useEffect(() => {
         if (!cookiesAccepted) return;
@@ -173,11 +181,6 @@ export default function Page() {
         return member.prename + ' ' + member.surname;
     }
 
-    const onLogin = useCallback(() => {
-        setLogin(false);
-        fetch()
-    }, [fetch])
-
     const customMenuItems: CustomMenuItem[] = [
         {
             type: 'checkbox',
@@ -188,22 +191,30 @@ export default function Page() {
                 const ctx = new LocalContext();
                 ctx.allActivitiesAsStartPage = checked;
             }
-        }
+        },
+        ...(user == null ? [] : [({
+            label: `${user} abmelden`,
+            onClick: onLogoutClick
+        })])
     ]
 
     return (
         <>
-            <Menu customSpinning={spinning} setCookiesAccepted={setCookiesAccepted} customItems={customMenuItems} />
+            <Menu customSpinning={spinning || loginLogoutSpinning} setCookiesAccepted={setCookiesAccepted} customItems={customMenuItems} />
             <div className={styles.main}>
                 <p>{comment}</p>
-                <Popup visible={login} >
-                    <LoginComp onLogin={onLogin} setSpinning={setSpinning} />
+                <Popup visible={/* login */ user == null} >
+                    <LoginComp user={userText} setUser={setUserText} passwd={passwdText} setPasswd={setPasswdText} onLoginClick={onLoginClick} comment={loginError} spinning={loginLogoutSpinning} />
                 </Popup>
                 {
                     activitiesInGroups &&
                     activitiesInGroups.map(activitiesInGroup => <ActivitiesInGroupComp key={activitiesInGroup.group} activitiesInGroup={activitiesInGroup} setDetails={setDetails} onEdit={() => {
                         router.push(`/group-admin/group-m/${activitiesInGroup.group}`)
                     }} />)
+                }
+                {
+                    (!spinning || loginLogoutSpinning) && (!activitiesInGroups || activitiesInGroups.length === 0) &&
+                    <p className={styles.empty}>Deinem Benutzerkonto sind (noch?) keine Gruppen und Aktivitäten zugeordnet.</p>
                 }
             </div>
             <Popup visible={details != null} setVisible={(visible) => {

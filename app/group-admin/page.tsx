@@ -12,25 +12,26 @@ import { apiFetchPost } from "../_lib/user-management-client/apiRoutesClient";
 import TabButton from "../_lib/TabButton";
 import TabPage from "../_lib/TabPage";
 import FixedAbortController from "../_lib/pr-client-utils/FixedAbortController";
-import Menu from "../_lib/Menu";
+import Menu, { CustomMenuItem } from "../_lib/Menu";
 import { Popup } from "../Popup";
 import LoginComp from "../_lib/user-management-client/LoginComp";
 import { LocalContext } from "../_lib/LocalContext";
 import { userAndTokenFromStorages } from "../_lib/userAndToken";
+import useLoginLogout from "../_lib/useLoginLogout";
 
 export default function Page() {
-    const user = useUser();
     const [comment, setComment] = useState('');
     const [groups, setGroups] = useState<string[] | null>(null);
     const [spinning, setSpinning] = useState(true);
-    const [login, setLogin] = useState(false);
     const [cookiesAccepted, setCookiesAccepted] = useState(false);
+
+    const [user, onLoginClick, onLogoutClick, loginLogoutSpinning, userText, setUserText, passwdText, setPasswdText, loginError, logoutError] = useLoginLogout(onLogin, onLogout)
+
 
     const fetchData = useCallback(function fetchData(abortController?: AbortController) {
         const [user1, token1] = userAndTokenFromStorages();
 
         if (user1 == null || token1 == null) {
-            setLogin(true);
             setSpinning(false);
             return;
         }
@@ -44,7 +45,6 @@ export default function Page() {
             switch (resp.type) {
                 case 'authFailed':
                     setComment('Nicht authorisiert.');
-                    setLogin(true);
                     break;
                 case 'success':
                     setGroups(resp.groupIds);
@@ -71,13 +71,24 @@ export default function Page() {
     }, [fetchData])
 
     function onLogin() {
-        setLogin(false);
         fetchData();
     }
 
+    function onLogout() {
+
+    }
+
+    const customMenuItems: CustomMenuItem[] = user == null ? [] : [
+        {
+            type: 'normal',
+            label: `${user} abmelden`,
+            onClick: onLogoutClick
+        }
+    ]
+
     return (
         <>
-            <Menu customSpinning={spinning} setCookiesAccepted={setCookiesAccepted}>
+            <Menu customSpinning={spinning} setCookiesAccepted={setCookiesAccepted} customItems={customMenuItems} >
                 <Header user={user} line1={{ text: 'pr-groups', fontSize: '1.2em', bold: false }} margin='1em' line2={{ text: 'Gruppenadministration', fontSize: '1.5em', bold: true }} />
                 <div className={styles.form}>
                     <p>{comment}</p>
@@ -114,8 +125,8 @@ export default function Page() {
                         <Link href='/group-admin/all-activities'>Alle aktuellen Aktivitäten all deiner Gruppen auf einen Blick</Link>
                     </div>
                 </div>
-                <Popup visible={login} >
-                    <LoginComp onLogin={onLogin} setSpinning={setSpinning} />
+                <Popup visible={user == null} >
+                    <LoginComp user={userText} setUser={setUserText} passwd={passwdText} setPasswd={setPasswdText} onLoginClick={onLoginClick} comment={loginError} spinning={loginLogoutSpinning} />
                 </Popup>
             </Menu>
         </>

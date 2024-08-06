@@ -171,3 +171,7 @@ export function withStopPropagation(f: () => void) {
         e.stopPropagation();
     }
 }
+
+export function isAbortError(reason: any) {
+    return 'name' in reason && reason.name === 'AbortError';
+}

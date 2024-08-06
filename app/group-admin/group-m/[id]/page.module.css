@@ -203,6 +203,8 @@
     padding: 1rem;
     text-align: right;
     border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
 }
 
 .memberLink a {

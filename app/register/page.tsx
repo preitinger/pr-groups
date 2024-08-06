@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import styles from './page.module.css'
 import { userRegisterFetch } from '../_lib/user-management-client/userManagementClient';
 import { RegisterReq } from '../_lib/user-management-client/user-management-common/register';
@@ -10,6 +10,9 @@ import Input from '../_lib/Input';
 import Input2 from '../_lib/pr-client-utils/Input2';
 import FormComp from '../_lib/pr-client-utils/FormComp';
 import Menu from '../_lib/Menu';
+import { register } from '../_lib/userAndToken';
+import FixedAbortController from '../_lib/pr-client-utils/FixedAbortController';
+import { isAbortError } from '../_lib/utils';
 
 const validateUser = (text: string) => text === '' ? 'User erforderlich!' : '';
 const validatePasswdRepeat = (passwd: string) => (text: string) => text !== passwd ? 'Passwörter stimmen nicht überein!' : '';
@@ -19,39 +22,41 @@ export default function Page() {
     const [passwd, setPasswd] = useState('');
     const [passwdRepeat, setPasswdRepeat] = useState('');
     const [cookiesAccepted, setCookiesAccepted] = useState(false);
+    const abortControllerRef = useRef<AbortController | null>(null);
 
     const router = useRouter();
+
+    useEffect(() => {
+        abortControllerRef.current = new FixedAbortController();
+        return () => {
+            abortControllerRef.current?.abort();
+        }
+    }, [])
 
     function onRegisterClick() {
         if (validateUser(user) !== '' || validatePasswdRepeat(passwd)(passwdRepeat) !== '') {
             alert('Bitte Eingaben überprüfen!');
             return;
         }
-        const req: RegisterReq = {
-            user: user,
-            passwd: passwd
-        }
-        userRegisterFetch(req).then(resp => {
-            switch (resp.type) {
-                case 'nameNotAvailable':
-                    alert('Dieser Name ist bereits vergeben.');
-                    break;
-                case 'success':
-                    alert(`User ${user} erfolgreich registriert.`);
-                    router.push('/login');
-                    break;
-                case 'error':
-                    alert('Unerwarteter Fehler: ' + resp.error);
-                    break;
+        register(user, passwd, abortControllerRef.current?.signal).then(error => {
+            if (error) {
+                alert(error)
+            } else {
+                alert(`User ${user} erfolgreich registriert.`);
+                router.push('/login');
             }
-        }).catch(reason => {
-            alert('Unerwarteter Fehler: ' + reason);
+        }).catch((reason: any) => {
+            if (isAbortError(reason)) {
+                // ignore
+            } else {
+                alert('Unerwarteter Fehler: ' + JSON.stringify(reason));
+            }
         })
     }
 
     return (
         <>
-            <Menu  setCookiesAccepted={setCookiesAccepted} />
+            <Menu setCookiesAccepted={setCookiesAccepted} />
             {/* <Header user={user} line1={{ text: '', fontSize: '1.2rem', bold: false }} margin='1rem' line2={{ text: '', fontSize: '1.5rem', bold: true }} /> */}
             <div className={styles.main}>
                 <h1>pr-groups</h1>

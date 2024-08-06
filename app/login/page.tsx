@@ -8,10 +8,12 @@ import { useRouter } from 'next/navigation';
 import Header from '../_lib/Header';
 import Input from '../_lib/Input';
 import Menu from '../_lib/Menu';
-import { userAndTokenFromStorages, userAndTokenToStorages } from '../_lib/userAndToken';
+import { login, userAndTokenFromStorages, userAndTokenToStorages } from '../_lib/userAndToken';
 import FormComp from '../_lib/pr-client-utils/FormComp';
 import Input2 from '../_lib/pr-client-utils/Input2';
 import { LocalContext } from '../_lib/LocalContext';
+import FixedAbortController from '../_lib/pr-client-utils/FixedAbortController';
+import { isAbortError } from '../_lib/utils';
 
 export default function Page() {
     const [user, setUser] = useState('');
@@ -26,6 +28,14 @@ export default function Page() {
         alpha: '',
     })
     const [cookiesAccepted, setCookiesAccepted] = useState(false);
+    const abortControllerRef = useRef<AbortController | null>(null);
+
+    useEffect(() => {
+        abortControllerRef.current = new FixedAbortController();
+        return () => {
+            abortControllerRef.current?.abort();
+        }
+    }, [])
 
     useEffect(() => {
         if (!cookiesAccepted) return;
@@ -40,27 +50,27 @@ export default function Page() {
             passwd: passwd
         }
         setComment('Sende Daten ...');
-        userLoginFetch(req).then(resp => {
+        login(user, passwd, abortControllerRef.current?.signal).then(resp => {
             switch (resp.type) {
+                case 'error':
+                    setComment(resp.error);
+                    break;
                 case 'success':
                     token.current = resp.token;
-                    userAndTokenToStorages(user, resp.token);
                     const ctx = new LocalContext();
                     if (ctx.allActivitiesAsStartPage) {
                         router.push('/group-admin/all-activities')
                     } else {
                         router.push('/group-admin');
                     }
-                    
                     break;
 
-                case 'wrongUserOrPasswd':
-                    setComment('Unbekannter User oder falsches Passwort!');
-                    break;
-
-                case 'error':
-                    setComment('Unerwarteter Fehler: ' + resp.error);
-                    break;
+            }
+        }).catch((reason: any) => {
+            if (isAbortError(reason)) {
+                // ignore
+            } else {
+                setComment('Unerwarteter Fehler: ' + JSON.stringify(reason));
             }
         })
     }

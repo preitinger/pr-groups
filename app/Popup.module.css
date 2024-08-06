@@ -5,6 +5,10 @@
     color: white;
 }
 
+.round {
+    border-radius: 1rem;
+}
+
 .popupContent {
     box-sizing: border-box;
     /* z-index: 100; */

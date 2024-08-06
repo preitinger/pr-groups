@@ -1,3 +1,22 @@
+.container {
+    padding: 1rem 0;
+    color: black;
+    background-color: white;
+    border-radius: 1rem;
+}
+
+.container h2 {
+    margin-left: 2rem;
+    margin-bottom: 2rem;
+}
+.container button {
+    margin: 2rem;
+    border-radius: 1rem;
+    background-color: lightgray;
+}
+.container button:focus {
+    outline: 2px solid green;
+}
 .passwdLabel,
 .passwd,
 .loginButton {
@@ -14,6 +33,10 @@
 
 .comment {
     margin-top: 1rem;
+    margin-left: 2rem;
+    margin-right: 2rem;
+    width: 200px;
+    height: 100px;
 }
 
 .passwdLabel {
@@ -22,4 +45,14 @@
 }
 .passwd {
     margin-bottom: 2rem;
+}
+
+.spinner {
+    position: absolute;
+    background: url('/Spinner@1x-1.0s-200px-200px.gif') no-repeat center;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 1001100;
 }
