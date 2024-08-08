@@ -7,3 +7,7 @@
     padding: 1rem;
     overflow-y: auto;
 }
+
+.article section {
+    padding-top: 1rem;
+}
