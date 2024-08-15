@@ -5,7 +5,7 @@
   --h1: 180px;
   --testTan: calc(tan(var(--alpha)));
   --w1: calc(tan(var(--alpha)) * var(--h1));
-  z-index: -1;
+  z-index: 0;
   --beta: 3deg;
   --barTop: 593px;
   --bg-color: #551a0a;
@@ -13,6 +13,8 @@
 
   font-family: Arial, Helvetica, sans-serif;
   background-color: var(--bg-color);
+  /* accent-color: gold; */
+  accent-color: hsl(13, 99%, 63%)
 }
 
 * {
@@ -93,7 +95,7 @@ body {
   margin: 0;
   padding: 0;
   overflow: hidden;
-  z-index: -1;
+  /* z-index: -1; */
   /* background-color: #551a0a; */
   color: #ebebeb;
   position: fixed;
@@ -112,7 +114,7 @@ body {
   top: 0;
   left: 0;
   right: 0;
-  bottom: 0;
+  bottom: 3rem;
   overflow: scroll;
 }
 
@@ -157,10 +159,10 @@ body {
   left: 100px;
 }
 
-button {
+/* button {
   background-color: #333;
   color: inherit;
-}
+} */
 
 *:focus {
   outline: 1px dashed gray;
@@ -242,7 +244,9 @@ button {
   scrollbar-color: hsl(0, 0%, 47%) #525252;
   scrollbar-width: thin;
   /* padding: 0; */
-  /* border: none; */
+  border: none;
+  border-radius: 2rem;
+  box-shadow: 15px 15px 16px 0px #0E0F0E;
 }
 
 .dialog * {
@@ -287,7 +291,77 @@ button {
   background-color: white;
   border-radius: 2rem;
   margin: auto;
-  padding: 2rem;
+  /* padding: 2rem; */
+  padding-top: 2rem;
   color: black;
   /* height: 400px; */
 }
+
+
+.loader {
+  width: 50px;
+  aspect-ratio: 1;
+  display: grid;
+  border-radius: 50%;
+  background:
+      linear-gradient(0deg, rgb(0 0 0/50%) 30%, #0000 0 70%, rgb(0 0 0/100%) 0) 50%/8% 100%,
+      linear-gradient(90deg, rgb(0 0 0/25%) 30%, #0000 0 70%, rgb(0 0 0/75%) 0) 50%/100% 8%;
+  background-repeat: no-repeat;
+  animation: l23 1s infinite steps(12);
+
+  /* nicht original: */
+  position: fixed;
+  left: calc(50% - 50px);
+  top: calc(50% - 50px);
+  width: 100px;
+  height: 100px;
+  z-index: 1001100;
+}
+
+.loader::before,
+.loader::after {
+  content: "";
+  grid-area: 1/1;
+  border-radius: 50%;
+  background: inherit;
+  opacity: 0.915;
+  transform: rotate(30deg);
+}
+
+.loader::after {
+  opacity: 0.83;
+  transform: rotate(60deg);
+}
+
+@keyframes l23 {
+  100% {
+      transform: rotate(1turn)
+  }
+}
+
+/* BEGIN button from web: */
+/* From Uiverse.io by elijahgummer */ 
+/* button {
+  font: inherit;
+  background-color: #f0f0f0;
+  border: 0;
+  color: #242424;
+  border-radius: 0.5em;
+  font-size: 1.35rem;
+  padding: 0.375em 1em;
+  font-weight: 600;
+  text-shadow: 0 0.0625em 0 #fff;
+  box-shadow: inset 0 0.0625em 0 0 #f4f4f4, 0 0.0625em 0 0 #efefef,
+    0 0.125em 0 0 #ececec, 0 0.25em 0 0 #e0e0e0, 0 0.3125em 0 0 #dedede,
+    0 0.375em 0 0 #dcdcdc, 0 0.425em 0 0 #cacaca, 0 0.425em 0.5em 0 #cecece;
+  transition: 0.15s ease;
+  cursor: pointer;
+}
+button:active {
+  translate: 0 0.225em;
+  box-shadow: inset 0 0.03em 0 0 #f4f4f4, 0 0.03em 0 0 #efefef,
+    0 0.0625em 0 0 #ececec, 0 0.125em 0 0 #e0e0e0, 0 0.125em 0 0 #dedede,
+    0 0.2em 0 0 #dcdcdc, 0 0.225em 0 0 #cacaca, 0 0.225em 0.375em 0 #cecece;
+} */
+/* END button from web: */
+
