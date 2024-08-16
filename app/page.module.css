@@ -43,7 +43,7 @@
 
   /* scrollbar-color: hsl(0, 0%, 47%) #525252; */
   scrollbar-width: auto;
-  overflow: scroll;
+  overflow: auto;
   width: auto;
   height: auto;
 }
