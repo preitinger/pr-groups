@@ -94,7 +94,7 @@ body {
 body {
   margin: 0;
   padding: 0;
-  overflow: hidden;
+  /* overflow: hidden; */
   /* z-index: -1; */
   /* background-color: #551a0a; */
   color: #ebebeb;

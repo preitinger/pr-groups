@@ -144,7 +144,7 @@ export default function Menu({ group, onDeleteMemberClick, customItems, customSp
                         </Popup>
                         <Popup visible={about} setVisible={setAbout}>
                             <h1>About pr-groups</h1>
-                            <p>1</p>
+                            <p>2</p>
                             <Label>Layout & Design der Abstimmungsseite:</Label>
                             <p>ALEXANDER POHL</p>
                             <Label>Layout & Design der Admin-Seiten und Programmierung:</Label>
