@@ -1,6 +1,6 @@
 .outer {
     display:flex;
-    position: fixed;
+    position: absolute;
     background: rgba(50, 50, 50, 0.5);
     z-index: 1000;
     left: 0;

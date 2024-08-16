@@ -27,7 +27,6 @@ body {
   scrollbar-arrow-color: gold;
   scrollbar-3dlight-color: gold;
   scrollbar-base-color: gold;
-  border: 2px solid black;
 }
 
 .d1 {
@@ -40,6 +39,7 @@ body {
   margin: 0;
   padding: 0;
   top: 0;
+  box-sizing: border-box;
 }
 
 .d5 {
@@ -98,6 +98,13 @@ body {
   /* z-index: -1; */
   /* background-color: #551a0a; */
   color: #ebebeb;
+
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+
   /* position: fixed;
   top: 0;
   left: 0;
@@ -278,7 +285,7 @@ body {
 } */
 
 .wrapper {
-  position: fixed;
+  position: absolute;
   top: 0;
   left: 0;
   right: 0;
@@ -310,7 +317,7 @@ body {
   animation: l23 1s infinite steps(12);
 
   /* nicht original: */
-  position: fixed;
+  position: absolute;
   left: calc(50% - 50px);
   top: calc(50% - 50px);
   width: 100px;
