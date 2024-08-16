@@ -34,7 +34,7 @@ export default function LoginComp({ user, setUser, passwd, setPasswd, onLoginCli
         <p className={styles.comment}>{comment}</p>
         {
             spinning &&
-            <div className={styles.spinner}></div>
+            <div className='loader'></div>
         }
 
     </div>

@@ -43,7 +43,7 @@ export default function ActivityDetailsComp({ group, selActivity, members }: Act
         return member.prename + ' ' + member.surname;
     }
     return <>
-        <Checkbox label='Details nicht anzeigen' value={simpleLists} setValue={setSimpleListsAlsoInLocalStorage} className={styles.detailsCheckbox} />
+        <Checkbox label='Details nicht anzeigen' checked={simpleLists} setChecked={setSimpleListsAlsoInLocalStorage} className={styles.detailsCheckbox} />
         <h1 className={styles.headerGroup}>{group}</h1>
         <h2 className={styles.headerActivity}>{selActivity?.name} {selActivity?.date != null && formatDateTime(selActivity?.date, true)}</h2>
         <div className={styles.detailLists}>

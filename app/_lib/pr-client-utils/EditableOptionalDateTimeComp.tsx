@@ -7,6 +7,8 @@ import Image from "next/image";
 import { Popup } from "@/app/Popup";
 import { formatDateTime, withStopPropagation } from "../utils";
 import Input from "../Input";
+import Input2 from "./Input2";
+import Toggler1 from "./Toggler1";
 
 export interface EditableOptionalDateTimeCompProps {
     label: string;
@@ -55,8 +57,8 @@ export default function EditableOptionalDateTimeComp({ label, info, enabled, set
         <>
             <Checkbox
                 label={label}
-                value={enabled}
-                setValue={setEnabled}
+                checked={enabled}
+                setChecked={setEnabled}
             />
             {
                 Number.isSafeInteger(optionalMs) && enabled &&
@@ -77,23 +79,28 @@ export default function EditableOptionalDateTimeComp({ label, info, enabled, set
                         }
                     </div> */}
 
-                    <dialog ref={dialogRef} className='dialog'>
-                        <Label>{label}</Label>
+                    <dialog ref={dialogRef} className='form'>
+                        {/* <Label>{label}</Label> */}
                         <div>
-                            <div><Input ref={inputRef} label='Datum/Uhrzeit (DD.MM.JJJJ hh:mm)' text={editedText} setText={setEditedText} onEnter={onOk} /> <div className={styles.comment}>{comment}</div></div>
+                            {/* <div><Input ref={inputRef} label='Datum/Uhrzeit (DD.MM.JJJJ hh:mm)' text={editedText} setText={setEditedText} onEnter={onOk} /> <div className={styles.comment}>{comment}</div></div> */}
+                            <Input2 label={label} text={editedText} setText={setEditedText} onEnter={onOk} validate={(text) => {
+                                return error
+                            }} />
+                            <div className={styles.summerWinter}>
                             {
                                 unclearMESZ ?
-                                <label><input tabIndex={unclearMESZ ? 0 : -1} readOnly={!unclearMESZ} type='checkbox' checked={userMESZ} onChange={() => setUserMESZ(d => !d)} /><span className={unclearMESZ ? '' : styles.disabled} >Sommerzeit</span></label> :
+                                <label className={styles.label}><input tabIndex={unclearMESZ ? 0 : -1} readOnly={!unclearMESZ} type='checkbox' checked={userMESZ} onChange={() => setUserMESZ(d => !d)} /><span className={unclearMESZ ? '' : styles.disabled} >Sommerzeit</span></label> :
                                 <p>({userMESZ ? 'Sommerzeit' : 'Winterzeit'})</p>
                             }
+                            </div>
                         </div>
 
-                        <div className={styles.error}>
+                        {/* <div className={styles.error}>
                             {
                                 error !== '' &&
                                 <p className={styles.error}>{error}</p>
                             }
-                        </div>
+                        </div> */}
                         <div className={styles.buttonRow}>
                             {!error &&
                                 <button className={styles.okImg} onClick={withStopPropagation(onOk)}></button>}

@@ -74,7 +74,7 @@ export default function Page() {
             </div>
             {
                 spinning &&
-                <div className={styles.spinner}></div>
+                <div className={'loader'}></div>
             }
        </>
     )

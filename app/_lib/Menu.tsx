@@ -103,7 +103,7 @@ export default function Menu({ group, onDeleteMemberClick, customItems, customSp
                                 {customItems != null &&
                                     customItems.map((item, i) =>
                                         item.type === 'checkbox' ?
-                                            <Checkbox key={i} label={item.label} value={item.checked} setValue={item.setChecked} />
+                                            <Checkbox key={i} label={item.label} checked={item.checked} setChecked={item.setChecked} />
                                             :
                                             <button key={i} onClick={withStopPropagation(() => {
                                                 setMenu(false);
@@ -176,7 +176,7 @@ export default function Menu({ group, onDeleteMemberClick, customItems, customSp
                         </Popup >
                         {
                             (spinning || customSpinning) &&
-                            <div className={styles.spinner}></div>
+                            <div className='loader'></div>
                         }
                     </>
             }

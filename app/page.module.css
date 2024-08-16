@@ -79,6 +79,8 @@
   right: 2rem; */
   display: flex;
   border-radius: 1rem;
+  justify-content: center;
+  align-items: center;
 }
 .buttons a {
   display: block;
@@ -131,10 +133,13 @@
   left: 250px;
 }
 
-.registerButton {
+.register, .login {
   min-width: 40px;
   min-height: 40px;
   margin: 2rem;
+  /* background-color: hsl(13, 79%, 15%);
+  color: white;
+  border-radius: 1rem; */
 }
 
 .screenShot {

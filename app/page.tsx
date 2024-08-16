@@ -12,6 +12,7 @@ import Menu from "./_lib/Menu";
 import { useRouter } from "next/navigation";
 import Input2 from "./_lib/pr-client-utils/Input2";
 import FormComp from "./_lib/pr-client-utils/FormComp";
+import Button from "./_lib/Button";
 
 export default function Home() {
   // const user = useUser();
@@ -64,8 +65,8 @@ export default function Home() {
         <div className={styles.header}>
           <h1>pr-groups</h1>
           <div className={styles.buttons}>
-            <a className={styles.register} onClick={onRegisterClick}>Konto erstellen</a>
-            <a className={styles.login} onClick={onLoginClick}>Anmelden</a>
+            <Button className={styles.register} onClick={onRegisterClick}>Konto erstellen</Button>
+            <Button className={styles.login} onClick={onLoginClick}>Anmelden</Button>
           </div>
         </div>
         <div ref={mainDivRef} className={styles.main}>

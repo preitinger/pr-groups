@@ -96,6 +96,8 @@ export default function Page() {
     const [cookiesAccepted, setCookiesAccepted] = useState(false);
     const [asStartPage, setAsStartPage] = useState(false);
 
+    const [user, onLoginClick, onLogoutClick, loginLogoutSpinning, userText, setUserText, passwdText, setPasswdText, loginError, logoutError] = useLoginLogout()
+
     const fetch = useCallback(() => {
         setComment('');
         const [user1, token1] = userAndTokenFromStorages();
@@ -113,6 +115,7 @@ export default function Page() {
             switch (resp.type) {
                 case 'authFailed':
                     setComment('Nicht authorisiert.');
+                    onLogoutClick();
                     // setLogin(true);
                     break;
                 case 'error':
@@ -136,18 +139,7 @@ export default function Page() {
             setSpinning(false)
         })
 
-    }, [])
-
-    const onLogin = useCallback(() => {
-        // setLogin(false);
-        fetch()
-    }, [fetch])
-
-    function onLogout() {
-        // setLogin(true);
-    }
-
-    const [user, onLoginClick, onLogoutClick, loginLogoutSpinning, userText, setUserText, passwdText, setPasswdText, loginError, logoutError] = useLoginLogout(onLogin, onLogout)
+    }, [onLogoutClick])
 
     const router = useRouter();
 
@@ -156,11 +148,13 @@ export default function Page() {
         const ctx = new LocalContext()
         setAsStartPage(ctx.allActivitiesAsStartPage);
         abortControllerRef.current = new FixedAbortController();
-        fetch()
+        if (user != null) {
+            fetch()
+        }
         return () => {
             abortControllerRef.current?.abort();
         }
-    }, [fetch, cookiesAccepted])
+    }, [fetch, cookiesAccepted, user])
 
 
     const decisions: { [user: string]: Participation } | undefined = details?.activity.participations.reduce((d, participation) => ({

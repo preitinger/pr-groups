@@ -48,11 +48,12 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 2rem;
+    margin: 2rem;
 }
 
 .buttonRow button {
     cursor: pointer;
+    border-radius: 0.5rem;
 }
 
 .okImg,

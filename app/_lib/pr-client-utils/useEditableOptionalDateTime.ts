@@ -51,7 +51,7 @@ export default function useEditableOptionalDateTime({ optionalMs, setOptionalMs 
         const res = parseGermanDate(editedText)
 
         if (res == null) {
-            setError('Datum/Uhrzeit ungültig!');
+            setError('Bitte so eingeben: DD.MM.JJJJ hh:mm');
             return;
         }
         if (Array.isArray(res)) {

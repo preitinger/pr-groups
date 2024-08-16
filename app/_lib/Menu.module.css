@@ -3,13 +3,15 @@
     justify-content: center;
     align-items: center;
     position: absolute;
-    right: calc(1rem - 8px); /* 8 = 40 - 32; 32px ist breite des bildes, 40px ist breite des buttons */
+    right: calc(1rem - 8px);
+    /* 8 = 40 - 32; 32px ist breite des bildes, 40px ist breite des buttons */
     top: calc(1rem - 8px);
     width: 40px;
     height: 40px;
     z-index: 1;
     cursor: pointer;
 }
+
 .menuImg {
     /* display: block; */
 }
@@ -19,6 +21,7 @@
     flex-direction: column;
     align-items: stretch;
 }
+
 .menu * {
     margin: 4px;
 }
@@ -54,13 +57,16 @@
     bottom: 0;
     z-index: 1001100;
 }
+
 .picture {
     background-color: black;
     opacity: 1;
 }
+
 .aboutTable td {
     padding: 1rem;
 }
+
 .labelAndImg {
     display: flex;
     flex-direction: row;

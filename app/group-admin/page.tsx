@@ -18,6 +18,7 @@ import LoginComp from "../_lib/user-management-client/LoginComp";
 import { LocalContext } from "../_lib/LocalContext";
 import { userAndTokenFromStorages } from "../_lib/userAndToken";
 import useLoginLogout from "../_lib/useLoginLogout";
+import FormComp from "../_lib/pr-client-utils/FormComp";
 
 export default function Page() {
     const [comment, setComment] = useState('');
@@ -25,7 +26,7 @@ export default function Page() {
     const [spinning, setSpinning] = useState(true);
     const [cookiesAccepted, setCookiesAccepted] = useState(false);
 
-    const [user, onLoginClick, onLogoutClick, loginLogoutSpinning, userText, setUserText, passwdText, setPasswdText, loginError, logoutError] = useLoginLogout(onLogin, onLogout)
+    const [user, onLoginClick, onLogoutClick, loginLogoutSpinning, userText, setUserText, passwdText, setPasswdText, loginError, logoutError] = useLoginLogout()
 
 
     const fetchData = useCallback(function fetchData(abortController?: AbortController) {
@@ -45,6 +46,7 @@ export default function Page() {
             switch (resp.type) {
                 case 'authFailed':
                     setComment('Nicht authorisiert.');
+                    onLogoutClick();
                     break;
                 case 'success':
                     setGroups(resp.groupIds);
@@ -60,23 +62,17 @@ export default function Page() {
             setSpinning(false);
         })
 
-    }, [])
+    }, [onLogoutClick])
 
     useEffect(() => {
         const abortController = new FixedAbortController();
-        fetchData(abortController);
+        if (user != null) {
+            fetchData(abortController);
+        }
         return (() => {
             abortController.abort();
         })
-    }, [fetchData])
-
-    function onLogin() {
-        fetchData();
-    }
-
-    function onLogout() {
-
-    }
+    }, [fetchData, user])
 
     const customMenuItems: CustomMenuItem[] = user == null ? [] : [
         {
@@ -89,41 +85,44 @@ export default function Page() {
     return (
         <>
             <Menu customSpinning={spinning} setCookiesAccepted={setCookiesAccepted} customItems={customMenuItems} >
-                <Header user={user} line1={{ text: 'pr-groups', fontSize: '1.2em', bold: false }} margin='1em' line2={{ text: 'Gruppenadministration', fontSize: '1.5em', bold: true }} />
-                <div className={styles.form}>
-                    <p>{comment}</p>
-                    <div className={styles.row}>
-                        <Link className={styles.linkMemberAdd} href='/group/member/add'>Gruppenmitglied hinzufügen</Link>
-                    </div>
-                    {/* <div className={styles.row}>
+                <Header user={null} line1={{ text: 'pr-groups', fontSize: '1.2em', bold: false }} margin='1em' line2={{ text: 'Gruppenadministration', fontSize: '1.5em', bold: true }} />
+                <div className={styles.main}>
+
+                    <FormComp decoImg={{ src: '/group-friends-jumping-top-hill.jpg', alt: 'Gruppe', width: 714, height: 576 }} maxWidth={1280} >
+                        <div className={styles.form}>
+                            <p>{comment}</p>
+                            {/* <div className={styles.row}> */}
+                            <Link className={styles.linkMemberAdd} href='/group/member/add'>Gruppenmitglied hinzufügen</Link>
+                            {/* </div> */}
+                            {/* <div className={styles.row}>
                     <Link className={styles.linkMemberRemove} href='/group/member/remove'>Gruppenmitglied entfernen</Link>
                 </div> */}
-                    <div className={styles.row}>
-                        <Link className={styles.linkActivityAdd} href='/group/activity/add'>Aktivität hinzufügen</Link>
-                    </div>
-                    {/* <div className={styles.row}>
+                            {/* <div className={styles.row}> */}
+                            <Link className={styles.linkActivityAdd} href='/group/activity/add'>Aktivität hinzufügen</Link>
+                            {/* </div> */}
+                            {/* <div className={styles.row}>
                     <Link className={styles.linkActivityDelete} href='/group/activity/delete'>Aktivität entfernen</Link>
                 </div>
                 <div className={styles.row}>
                     <Link className={styles.linkActivityChange} href='/group/activity/change'>Aktivität bearbeiten</Link>
                 </div> */}
-                    <div className={styles.groups}>
-                        {
-                            groups == null ?
-                                <div className={styles.spinner}></div>
-                                :
-                                <>
-                                <h3 className={styles.groupHeader}>Du bist Administrator folgender Gruppen:</h3>
-                                    {
-                                        groups.map(group =>
-                                            <Link key={group} href={`/group-admin/group-m/${group}`} >{group}</Link>)
-                                    }
-                                </>
-                        }
-                    </div>
-                    <div>
-                        <Link href='/group-admin/all-activities'>Alle aktuellen Aktivitäten all deiner Gruppen auf einen Blick</Link>
-                    </div>
+                            <div className={styles.groups}>
+                                {
+                                    groups == null ?
+                                        <div className='loader'></div>
+                                        :
+                                        <>
+                                            <h3 className={styles.groupHeader}>Du bist Administrator folgender Gruppen:</h3>
+                                            {
+                                                groups.map(group =>
+                                                    <Link key={group} href={`/group-admin/group-m/${group}`} >{group}</Link>)
+                                            }
+                                        </>
+                                }
+                            </div>
+                            <Link className={styles.linkAllActivities} href='/group-admin/all-activities'>Alle aktuellen Aktivitäten all deiner Gruppen auf einen Blick</Link>
+                        </div>
+                    </FormComp>
                 </div>
                 <Popup visible={user == null} >
                     <LoginComp user={userText} setUser={setUserText} passwd={passwdText} setPasswd={setPasswdText} onLoginClick={onLoginClick} comment={loginError} spinning={loginLogoutSpinning} />

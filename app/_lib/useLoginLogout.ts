@@ -3,9 +3,6 @@ import { login, logout, userAndTokenFromStorages } from "./userAndToken";
 import { isAbortError } from "./utils";
 import FixedAbortController from "./pr-client-utils/FixedAbortController";
 
-export type OnLogin = () => void;
-export type OnLogout = () => void;
-
 export type User = string | null;
 export type OnLoginClick = () => void;
 export type OnLogoutClick = () => void;
@@ -29,7 +26,7 @@ export type LoginLogoutRes = [
     LoginError,
     LogoutError
 ]
-export default function useLoginLogout(onLogin: OnLogin, onLogout: OnLogout): LoginLogoutRes {
+export default function useLoginLogout(): LoginLogoutRes {
     const [user, setUser] = useState<User>(null);
     const [spinning, setSpinning] = useState(false);
     const [userText, setUserText] = useState('');
@@ -59,7 +56,6 @@ export default function useLoginLogout(onLogin: OnLogin, onLogout: OnLogout): Lo
                     setUser(null);
                     break;
                 case 'success':
-                    onLogin();
                     setUser(userText);
                     break;
             }
@@ -79,7 +75,6 @@ export default function useLoginLogout(onLogin: OnLogin, onLogout: OnLogout): Lo
         try {
             const error = await logout(abortControllerRef.current?.signal)
             if (error == '') {
-                onLogout();
             } else {
                 setLogoutError(error);
             }
@@ -92,7 +87,7 @@ export default function useLoginLogout(onLogin: OnLogin, onLogout: OnLogout): Lo
             setUser(null);
         }
 
-    }, [onLogout])
+    }, [])
 
     return [user, onLoginClick, onLogoutClick, spinning, userText, setUserText, passwdText, setPasswdText, loginError, logoutError]
 }

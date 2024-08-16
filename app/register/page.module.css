@@ -72,7 +72,7 @@
     flex-flow: column;
     justify-content: center;
     /* align-items: stretch; */
-    width: calc(200px + 4rem);
+    width: calc(300px + 4rem);
 }
 
 .innerForm h1 {

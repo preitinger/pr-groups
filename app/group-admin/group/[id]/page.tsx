@@ -509,7 +509,7 @@ export default function Page({ params }: { params: { id: string } }) {
             }
             {
                 spinning &&
-                <div className={styles.spinner}></div>
+                <div className={'loader'}></div>
             }
 
         </Menu>

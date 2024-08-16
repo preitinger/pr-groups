@@ -10,14 +10,14 @@
     margin-left: 2rem;
 }
 
-.form {
+/* .form {
     display: block;
     position: absolute;
     top: calc(var(--h1) + 2rem);
     left: calc(var(--w1) + 4rem);
     color: #ebebeb;
     right: 2rem;
-}
+} */
 
 .passwdLabel,
 .passwd,
@@ -34,7 +34,7 @@
 }
 
 .comment {
-    margin-top: 1rem;
+    margin: 2rem;
 }
 
 .passwdLabel {
@@ -50,7 +50,7 @@
     flex-flow: column;
     justify-content: center;
     /* align-items: stretch; */
-    width: calc(200px + 4rem);
+    width: calc(300px + 4rem);
 }
 
 .innerForm h1 {
@@ -64,4 +64,5 @@
 
 .loginButton {
     align-self: center;
+    color: black !important;
 }

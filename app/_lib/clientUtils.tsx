@@ -7,6 +7,7 @@ import { withStopPropagation } from "./utils";
 import Image from "next/image";
 
 import styles from './clientUtils.module.css'
+import Input2 from "./pr-client-utils/Input2";
 
 export type Validation = 'validating' | 'valid' | 'invalid'
 
@@ -149,19 +150,22 @@ export function Editable<T>({ disabled, label, info, value, setValue, format, pa
                     <button className={styles.cancelImg} onClick={withStopPropagation(onCancel)}></button>
                 </div>
             </div> */}
-            <dialog onClose={() => { onCancel(); }} className='dialog' ref={dialogRef} aria-modal>
-                <Label>{label}</Label>
+            <dialog onClose={() => { onCancel(); }} className='form' ref={dialogRef} aria-modal>
+                {/* <Label>{label}</Label>
                 <input autoFocus className={styles.input} ref={inputRef} value={editedText} onChange={(e) => onChange(e.target.value)} onKeyUp={(e) => {
                     if (e.key === 'Enter') {
                         onOk()
                     } else if (e.key === 'Escape') {
                         onCancel();
                     }
+                }} /> */}
+                <Input2 label={label ?? ''} text={editedText} setText={onChange} onEnter={onOk} validate={(text) => {
+                    return error
                 }} />
-                {
+                {/* {
                     error !== '' &&
                     <p className={styles.error}>{error}</p>
-                }
+                } */}
                 <div className={styles.buttonRow}>
                     {validation === 'valid' &&
                         <button className={styles.okImg} onClick={withStopPropagation(onOk)}></button>}

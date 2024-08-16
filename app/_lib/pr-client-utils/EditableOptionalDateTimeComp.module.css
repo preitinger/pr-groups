@@ -9,10 +9,13 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 2rem;
+    margin: 2rem;
 }
 
-.buttonRow button {}
+.buttonRow button {
+    border-radius: 8px;
+    cursor: pointer;
+}
 
 .okImg,
 .cancelImg {
@@ -34,6 +37,7 @@
 .comment,
 .error {
     height: 2.5em;
+    margin-left: 2rem;
 }
 
 .content {
@@ -44,4 +48,13 @@
     overflow: auto;
     max-width: calc(100vw - var(--w1) - 8rem);
     min-height: 40px;
+    cursor: pointer;
+}
+
+.summerWinter {
+    margin: 0 2rem;
+}
+
+.label {
+    cursor: pointer;
 }

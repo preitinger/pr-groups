@@ -32,6 +32,7 @@ import { myCssSupports } from "@/app/_lib/pr-client-utils/myCssSupports";
 import { LogoutReq } from "@/app/_lib/user-management-client/user-management-common/logout";
 import { userLogoutFetch } from "@/app/_lib/user-management-client/userManagementClient";
 import useLoginLogout from "@/app/_lib/useLoginLogout";
+import Toggler1 from "@/app/_lib/pr-client-utils/Toggler1";
 
 const MAX_GROUP_LENGTH = 20
 const MAX_HEADER_LEN = 20
@@ -75,8 +76,8 @@ function OptionalEditable<T>({ label, value, defaultValue, setValue, format, par
     return <div className={styles.optionalEditable}>
         <Checkbox
             label={label}
-            value={value != null}
-            setValue={updateEnabled}
+            checked={value != null}
+            setChecked={updateEnabled}
         />
         {
             value != null &&
@@ -123,7 +124,7 @@ function EditableImg({ label, img, setImg }: EditableImgProps) {
 
     return (
         <>
-            <Checkbox label={label} value={imgUsed} setValue={(b) => {
+            <Checkbox className={styles.checkbox} label={label} checked={imgUsed} setChecked={(b) => {
                 if (!b) {
                     if (img == null) {
                         console.error('unexpected: img null')
@@ -390,7 +391,7 @@ function HeaderLine({ children, label, line, setLine }: PropsWithChildren<{ labe
 
     return (
         <>
-            <Checkbox label={`${label} anzeigen`} value={lineUsed} setValue={(b) => {
+            <Checkbox label={`${label} anzeigen`} checked={lineUsed} setChecked={(b) => {
                 if (!b) {
                     if (line.text === '') {
                         console.error('unexpected: empty line text');
@@ -444,7 +445,7 @@ function HeaderLine({ children, label, line, setLine }: PropsWithChildren<{ labe
                             />
 
 
-                            <Checkbox label='bold' value={line.bold} setValue={(bold) => {
+                            <Checkbox label='bold' checked={line.bold} setChecked={(bold) => {
                                 setLine({
                                     ...line,
                                     bold: bold
@@ -580,16 +581,7 @@ export default function Page({ params }: { params: { id: string } }) {
     const mainRef = useRef<HTMLDivElement>(null);
     const [cookiesAccepted, setCookiesAccepted] = useState(false);
 
-    function onLogin() {
-        setComment('');
-        fetchData();
-    }
-
-    const onLogout = useCallback(() => {
-        // ?
-    }, [])
-
-    const [user, onLoginClick, onLogoutClick, loginLogoutSpinning, userText, setUserText, passwdText, setPasswdText, loginError, logoutError] = useLoginLogout(onLogin, onLogout)
+    const [user, onLoginClick, onLogoutClick, loginLogoutSpinning, userText, setUserText, passwdText, setPasswdText, loginError, logoutError] = useLoginLogout()
 
 
     // useEffect(() => {
@@ -623,6 +615,7 @@ export default function Page({ params }: { params: { id: string } }) {
             switch (resp.type) {
                 case 'authFailed':
                     setComment('Nicht authorisiert.');
+                    onLogoutClick();
                     break;
                 case 'success': {
                     setLogo(resp.logo)
@@ -646,6 +639,7 @@ export default function Page({ params }: { params: { id: string } }) {
                 // expected
             } else {
                 console.error('Unexpected error', reason)
+                onLogoutClick();
             }
         }).finally(() => {
             setSpinning(false);
@@ -717,6 +711,7 @@ export default function Page({ params }: { params: { id: string } }) {
             switch (resp.type) {
                 case 'authFailed':
                     setComment('Nicht authorisiert.');
+                    onLogoutClick();
                     break;
                 case 'success':
                     setDirty(false);
@@ -1010,7 +1005,7 @@ export default function Page({ params }: { params: { id: string } }) {
                                         }}
                                     />
                                     <HeaderLine label='Überschrift 2' line={line2 ?? { text: '', fontSize: '1rem', bold: false }} setLine={withSetDirty(setLine2)} />
-                                    <Checkbox label='Titel in Browser-Tab' value={docTitle != null} setValue={withSetDirty((b) => {
+                                    <Checkbox label='Titel in Browser-Tab' checked={docTitle != null} setChecked={withSetDirty((b) => {
                                         if (b) {
                                             setDocTitle(lastDocTitle);
                                         } else {
@@ -1105,7 +1100,7 @@ export default function Page({ params }: { params: { id: string } }) {
                 </>
             }
             <Popup visible={user == null} >
-                <LoginComp  user={userText} setUser={setUserText} passwd={passwdText} setPasswd={setPasswdText} onLoginClick={onLoginClick} comment={loginError} spinning={loginLogoutSpinning} />
+                <LoginComp user={userText} setUser={setUserText} passwd={passwdText} setPasswd={setPasswdText} onLoginClick={onLoginClick} comment={loginError} spinning={loginLogoutSpinning} />
             </Popup>
             {groupId != null &&
                 <Popup visible={addingMember} >

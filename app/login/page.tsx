@@ -14,6 +14,7 @@ import Input2 from '../_lib/pr-client-utils/Input2';
 import { LocalContext } from '../_lib/LocalContext';
 import FixedAbortController from '../_lib/pr-client-utils/FixedAbortController';
 import { isAbortError } from '../_lib/utils';
+import Button from '../_lib/Button';
 
 export default function Page() {
     const [user, setUser] = useState('');
@@ -102,12 +103,12 @@ export default function Page() {
             <Menu setCookiesAccepted={setCookiesAccepted} />
             <div className={styles.main}>
                 <h1>pr-groups</h1>
-                <FormComp decoImg={{ src: '/group-friends-jumping-top-hill.jpg', alt: 'Gruppe', width: 714, height: 576 }} maxWidth={1200} >
+                <FormComp decoImg={{ src: '/group-friends-jumping-top-hill.jpg', alt: 'Gruppe', width: 714, height: 576 }} maxWidth={1280} >
                     <div className={styles.innerForm}>
                         <h1>Anmelden</h1>
                         <Input2 label='User' text={user} setText={setUser} onEnter={onLoginClick} />
                         <Input2 label='Passwort' type='password' text={passwd} setText={setPasswd} onEnter={onLoginClick} />
-                        <button className={styles.loginButton} onClick={onLoginClick}>Login</button>
+                        <Button className={styles.loginButton} onClick={onLoginClick}>Login</Button>
                         <p className={styles.comment}>{comment}</p>
 
                     </div>

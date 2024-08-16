@@ -696,7 +696,7 @@ export default function Page({ params }: { params: { group: string; phoneNr: str
                 }
                 {
                     spinning &&
-                    <div className={styles.spinner}></div>
+                    <div className={'loader'}></div>
                 }
             </div>
         </>
