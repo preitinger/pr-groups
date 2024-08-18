@@ -82,7 +82,10 @@ export default function Page() {
     return (
         <>
             <Menu customSpinning={false} setCookiesAccepted={setCookiesAccepted} customItems={customMenuItems} >
-                <Header user={null} line1={{ text: 'pr-groups / Gruppen-Admin', fontSize: '1.2rem', bold: false }} margin='1rem' line2={{ text: 'Aktivität hinzufügen', fontSize: '1.5rem', bold: true }} />
+                <Header user={null} line1={{ text: 'pr-groups / Gruppen-Admin', 
+                    fontSize: '1.2rem', bold: false }} 
+                    margin='1rem' 
+                    line2={{ text: 'Aktivität hinzufügen', fontSize: '1.5rem', bold: true }} />
                 <div className={styles.main}>
                     <FormComp decoImg={{ src: '/group-friends-jumping-top-hill.jpg', alt: 'Gruppe', width: 714, height: 576 }} maxWidth={1280} >
                         <div className={styles.form}>
