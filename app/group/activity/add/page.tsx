@@ -23,7 +23,7 @@ export default function Page() {
     const [group, setGroup] = useState('');
     const [activity, setActivity] = useState('');
     const [capacity, setCapacity] = useState('');
-    const [date, setDate] = useState<Date | null>(null);
+    // const [date, setDate] = useState<Date | null>(null);
     const [timeText, setTimeText] = useState('');
     const [comment, setComment] = useState('');
     const [unclearMESZ, setUnclearMESZ] = useState(false);
@@ -42,7 +42,7 @@ export default function Page() {
         try {
             capacityNum = parseInt(capacity);
         } catch (reason) { }
-        const test = JSON.parse(JSON.stringify(date));
+        const date = new Date(timeText);
         const req: GroupActivityAddReq = {
             user: user1,
             token: token1,
