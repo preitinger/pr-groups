@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Image from "next/image";
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -12,6 +13,7 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   width: 'device-width',
+  initialScale: 1
   // initialScale: 1
   // initialScale: 0.86,
   // minimumScale: 0.86,
