@@ -1,4 +1,4 @@
-import { AccordionItem } from "react-bootstrap";
+import Button from "react-bootstrap/Button";
 import Accordion from "react-bootstrap/Accordion";
 
 export default function BootstrapAccordion() {
@@ -15,5 +15,7 @@ export default function BootstrapAccordion() {
                 <div>bla 2</div>
             </Accordion.Body>
         </Accordion.Item>
+
+        <Button>Yeee-haaaa</Button>
     </Accordion>
 }
