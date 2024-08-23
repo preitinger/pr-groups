@@ -1,3 +1,5 @@
+@import "~bootstrap/dist/css/bootstrap.min.css";
+
 :root {
   --theta: 85deg;
   --alpha: calc(90deg - var(--theta));
