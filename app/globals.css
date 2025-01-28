@@ -1,4 +1,4 @@
-@import "~bootstrap/dist/css/bootstrap.min.css";
+@import '~bootstrap/dist/css/bootstrap.min.css';
 
 :root {
   --theta: 85deg;
@@ -16,15 +16,15 @@
   /* overflow: hidden; */
 
   font-family: Arial, Helvetica, sans-serif;
-  background-color: var(--bg-color);
+  /* background-color: var(--bg-color); */
   /* accent-color: gold; */
   accent-color: hsl(13, 99%, 63%)
 }
 
-* {
+/* * {
   scrollbar-color: hsl(13, 99%, 23%) #551a0a;
   scrollbar-width: thin;
-}
+} */
 
 body {
   scrollbar-color: yellow;
@@ -150,6 +150,7 @@ body {
   right: 0;
   bottom: 0;
   background-color: var(--bg-color);
+  overflow: hidden;
 }
 
 @media((min-width: 610px) and (min-height: 660px)) {
@@ -376,3 +377,9 @@ button:active {
 } */
 /* END button from web: */
 
+.mainNew {
+  background-color: var(--bs-white);
+  color: black;
+  width: 100%;
+  height: 100%;
+}
